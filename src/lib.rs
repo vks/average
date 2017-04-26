@@ -1,11 +1,21 @@
+#![no_std]
+
 extern crate conv;
 
 use conv::ApproxFrom;
 
-/// Represent and average value of a sequence of numbers.
+/// Represent an average value of a sequence of numbers.
 ///
 /// The average is calculated iteratively, so the sequence of numbers can be an
 /// iterator.
+///
+/// ```
+/// use average::Average;
+///
+/// let a: Average = (1..6).map(|x| x as f64).collect();
+/// assert_eq!(a.avg(), 3.0);
+/// assert_eq!(a.var(), 2.5);
+/// ```
 #[derive(Debug, Clone)]
 pub struct Average {
     avg: f64,
@@ -54,7 +64,7 @@ impl Average {
     }
 }
 
-impl std::iter::FromIterator<f64> for Average {
+impl core::iter::FromIterator<f64> for Average {
     fn from_iter<T>(iter: T) -> Average
         where T: IntoIterator<Item=f64>
     {
@@ -73,7 +83,18 @@ mod tests {
     use ::conv::ConvAsUtil;
 
     #[test]
-    fn average() {
+    fn average_trivial() {
+        let mut a = Average::new();
+        assert_eq!(a.len(), 0);
+        a.add(1.0);
+        assert_eq!(a.avg(), 1.0);
+        assert_eq!(a.len(), 1);
+        assert_eq!(a.var(), 0.0);
+        assert_eq!(a.err(), 0.0);
+    }
+
+    #[test]
+    fn average_simple() {
         let a: Average = (1..6).map(|x| x.approx().unwrap()).collect();
         assert_eq!(a.avg(), 3.0);
         assert_eq!(a.len(), 5);
