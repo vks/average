@@ -1,0 +1,7 @@
+[package]
+authors = ["Vinzent Steinberg <Vinzent.Steinberg@gmail.com>"]
+name = "average"
+version = "0.1.0"
+
+[dependencies]
+conv = "0.3"
