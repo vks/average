@@ -20,8 +20,11 @@ use conv::ApproxFrom;
 /// ```
 #[derive(Debug, Clone)]
 pub struct Average {
+    /// Average value.
     avg: f64,
+    /// Number of samples.
     n: u64,
+    /// Intermediate value for calculating the variance.
     v: f64,
 }
 
@@ -81,7 +84,10 @@ impl core::iter::FromIterator<f64> for Average {
     macro_rules! assert_almost_eq {
         ($a:expr, $b:expr, $prec:expr) => (
             if ($a - $b).abs() > $prec {
-                panic!(format!("assertion failed: `abs(left - right) < {:e}`, (left: `{}`, right: `{}`)", $prec, $a, $b));
+                panic!(format!(
+                    "assertion failed: `abs(left - right) < {:e}`, \
+                     (left: `{}`, right: `{}`)",
+                    $prec, $a, $b));
             }
         );
     }
