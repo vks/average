@@ -31,16 +31,21 @@ impl Average {
         Average { avg: 0., n: 0, v: 0. }
     }
 
-    /// Add a number to the sequence of which the average is calculated.
-    pub fn add(&mut self, x: f64) {
+    /// Add a sample to the sequence of which the average is calculated.
+    pub fn add(&mut self, sample: f64) {
         // This algorithm introduced by Welford in 1962 trades numerical
         // stability for a division inside the loop.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
         self.n += 1;
-        let delta = x - self.avg;
+        let delta = sample - self.avg;
         self.avg += delta / f64::approx_from(self.n).unwrap();
-        self.v += delta * (x - self.avg);
+        self.v += delta * (sample - self.avg);
+    }
+
+    /// Determine whether the sequence is empty.
+    pub fn is_empty(&self) -> bool {
+        self.n == 0
     }
 
     /// Return the mean of the sequence.
@@ -139,18 +144,19 @@ mod tests {
     use core::iter::Iterator;
 
     #[test]
-    fn average_trivial() {
+    fn trivial() {
         let mut a = Average::new();
         assert_eq!(a.len(), 0);
         a.add(1.0);
         assert_eq!(a.mean(), 1.0);
         assert_eq!(a.len(), 1);
         assert_eq!(a.sample_variance(), 0.0);
+        assert_eq!(a.population_variance(), 0.0);
         assert_eq!(a.error(), 0.0);
     }
 
     #[test]
-    fn average_simple() {
+    fn simple() {
         let a: Average = (1..6).map(f64::from).collect();
         assert_eq!(a.mean(), 3.0);
         assert_eq!(a.len(), 5);
@@ -159,7 +165,7 @@ mod tests {
     }
 
     #[test]
-    fn average_numerically_unstable() {
+    fn numerically_unstable() {
         // The naive algorithm fails for this example due to cancelation.
         let big = 1e9;
         let sample = &[big + 4., big + 7., big + 13., big + 16.];
@@ -168,7 +174,7 @@ mod tests {
     }
 
     #[test]
-    fn average_normal_distribution() {
+    fn normal_distribution() {
         use rand::distributions::{Normal, IndependentSample};
         let normal = Normal::new(2.0, 3.0);
         let mut a = Average::new();

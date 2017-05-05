@@ -6,5 +6,7 @@ extern crate conv;
 
 #[macro_use] mod macros;
 mod average;
+mod weighted_average;
 
 pub use average::Average;
+pub use weighted_average::WeightedAverage;
