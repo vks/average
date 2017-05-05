@@ -14,7 +14,7 @@ use conv::ApproxFrom;
 /// ```
 /// use average::Average;
 ///
-/// let a: Average = (1..6).map(|x| x as f64).collect();
+/// let a: Average = (1..6).map(Into::into).collect();
 /// assert_eq!(a.avg(), 3.0);
 /// assert_eq!(a.var(), 2.5);
 /// ```
