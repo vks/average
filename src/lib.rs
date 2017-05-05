@@ -102,7 +102,7 @@ impl Average {
         //
         //     self.avg += delta * len_other / len_total;
         //
-        // instead but this results in cancellation if the number of samples are similar.
+        // instead but this results in cancelation if the number of samples are similar.
         self.v += other.v + delta*delta * len_self * len_other / len_total;
     }
 }
@@ -161,6 +161,15 @@ mod tests {
         assert_eq!(a.len(), 5);
         assert_eq!(a.sample_variance(), 2.5);
         assert_almost_eq!(a.err(), f64::sqrt(0.5), 1e-16);
+    }
+
+    #[test]
+    fn average_numerically_unstable() {
+        // The naive algorithm fails for this example due to cancelation.
+        let big = 1e9;
+        let sample = &[big + 4., big + 7., big + 13., big + 16.];
+        let a: Average = sample.iter().map(|x| *x).collect();
+        assert_eq!(a.sample_variance(), 30.);
     }
 
     #[test]
