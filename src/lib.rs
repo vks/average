@@ -39,6 +39,9 @@ impl Average {
 
     /// Add a number to the sequence of which the average is calculated.
     pub fn add(&mut self, x: f64) {
+        // This algorithm introduced by Welford in 1962 trades numerical
+        // stability for a division inside the loop.
+        //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
         self.n += 1;
         let delta = x - self.avg;
@@ -83,6 +86,25 @@ impl Average {
         }
         (self.sample_variance() / f64::approx_from(self.n).unwrap()).sqrt()
     }
+
+    /// Merge the average of another sequence into this one.
+    pub fn merge(&mut self, other: &Average) {
+        // This algorithm was proposed by Chan et al. in 1979.
+        //
+        // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
+        let delta = other.avg - self.avg;
+        let len_self = f64::approx_from(self.n).unwrap();
+        let len_other = f64::approx_from(other.n).unwrap();
+        let len_total = len_self + len_other;
+        self.n += other.n;
+        self.avg = (len_self * self.avg + len_other * other.avg) / len_total;
+        // Chan et al. use
+        //
+        //     self.avg += delta * len_other / len_total;
+        //
+        // instead but this results in cancellation if the number of samples are similar.
+        self.v += other.v + delta*delta * len_self * len_other / len_total;
+    }
 }
 
 impl core::default::Default for Average {
@@ -118,9 +140,8 @@ macro_rules! assert_almost_eq {
 mod tests {
     use super::*;
 
+    use core::iter::Iterator;
     use std::vec::Vec;
-
-    use ::conv::ConvAsUtil;
 
     #[test]
     fn average_trivial() {
@@ -135,7 +156,7 @@ mod tests {
 
     #[test]
     fn average_simple() {
-        let a: Average = (1..6).map(|x| x.approx().unwrap()).collect();
+        let a: Average = (1..6).map(f64::from).collect();
         assert_eq!(a.mean(), 3.0);
         assert_eq!(a.len(), 5);
         assert_eq!(a.sample_variance(), 2.5);
@@ -152,6 +173,21 @@ mod tests {
         }
         assert_almost_eq!(a.mean(), 2.0, 1e-2);
         assert_almost_eq!(a.sample_variance().sqrt(), 3.0, 1e-2);
+    }
+
+    #[test]
+    fn merge() {
+        let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
+        for mid in 0..sequence.len() {
+            let (left, right) = sequence.split_at(mid);
+            let avg_total: Average = sequence.iter().map(|x| *x).collect();
+            let mut avg_left: Average = left.iter().map(|x| *x).collect();
+            let avg_right: Average = right.iter().map(|x| *x).collect();
+            avg_left.merge(&avg_right);
+            assert_eq!(avg_total.n, avg_left.n);
+            assert_eq!(avg_total.avg, avg_left.avg);
+            assert_eq!(avg_total.v, avg_left.v);
+        }
     }
 
     fn initialize_vec() -> Vec<f64> {
