@@ -80,7 +80,7 @@ impl Average {
     }
 
     /// Calculate the standard error of the mean of the sequence.
-    pub fn err(&self) -> f64 {
+    pub fn error(&self) -> f64 {
         if self.n == 0 {
             return 0.;
         }
@@ -155,7 +155,7 @@ mod tests {
         assert_eq!(a.mean(), 1.0);
         assert_eq!(a.len(), 1);
         assert_eq!(a.sample_variance(), 0.0);
-        assert_eq!(a.err(), 0.0);
+        assert_eq!(a.error(), 0.0);
     }
 
     #[test]
@@ -164,7 +164,7 @@ mod tests {
         assert_eq!(a.mean(), 3.0);
         assert_eq!(a.len(), 5);
         assert_eq!(a.sample_variance(), 2.5);
-        assert_almost_eq!(a.err(), f64::sqrt(0.5), 1e-16);
+        assert_almost_eq!(a.error(), f64::sqrt(0.5), 1e-16);
     }
 
     #[test]
