@@ -40,9 +40,9 @@ impl Average {
     /// Add a number to the sequence of which the average is calculated.
     pub fn add(&mut self, x: f64) {
         self.n += 1;
-        let prev_avg = self.avg;
-        self.avg += (x - prev_avg) / f64::approx_from(self.n).unwrap();
-        self.v += (x - prev_avg) * (x - self.avg);
+        let delta = x - self.avg;
+        self.avg += delta / f64::approx_from(self.n).unwrap();
+        self.v += delta * (x - self.avg);
     }
 
     /// Return the mean of the sequence.
