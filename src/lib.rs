@@ -19,7 +19,7 @@ use conv::ApproxFrom;
 ///
 /// let a: Average = (1..6).map(Into::into).collect();
 /// assert_eq!(a.mean(), 3.0);
-/// assert_eq!(a.var(), 2.5);
+/// assert_eq!(a.sample_variance(), 2.5);
 /// ```
 #[derive(Debug, Clone)]
 pub struct Average {
@@ -27,7 +27,7 @@ pub struct Average {
     avg: f64,
     /// Number of samples.
     n: u64,
-    /// Intermediate value for calculating the variance.
+    /// Intermediate sum of squares for calculating the variance.
     v: f64,
 }
 
@@ -56,11 +56,23 @@ impl Average {
     }
 
     /// Calculate the unbiased sample variance of the sequence.
-    pub fn var(&self) -> f64 {
+    ///
+    /// This assumes that sequence consists of samples of a larger population.
+    pub fn sample_variance(&self) -> f64 {
         if self.n < 2 {
             return 0.;
         }
         self.v / f64::approx_from(self.n - 1).unwrap()
+    }
+
+    /// Calculate the population variance of the sequence.
+    ///
+    /// This assumes that sequence consists of the entire population.
+    pub fn population_variance(&self) -> f64 {
+        if self.n < 2 {
+            return 0.;
+        }
+        self.v / f64::approx_from(self.n).unwrap()
     }
 
     /// Calculate the standard error of the mean of the sequence.
@@ -68,7 +80,7 @@ impl Average {
         if self.n == 0 {
             return 0.;
         }
-        (self.var() / f64::approx_from(self.n).unwrap()).sqrt()
+        (self.sample_variance() / f64::approx_from(self.n).unwrap()).sqrt()
     }
 }
 
@@ -90,16 +102,16 @@ impl core::iter::FromIterator<f64> for Average {
     }
 }
 
-    macro_rules! assert_almost_eq {
-        ($a:expr, $b:expr, $prec:expr) => (
-            if ($a - $b).abs() > $prec {
-                panic!(format!(
-                    "assertion failed: `abs(left - right) < {:e}`, \
-                     (left: `{}`, right: `{}`)",
-                    $prec, $a, $b));
-            }
-        );
-    }
+macro_rules! assert_almost_eq {
+    ($a:expr, $b:expr, $prec:expr) => (
+        if ($a - $b).abs() > $prec {
+            panic!(format!(
+                "assertion failed: `abs(left - right) < {:e}`, \
+                 (left: `{}`, right: `{}`)",
+                $prec, $a, $b));
+        }
+    );
+}
 
 #[cfg(test)]
 mod tests {
@@ -116,7 +128,7 @@ mod tests {
         a.add(1.0);
         assert_eq!(a.mean(), 1.0);
         assert_eq!(a.len(), 1);
-        assert_eq!(a.var(), 0.0);
+        assert_eq!(a.sample_variance(), 0.0);
         assert_eq!(a.err(), 0.0);
     }
 
@@ -125,7 +137,7 @@ mod tests {
         let a: Average = (1..6).map(|x| x.approx().unwrap()).collect();
         assert_eq!(a.mean(), 3.0);
         assert_eq!(a.len(), 5);
-        assert_eq!(a.var(), 2.5);
+        assert_eq!(a.sample_variance(), 2.5);
         assert_almost_eq!(a.err(), f64::sqrt(0.5), 1e-16);
     }
 
@@ -134,11 +146,11 @@ mod tests {
         use rand::distributions::{Normal, IndependentSample};
         let normal = Normal::new(2.0, 3.0);
         let mut a = Average::new();
-        for _ in 0..1000000 {
+        for _ in 0..1_000_000 {
             a.add(normal.ind_sample(&mut ::rand::thread_rng()));
         }
         assert_almost_eq!(a.mean(), 2.0, 1e-2);
-        assert_almost_eq!(a.var().sqrt(), 3.0, 1e-2);
+        assert_almost_eq!(a.sample_variance().sqrt(), 3.0, 1e-2);
     }
 
     fn initialize_vec() -> Vec<f64> {
