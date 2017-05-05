@@ -15,7 +15,7 @@ use conv::ApproxFrom;
 /// use average::Average;
 ///
 /// let a: Average = (1..6).map(Into::into).collect();
-/// assert_eq!(a.avg(), 3.0);
+/// assert_eq!(a.mean(), 3.0);
 /// assert_eq!(a.var(), 2.5);
 /// ```
 #[derive(Debug, Clone)]
@@ -42,8 +42,8 @@ impl Average {
         self.v += (x - prev_avg) * (x - self.avg);
     }
 
-    /// Return the average of the sequence.
-    pub fn avg(&self) -> f64 {
+    /// Return the mean of the sequence.
+    pub fn mean(&self) -> f64 {
         self.avg
     }
 
@@ -60,12 +60,18 @@ impl Average {
         self.v / f64::approx_from(self.n - 1).unwrap()
     }
 
-    /// Calculate the standard error of the average of the sequence.
+    /// Calculate the standard error of the mean of the sequence.
     pub fn err(&self) -> f64 {
         if self.n == 0 {
             return 0.;
         }
         (self.var() / f64::approx_from(self.n).unwrap()).sqrt()
+    }
+}
+
+impl core::default::Default for Average {
+    fn default() -> Average {
+        Average::new()
     }
 }
 
@@ -103,7 +109,7 @@ mod tests {
         let mut a = Average::new();
         assert_eq!(a.len(), 0);
         a.add(1.0);
-        assert_eq!(a.avg(), 1.0);
+        assert_eq!(a.mean(), 1.0);
         assert_eq!(a.len(), 1);
         assert_eq!(a.var(), 0.0);
         assert_eq!(a.err(), 0.0);
@@ -112,7 +118,7 @@ mod tests {
     #[test]
     fn average_simple() {
         let a: Average = (1..6).map(|x| x.approx().unwrap()).collect();
-        assert_eq!(a.avg(), 3.0);
+        assert_eq!(a.mean(), 3.0);
         assert_eq!(a.len(), 5);
         assert_eq!(a.var(), 2.5);
         assert_almost_eq!(a.err(), f64::sqrt(0.5), 1e-16);
@@ -126,7 +132,7 @@ mod tests {
         for _ in 0..1000000 {
             a.add(normal.ind_sample(&mut ::rand::thread_rng()));
         }
-        assert_almost_eq!(a.avg(), 2.0, 1e-2);
+        assert_almost_eq!(a.mean(), 2.0, 1e-2);
         assert_almost_eq!(a.var().sqrt(), 3.0, 1e-2);
     }
 }
