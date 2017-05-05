@@ -88,6 +88,19 @@ impl Average {
     }
 
     /// Merge the average of another sequence into this one.
+    ///
+    /// ```
+    /// use average::Average;
+    ///
+    /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
+    /// let (left, right) = sequence.split_at(3);
+    /// let avg_total: Average = sequence.iter().map(|x| *x).collect();
+    /// let mut avg_left: Average = left.iter().map(|x| *x).collect();
+    /// let avg_right: Average = right.iter().map(|x| *x).collect();
+    /// avg_left.merge(&avg_right);
+    /// assert_eq!(avg_total.mean(), avg_left.mean());
+    /// assert_eq!(avg_total.sample_variance(), avg_left.sample_variance());
+    /// ```
     pub fn merge(&mut self, other: &Average) {
         // This algorithm was proposed by Chan et al. in 1979.
         //
