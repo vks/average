@@ -13,3 +13,4 @@ conv = "0.3"
 
 [dev-dependencies]
 rand = "0.3"
+streaming-stats = "0.1"
