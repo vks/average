@@ -6,6 +6,7 @@ extern crate stats;
 
 use bencher::Bencher;
 
+/// Create a random vector by sampling from a normal distribution.
 fn initialize_vec() -> Vec<f64> {
     use rand::distributions::{Normal, IndependentSample};
     use rand::{XorShiftRng, SeedableRng};
