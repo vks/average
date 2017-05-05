@@ -1,11 +1,8 @@
 #![no_std]
-#![feature(test)]
 
 extern crate conv;
 #[cfg(test)] extern crate rand;
 #[cfg(test)] #[macro_use] extern crate std;
-#[cfg(test)] extern crate stats;
-#[cfg(test)] extern crate test;
 
 use conv::ApproxFrom;
 
@@ -159,7 +156,6 @@ mod tests {
     use super::*;
 
     use core::iter::Iterator;
-    use std::vec::Vec;
 
     #[test]
     fn average_trivial() {
@@ -215,36 +211,5 @@ mod tests {
             assert_eq!(avg_total.avg, avg_left.avg);
             assert_eq!(avg_total.v, avg_left.v);
         }
-    }
-
-    fn initialize_vec() -> Vec<f64> {
-        use rand::distributions::{Normal, IndependentSample};
-        use rand::{XorShiftRng, SeedableRng};
-        let normal = Normal::new(2.0, 3.0);
-        let n = 1_000_000;
-        let mut values = Vec::with_capacity(n);
-        let mut rng = XorShiftRng::from_seed([1, 2, 3, 4]);
-        for _ in 0..n {
-            values.push(normal.ind_sample(&mut rng));
-        }
-        values
-    }
-
-    #[bench]
-    fn bench_average(b: &mut test::Bencher) {
-        let values = initialize_vec();
-        b.iter(|| {
-            let a: Average = values.iter().map(|x| *x).collect();
-            a
-        });
-    }
-
-    #[bench]
-    fn bench_stats(b: &mut test::Bencher) {
-        let values = initialize_vec();
-        b.iter(|| {
-            let a: stats::OnlineStats = values.iter().map(|x| *x).collect();
-            a
-        });
     }
 }

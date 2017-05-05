@@ -12,5 +12,10 @@ keywords = ["statistics", "stats"]
 conv = "0.3"
 
 [dev-dependencies]
+bencher = "0.1"
 rand = "0.3"
 streaming-stats = "0.1"
+
+[[bench]]
+name = "average"
+harness = false
