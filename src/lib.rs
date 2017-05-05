@@ -1,6 +1,8 @@
 #![no_std]
 
 extern crate conv;
+#[cfg(test)] extern crate rand;
+#[cfg(test)] #[macro_use] extern crate std;
 
 use conv::ApproxFrom;
 
@@ -76,6 +78,14 @@ impl core::iter::FromIterator<f64> for Average {
     }
 }
 
+    macro_rules! assert_almost_eq {
+        ($a:expr, $b:expr, $prec:expr) => (
+            if ($a - $b).abs() > $prec {
+                panic!(format!("assertion failed: `abs(left - right) < {:e}`, (left: `{}`, right: `{}`)", $prec, $a, $b));
+            }
+        );
+    }
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -99,6 +109,18 @@ mod tests {
         assert_eq!(a.avg(), 3.0);
         assert_eq!(a.len(), 5);
         assert_eq!(a.var(), 2.5);
-        assert!((a.err() - f64::sqrt(0.5)).abs() < 1e-16);
+        assert_almost_eq!(a.err(), f64::sqrt(0.5), 1e-16);
+    }
+
+    #[test]
+    fn average_normal_distribution() {
+        use rand::distributions::{Normal, IndependentSample};
+        let normal = Normal::new(2.0, 3.0);
+        let mut a = Average::new();
+        for _ in 0..1000000 {
+            a.add(normal.ind_sample(&mut ::rand::thread_rng()));
+        }
+        assert_almost_eq!(a.avg(), 2.0, 1e-2);
+        assert_almost_eq!(a.var().sqrt(), 3.0, 1e-2);
     }
 }
