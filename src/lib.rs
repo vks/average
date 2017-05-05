@@ -9,10 +9,11 @@ extern crate conv;
 
 use conv::ApproxFrom;
 
-/// Represent an average value of a sequence of numbers.
+/// Represent the arithmetic mean and the variance of a sequence of numbers.
 ///
-/// The average is calculated iteratively, so the sequence of numbers can be an
-/// iterator.
+/// Everything is calculated iteratively using constant memory, so the sequence
+/// of numbers can be an iterator. The used algorithms try to avoid numerical
+/// instabilities.
 ///
 /// ```
 /// use average::Average;
@@ -61,7 +62,7 @@ impl Average {
 
     /// Calculate the unbiased sample variance of the sequence.
     ///
-    /// This assumes that sequence consists of samples of a larger population.
+    /// This assumes that the sequence consists of samples of a larger population.
     pub fn sample_variance(&self) -> f64 {
         if self.n < 2 {
             return 0.;
@@ -71,7 +72,7 @@ impl Average {
 
     /// Calculate the population variance of the sequence.
     ///
-    /// This assumes that sequence consists of the entire population.
+    /// This assumes that the sequence consists of the entire population.
     pub fn population_variance(&self) -> f64 {
         if self.n < 2 {
             return 0.;
