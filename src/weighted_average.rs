@@ -25,7 +25,9 @@ impl WeightedAverage {
         // This algorithm was suggested by West in 1979.
         //
         // See
-        // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
+        // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
+        // and
+        // http://people.ds.cam.ac.uk/fanf2/hermes/doc/antiforgery/stats.pdf.
         self.weight_sum += weight;
         self.weight_sum_sq += weight*weight;
         let prev_avg = self.avg;
@@ -48,9 +50,17 @@ impl WeightedAverage {
         self.weight_sum_sq
     }
 
-    /// Return the weighted mean of the sequence.
+    /// Estimate the weighted mean of the sequence.
     pub fn mean(&self) -> f64 {
         self.avg
+    }
+
+    /// Calculate the effective sample size.
+    pub fn effective_len(&self) -> f64 {
+        if self.is_empty() {
+            return 0.
+        }
+        self.weight_sum * self.weight_sum / self.weight_sum_sq
     }
 
     /// Calculate the population variance of the weighted sequence.
@@ -69,8 +79,10 @@ impl WeightedAverage {
     ///
     /// This assumes that the sequence consists of samples of a larger
     /// population and the weights represent *frequency*.
+    ///
+    /// Note that this is undefined if the sum of the weights is 1.
     pub fn sample_variance(&self) -> f64 {
-        if self.is_empty() {
+        if self.effective_len() <= 1. {
             0.
         } else {
             self.v / (self.weight_sum - 1.0)
@@ -86,6 +98,25 @@ impl WeightedAverage {
         } else {
             self.v / (self.weight_sum - self.weight_sum_sq / self.weight_sum)
         }
+    }
+
+    /// Estimate the standard error of the weighted mean of the sequence.
+    pub fn error(&self) -> f64 {
+        // This uses the same estimate as SPSS.
+        //
+        // See http://www.analyticalgroup.com/download/WEIGHTED_MEAN.pdf.
+        if self.is_empty() {
+            return 0.;
+        }
+        let variance = if self.weight_sum != 1. {
+            // We generally want to use the weighted sample variance...
+            self.sample_variance()
+        } else {
+            // ...but in this case it is undefined, so we use the weighted
+            // population variance instead.
+            self.population_variance()
+        };
+        (variance / self.weight_sum).sqrt()
     }
 }
 
@@ -123,7 +154,13 @@ mod tests {
         assert_eq!(a.sum_weights(), 1.0);
         assert_eq!(a.sum_weights_sq(), 1.0);
         assert_eq!(a.population_variance(), 0.0);
-        //assert_eq!(a.error(), 0.0);
+        assert_eq!(a.error(), 0.0);
+        a.add(1.0, 1.0);
+        assert_eq!(a.mean(), 1.0);
+        assert_eq!(a.sum_weights(), 2.0);
+        assert_eq!(a.sum_weights_sq(), 2.0);
+        assert_eq!(a.population_variance(), 0.0);
+        assert_eq!(a.error(), 0.0);
     }
 
     #[test]
@@ -132,6 +169,29 @@ mod tests {
         assert_eq!(a.mean(), 3.0);
         assert_eq!(a.sum_weights(), 5.0);
         assert_eq!(a.sample_variance(), 2.5);
-        //assert_almost_eq!(a.error(), f64::sqrt(0.5), 1e-16);
+        assert_almost_eq!(a.error(), f64::sqrt(0.5), 1e-16);
+    }
+
+    #[test]
+    fn reference() {
+        // Example from http://www.analyticalgroup.com/download/WEIGHTED_MEAN.pdf.
+        let values = &[5., 5., 4., 4., 3., 4., 3., 2., 2., 1.];
+        let weights = &[1.23, 2.12, 1.23, 0.32, 1.53, 0.59, 0.94, 0.94, 0.84, 0.73];
+        let a: WeightedAverage = values.iter().zip(weights.iter())
+            .map(|(x, w)| (*x, *w)).collect();
+        assert_almost_eq!(a.mean(), 3.53486, 1e-5);
+        assert_almost_eq!(a.sample_variance(), 1.8210, 1e-4);
+        assert_eq!(a.sum_weights(), 10.47);
+        assert_almost_eq!(a.effective_len(), 8.2315, 1e-4);
+        assert_almost_eq!(a.error(), f64::sqrt(0.1739), 1e-4);
+    }
+
+    #[test]
+    fn error_corner_case() {
+        let values = &[1., 2.];
+        let weights = &[0.5, 0.5];
+        let a: WeightedAverage = values.iter().zip(weights.iter())
+            .map(|(x, w)| (*x, *w)).collect();
+        assert_eq!(a.error(), 0.5);
     }
 }

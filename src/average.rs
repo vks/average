@@ -48,7 +48,7 @@ impl Average {
         self.n == 0
     }
 
-    /// Return the mean of the sequence.
+    /// Estimate the mean of the sequence.
     pub fn mean(&self) -> f64 {
         self.avg
     }
@@ -78,7 +78,7 @@ impl Average {
         self.v / f64::approx_from(self.n).unwrap()
     }
 
-    /// Calculate the standard error of the mean of the sequence.
+    /// Estimate the standard error of the mean of the sequence.
     pub fn error(&self) -> f64 {
         if self.n == 0 {
             return 0.;
@@ -150,6 +150,12 @@ mod tests {
         a.add(1.0);
         assert_eq!(a.mean(), 1.0);
         assert_eq!(a.len(), 1);
+        assert_eq!(a.sample_variance(), 0.0);
+        assert_eq!(a.population_variance(), 0.0);
+        assert_eq!(a.error(), 0.0);
+        a.add(1.0);
+        assert_eq!(a.mean(), 1.0);
+        assert_eq!(a.len(), 2);
         assert_eq!(a.sample_variance(), 0.0);
         assert_eq!(a.population_variance(), 0.0);
         assert_eq!(a.error(), 0.0);
