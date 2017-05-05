@@ -39,6 +39,7 @@ impl Average {
 
     /// Add a number to the sequence of which the average is calculated.
     pub fn add(&mut self, x: f64) {
+        // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
         self.n += 1;
         let delta = x - self.avg;
         self.avg += delta / f64::approx_from(self.n).unwrap();
