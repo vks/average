@@ -2,18 +2,23 @@ use core;
 
 use conv::ApproxFrom;
 
-/// Represent the arithmetic mean and the variance of a sequence of numbers.
+/// Estimate the arithmetic mean and the variance of a sequence of numbers
+/// ("population").
+///
+/// This can be used to estimate the standard error of the mean.
 ///
 /// Everything is calculated iteratively using constant memory, so the sequence
 /// of numbers can be an iterator. The used algorithms try to avoid numerical
 /// instabilities.
 ///
+///
+/// ## Example
+///
 /// ```
 /// use average::Average;
 ///
 /// let a: Average = (1..6).map(Into::into).collect();
-/// assert_eq!(a.mean(), 3.0);
-/// assert_eq!(a.sample_variance(), 2.5);
+/// println!("The average is {} ± {}.", a.mean(), a.error());
 /// ```
 #[derive(Debug, Clone)]
 pub struct Average {
@@ -26,12 +31,12 @@ pub struct Average {
 }
 
 impl Average {
-    /// Create a new average.
+    /// Create a new average estimator.
     pub fn new() -> Average {
         Average { avg: 0., n: 0, v: 0. }
     }
 
-    /// Add a sample to the sequence of which the average is calculated.
+    /// Add an element sampled from the population.
     pub fn add(&mut self, sample: f64) {
         // This algorithm introduced by Welford in 1962 trades numerical
         // stability for a division inside the loop.
@@ -43,24 +48,24 @@ impl Average {
         self.v += delta * (sample - self.avg);
     }
 
-    /// Determine whether the sequence is empty.
+    /// Determine whether the samples are empty.
     pub fn is_empty(&self) -> bool {
         self.n == 0
     }
 
-    /// Estimate the mean of the sequence.
+    /// Estimate the mean of the population.
     pub fn mean(&self) -> f64 {
         self.avg
     }
 
-    /// Return the number of elements in the sequence.
+    /// Return the number of samples.
     pub fn len(&self) -> u64 {
         self.n
     }
 
-    /// Calculate the unbiased sample variance of the sequence.
+    /// Calculate the sample variance.
     ///
-    /// This assumes that the sequence consists of samples of a larger population.
+    /// This is an unbiased estimator of the variance of the population.
     pub fn sample_variance(&self) -> f64 {
         if self.n < 2 {
             return 0.;
@@ -68,9 +73,9 @@ impl Average {
         self.v / f64::approx_from(self.n - 1).unwrap()
     }
 
-    /// Calculate the population variance of the sequence.
+    /// Calculate the population variance of the sample.
     ///
-    /// This assumes that the sequence consists of the entire population.
+    /// This is a biased estimator of the variance of the population.
     pub fn population_variance(&self) -> f64 {
         if self.n < 2 {
             return 0.;
@@ -78,7 +83,7 @@ impl Average {
         self.v / f64::approx_from(self.n).unwrap()
     }
 
-    /// Estimate the standard error of the mean of the sequence.
+    /// Estimate the standard error of the mean of the population.
     pub fn error(&self) -> f64 {
         if self.n == 0 {
             return 0.;
@@ -86,7 +91,10 @@ impl Average {
         (self.sample_variance() / f64::approx_from(self.n).unwrap()).sqrt()
     }
 
-    /// Merge the average of another sequence into this one.
+    /// Merge another sample into this one.
+    ///
+    ///
+    /// ## Example
     ///
     /// ```
     /// use average::Average;

@@ -1,7 +1,20 @@
 use core;
 
-/// Represent the weighted arithmetic mean and the weighted variance of a
-/// sequence of numbers.
+/// Estimate the weighted arithmetic mean and the weighted variance of a
+/// sequence of numbers ("population").
+///
+/// This can be used to estimate the standard error of the weighted mean.
+///
+///
+/// ## Example
+///
+/// ```
+/// use average::WeightedAverage;
+///
+/// let a: WeightedAverage = (1..6).zip(1..6)
+///     .map(|(x, w)| (f64::from(x), f64::from(w))).collect();
+/// println!("The weighted average is {} ± {}.", a.mean(), a.error());
+/// ```
 #[derive(Debug, Clone)]
 pub struct WeightedAverage {
     /// Sum of the weights.
@@ -13,12 +26,12 @@ pub struct WeightedAverage {
 }
 
 impl WeightedAverage {
-    /// Create a new weighted average.
+    /// Create a new weighted average estimator.
     pub fn new() -> WeightedAverage {
         WeightedAverage { weight_sum: 0., avg: 0., v: 0. }
     }
 
-    /// Add a sample to the weighted sequence of which the average is calculated.
+    /// Add a weighted element sampled from the population.
     pub fn add(&mut self, sample: f64, weight: f64) {
         // This algorithm was suggested by West in 1979.
         //
@@ -32,7 +45,7 @@ impl WeightedAverage {
         self.v += weight * (sample - prev_avg) * (sample - self.avg);
     }
 
-    /// Determine whether the sequence is empty.
+    /// Determine whether the samples are empty.
     pub fn is_empty(&self) -> bool {
         self.weight_sum == 0. && self.v == 0. && self.avg == 0.
     }
@@ -42,15 +55,14 @@ impl WeightedAverage {
         self.weight_sum
     }
 
-    /// Estimate the weighted mean of the sequence.
+    /// Estimate the weighted mean of the population.
     pub fn mean(&self) -> f64 {
         self.avg
     }
 
-    /// Calculate the population variance of the weighted sequence.
+    /// Calculate the weighted population variance of the sample.
     ///
-    /// This assumes that the sequence consists of the entire population and the
-    /// weights represent *frequency*.
+    /// This is a biased estimator of the weighted variance of the population.
     pub fn population_variance(&self) -> f64 {
         if self.is_empty() {
             0.
@@ -59,10 +71,9 @@ impl WeightedAverage {
         }
     }
 
-    /// Calculate the unbiased sample variance of the weighted sequence.
+    /// Calculate the weighted sample variance.
     ///
-    /// This assumes that the sequence consists of samples of a larger
-    /// population and the weights represent *frequency*.
+    /// This is an unbiased estimator of the weighted variance of the population.
     ///
     /// Note that this will return 0 if the sum of the weights is <= 1.
     pub fn sample_variance(&self) -> f64 {
@@ -73,10 +84,10 @@ impl WeightedAverage {
         }
     }
 
-    /// Estimate the standard error of the weighted mean of the sequence.
+    /// Estimate the standard error of the weighted mean of the population.
     ///
     /// Note that this will return 0 if the sum of the weights is 0.
-    /// For this estimator the sum of weights should be larger than 1.
+    /// For this estimator, the sum of weights should be larger than 1.
     ///
     /// This biased estimator uses the weighted variance and the sum of weights.
     /// It considers the weights as (noninteger) counts of how often the sample
@@ -97,7 +108,10 @@ impl WeightedAverage {
         (variance / self.weight_sum).sqrt()
     }
 
-    /// Merge the weighted average of another sequence into this one.
+    /// Merge another sample into this one.
+    ///
+    ///
+    /// ## Example
     ///
     /// ```
     /// use average::WeightedAverage;

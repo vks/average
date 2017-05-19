@@ -2,27 +2,40 @@ use core;
 
 use conv::ApproxFrom;
 
-/// Represent the weighted and unweighted arithmetic mean and the unweighted
-/// variance of a sequence of numbers.
+/// Estimate the weighted and unweighted arithmetic mean and the unweighted
+/// variance of a sequence of numbers ("population").
+///
+/// This can be used to estimate the standard error of the weighted mean.
+///
+///
+/// ## Example
+///
+/// ```
+/// use average::WeightedAverage2 as WeightedAverage;
+///
+/// let a: WeightedAverage = (1..6).zip(1..6)
+///     .map(|(x, w)| (f64::from(x), f64::from(w))).collect();
+/// println!("The weighted average is {} ± {}.", a.weighted_mean(), a.error());
+/// ```
 #[derive(Debug, Clone)]
 pub struct WeightedAverage {
     /// Sum of the weights.
     weight_sum: f64,
     /// Sum of the squares of the weights.
     weight_sum_sq: f64,
-    /// Weighted verage value.
+    /// Weighted average value.
     weighted_avg: f64,
 
     /// Number of samples.
     n: u64,
-    /// Unweighted verage value.
+    /// Unweighted average value.
     unweighted_avg: f64,
     /// Intermediate sum of squares for calculating the *unweighted* variance.
     v: f64,
 }
 
 impl WeightedAverage {
-    /// Create a new weighted average.
+    /// Create a new weighted and unweighted average estimator.
     pub fn new() -> WeightedAverage {
         WeightedAverage {
             weight_sum: 0., weight_sum_sq: 0., weighted_avg: 0.,
@@ -30,7 +43,7 @@ impl WeightedAverage {
         }
     }
 
-    /// Add a sample to the weighted sequence of which the average is calculated.
+    /// Add a weighted element sampled from the population.
     pub fn add(&mut self, sample: f64, weight: f64) {
         // The algorithm for the unweighted average was suggested by Welford in 1962.
         // The algorithm for the weighted average was suggested by West in 1979.
@@ -51,7 +64,7 @@ impl WeightedAverage {
         self.v += delta * (sample - self.unweighted_avg);
     }
 
-    /// Determine whether the sequence is empty.
+    /// Determine whether the sample is empty.
     pub fn is_empty(&self) -> bool {
         self.n == 0
     }
@@ -89,9 +102,9 @@ impl WeightedAverage {
         self.weight_sum * self.weight_sum / self.weight_sum_sq
     }
 
-    /// Calculate the *unweighted* population variance of the sequence.
+    /// Calculate the *unweighted* population variance of the sample.
     ///
-    /// This assumes that the sequence consists of the entire population.
+    /// This is a biased estimator of the variance of the population.
     pub fn population_variance(&self) -> f64 {
         if self.n < 2 {
             return 0.;
@@ -99,9 +112,9 @@ impl WeightedAverage {
         self.v / f64::approx_from(self.n).unwrap()
     }
 
-    /// Calculate the *unweighted*, unbiased sample variance of the sequence.
+    /// Calculate the *unweighted* sample variance.
     ///
-    /// This assumes that the sequence consists of samples of a larger population.
+    /// This is an unbiased estimator of the variance of the population.
     pub fn sample_variance(&self) -> f64 {
         if self.n < 2 {
             return 0.;
@@ -109,7 +122,7 @@ impl WeightedAverage {
         self.v / f64::approx_from(self.n - 1).unwrap()
     }
 
-    /// Estimate the standard error of the weighted mean of the sequence.
+    /// Estimate the standard error of the *weighted* mean of the sequence.
     ///
     /// Returns 0 if the sum of weights is 0.
     ///
@@ -126,14 +139,17 @@ impl WeightedAverage {
         (self.sample_variance() / effective_base).sqrt()
     }
 
-    /// Merge the weighted average of another sequence into this one.
+    /// Merge another sample into this one.
+    ///
+    ///
+    /// ## Example
     ///
     /// ```
     /// use average::WeightedAverage2 as WeightedAverage;
     ///
     /// let weighted_sequence: &[(f64, f64)] = &[
     ///     (1., 0.1), (2., 0.2), (3., 0.3), (4., 0.4), (5., 0.5),
-    ///     (6., 0.6), (7., 0.7), (8., 0.8), (9., 0.)];
+    ///     (6., 0.6), (7., 0.7), (8., 0.8), (9., 0.9)];
     /// let (left, right) = weighted_sequence.split_at(3);
     /// let avg_total: WeightedAverage = weighted_sequence.iter().map(|&x| x).collect();
     /// let mut avg_left: WeightedAverage = left.iter().map(|&x| x).collect();
