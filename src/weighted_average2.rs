@@ -112,6 +112,9 @@ impl WeightedAverage {
     /// Estimate the standard error of the weighted mean of the sequence.
     ///
     /// Returns 0 if the sum of weights is 0.
+    ///
+    /// This unbiased estimator assumes that the samples were independently
+    /// drawn from the same population with constant variance.
     pub fn error(&self) -> f64 {
         // This uses the same estimate as WinCross.
         //

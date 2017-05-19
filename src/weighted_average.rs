@@ -77,6 +77,11 @@ impl WeightedAverage {
     ///
     /// Note that this will return 0 if the sum of the weights is 0.
     /// For this estimator the sum of weights should be larger than 1.
+    ///
+    /// This biased estimator uses the weighted variance and the sum of weights.
+    /// It considers the weights as (noninteger) counts of how often the sample
+    /// has been observed, applying the standard formulas to calculate mean,
+    /// variance and sample size across all "repeats".
     pub fn error(&self) -> f64 {
         // This uses the same estimate as SPSS.
         //
