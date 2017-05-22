@@ -2,8 +2,8 @@
 //! sequence of numbers, and for their standard errors. The typical workflow
 //! looks like this:
 //!
-//! 1. Initialize your estimator of choice (`Average`, `WeightedAverage` or
-//!    `WeightedAverage2`) with `new()`.
+//! 1. Initialize your estimator of choice (`Average` or `WeightedAverage`) with
+//!    `new()`.
 //! 2. Add some subset (called "samples") of the sequence of numbers (called
 //!    "population") for which you want to estimate the average, using `add()`
 //!    or `collect()`.
@@ -32,8 +32,6 @@ extern crate conv;
 #[macro_use] mod macros;
 mod average;
 mod weighted_average;
-mod weighted_average2;
 
 pub use average::Average;
 pub use weighted_average::WeightedAverage;
-pub use weighted_average2::WeightedAverage as WeightedAverage2;

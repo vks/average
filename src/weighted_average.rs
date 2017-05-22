@@ -1,7 +1,9 @@
 use core;
 
-/// Estimate the weighted arithmetic mean and the weighted variance of a
-/// sequence of numbers ("population").
+use conv::ApproxFrom;
+
+/// Estimate the weighted and unweighted arithmetic mean and the unweighted
+/// variance of a sequence of numbers ("population").
 ///
 /// This can be used to estimate the standard error of the weighted mean.
 ///
@@ -13,41 +15,58 @@ use core;
 ///
 /// let a: WeightedAverage = (1..6).zip(1..6)
 ///     .map(|(x, w)| (f64::from(x), f64::from(w))).collect();
-/// println!("The weighted average is {} ± {}.", a.mean(), a.error());
+/// println!("The weighted average is {} ± {}.", a.weighted_mean(), a.error());
 /// ```
 #[derive(Debug, Clone)]
 pub struct WeightedAverage {
     /// Sum of the weights.
     weight_sum: f64,
-    /// Average value.
-    avg: f64,
-    /// Intermediate sum of squares for calculating the variance.
+    /// Sum of the squares of the weights.
+    weight_sum_sq: f64,
+    /// Weighted average value.
+    weighted_avg: f64,
+
+    /// Number of samples.
+    n: u64,
+    /// Unweighted average value.
+    unweighted_avg: f64,
+    /// Intermediate sum of squares for calculating the *unweighted* variance.
     v: f64,
 }
 
 impl WeightedAverage {
-    /// Create a new weighted average estimator.
+    /// Create a new weighted and unweighted average estimator.
     pub fn new() -> WeightedAverage {
-        WeightedAverage { weight_sum: 0., avg: 0., v: 0. }
+        WeightedAverage {
+            weight_sum: 0., weight_sum_sq: 0., weighted_avg: 0.,
+            n: 0, unweighted_avg: 0., v: 0.,
+        }
     }
 
     /// Add a weighted element sampled from the population.
     pub fn add(&mut self, sample: f64, weight: f64) {
-        // This algorithm was suggested by West in 1979.
+        // The algorithm for the unweighted average was suggested by Welford in 1962.
+        // The algorithm for the weighted average was suggested by West in 1979.
         //
         // See
         // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
         // and
         // http://people.ds.cam.ac.uk/fanf2/hermes/doc/antiforgery/stats.pdf.
         self.weight_sum += weight;
-        let prev_avg = self.avg;
-        self.avg = prev_avg + (weight / self.weight_sum) * (sample - prev_avg);
-        self.v += weight * (sample - prev_avg) * (sample - self.avg);
+        self.weight_sum_sq += weight*weight;
+
+        let prev_avg = self.weighted_avg;
+        self.weighted_avg = prev_avg + (weight / self.weight_sum) * (sample - prev_avg);
+
+        self.n += 1;
+        let delta = sample - self.unweighted_avg;
+        self.unweighted_avg += delta / f64::approx_from(self.n).unwrap();
+        self.v += delta * (sample - self.unweighted_avg);
     }
 
-    /// Determine whether the samples are empty.
+    /// Determine whether the sample is empty.
     pub fn is_empty(&self) -> bool {
-        self.weight_sum == 0. && self.v == 0. && self.avg == 0.
+        self.n == 0
     }
 
     /// Return the sum of the weights.
@@ -55,57 +74,70 @@ impl WeightedAverage {
         self.weight_sum
     }
 
-    /// Estimate the weighted mean of the population.
-    pub fn mean(&self) -> f64 {
-        self.avg
+    /// Return the sum of the squared weights.
+    pub fn sum_weights_sq(&self) -> f64 {
+        self.weight_sum_sq
     }
 
-    /// Calculate the weighted population variance of the sample.
-    ///
-    /// This is a biased estimator of the weighted variance of the population.
-    pub fn population_variance(&self) -> f64 {
+    /// Estimate the weighted mean of the sequence.
+    pub fn weighted_mean(&self) -> f64 {
+        self.weighted_avg
+    }
+
+    /// Estimate the unweighted mean of the sequence.
+    pub fn unweighted_mean(&self) -> f64 {
+        self.unweighted_avg
+    }
+
+    /// Return sample size.
+    pub fn len(&self) -> u64 {
+        self.n
+    }
+
+    /// Calculate the effective sample size.
+    pub fn effective_len(&self) -> f64 {
         if self.is_empty() {
-            0.
-        } else {
-            self.v / self.weight_sum
+            return 0.
         }
+        self.weight_sum * self.weight_sum / self.weight_sum_sq
     }
 
-    /// Calculate the weighted sample variance.
+    /// Calculate the *unweighted* population variance of the sample.
     ///
-    /// This is an unbiased estimator of the weighted variance of the population.
+    /// This is a biased estimator of the variance of the population.
+    pub fn population_variance(&self) -> f64 {
+        if self.n < 2 {
+            return 0.;
+        }
+        self.v / f64::approx_from(self.n).unwrap()
+    }
+
+    /// Calculate the *unweighted* sample variance.
     ///
-    /// Note that this will return 0 if the sum of the weights is <= 1.
+    /// This is an unbiased estimator of the variance of the population.
     pub fn sample_variance(&self) -> f64 {
-        if self.weight_sum <= 1. {
-            0.
-        } else {
-            self.v / (self.weight_sum - 1.0)
+        if self.n < 2 {
+            return 0.;
         }
+        self.v / f64::approx_from(self.n - 1).unwrap()
     }
 
-    /// Estimate the standard error of the weighted mean of the population.
+    /// Estimate the standard error of the *weighted* mean of the sequence.
     ///
-    /// Note that this will return 0 if the sum of the weights is 0.
-    /// For this estimator, the sum of weights should be larger than 1.
+    /// Returns 0 if the sum of weights is 0.
     ///
-    /// This biased estimator uses the weighted variance and the sum of weights.
-    /// It considers the weights as (noninteger) counts of how often the sample
-    /// has been observed, applying the standard formulas to calculate mean,
-    /// variance and sample size across all "repeats".
+    /// This unbiased estimator assumes that the samples were independently
+    /// drawn from the same population with constant variance.
     pub fn error(&self) -> f64 {
-        // This uses the same estimate as SPSS.
+        // This uses the same estimate as WinCross, which should provide better
+        // results than the ones used by SPSS or Mentor.
         //
-        // See http://www.analyticalgroup.com/download/WEIGHTED_MEAN.pdf.
+        // See http://www.analyticalgroup.com/download/WEIGHTED_VARIANCE.pdf.
         if self.weight_sum == 0. {
             return 0.;
         }
-        let variance = if self.weight_sum <= 1. {
-            self.population_variance()
-        } else {
-            self.sample_variance()
-        };
-        (variance / self.weight_sum).sqrt()
+        let inv_effective_len = self.weight_sum_sq / (self.weight_sum * self.weight_sum);
+        (self.sample_variance() * inv_effective_len).sqrt()
     }
 
     /// Merge another sample into this one.
@@ -124,20 +156,32 @@ impl WeightedAverage {
     /// let mut avg_left: WeightedAverage = left.iter().map(|&x| x).collect();
     /// let avg_right: WeightedAverage = right.iter().map(|&x| x).collect();
     /// avg_left.merge(&avg_right);
-    /// assert!((avg_total.mean() - avg_left.mean()).abs() < 1e-15);
+    /// assert!((avg_total.weighted_mean() - avg_left.weighted_mean()).abs() < 1e-15);
     /// assert!((avg_total.error() - avg_left.error()).abs() < 1e-15);
     /// ```
     pub fn merge(&mut self, other: &WeightedAverage) {
         // This is similar to the algorithm proposed by Chan et al. in 1979.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
-        let delta = other.avg - self.avg;
-        let total_weight_sum = self.weight_sum + other.weight_sum;
-        self.avg = (self.weight_sum * self.avg + other.weight_sum * other.avg)
-                   / (self.weight_sum + other.weight_sum);
-        self.v += other.v + delta*delta * self.weight_sum * other.weight_sum
-                            / total_weight_sum;
-        self.weight_sum = total_weight_sum;
+        {
+            let total_weight_sum = self.weight_sum + other.weight_sum;
+            self.weighted_avg = (self.weight_sum * self.weighted_avg
+                                 + other.weight_sum * other.weighted_avg)
+                                / (self.weight_sum + other.weight_sum);
+            self.weight_sum = total_weight_sum;
+            self.weight_sum_sq += other.weight_sum_sq;
+        }
+        {
+            let delta = other.unweighted_avg - self.unweighted_avg;
+            let len_self = f64::approx_from(self.n).unwrap();
+            let len_other = f64::approx_from(other.n).unwrap();
+            let len_total = len_self + len_other;
+            self.n += other.n;
+            self.unweighted_avg = (len_self * self.unweighted_avg
+                                   + len_other * other.unweighted_avg)
+                                  / len_total;
+            self.v += other.v + delta*delta * len_self * len_other / len_total;
+        }
     }
 }
 
@@ -172,8 +216,11 @@ mod tests {
             let mut avg_left: WeightedAverage = left.iter().map(|x| (*x, 1.)).collect();
             let avg_right: WeightedAverage = right.iter().map(|x| (*x, 1.)).collect();
             avg_left.merge(&avg_right);
+            assert_eq!(avg_total.n, avg_left.n);
             assert_eq!(avg_total.weight_sum, avg_left.weight_sum);
-            assert_eq!(avg_total.avg, avg_left.avg);
+            assert_eq!(avg_total.weight_sum_sq, avg_left.weight_sum_sq);
+            assert_eq!(avg_total.weighted_avg, avg_left.weighted_avg);
+            assert_eq!(avg_total.unweighted_avg, avg_left.unweighted_avg);
             assert_eq!(avg_total.v, avg_left.v);
         }
     }
@@ -189,8 +236,11 @@ mod tests {
             let mut avg_left: WeightedAverage = left.iter().map(|&(x, w)| (x, w)).collect();
             let avg_right: WeightedAverage = right.iter().map(|&(x, w)| (x, w)).collect();
             avg_left.merge(&avg_right);
+            assert_eq!(avg_total.n, avg_left.n);
             assert_almost_eq!(avg_total.weight_sum, avg_left.weight_sum, 1e-15);
-            assert_almost_eq!(avg_total.avg, avg_left.avg, 1e-15);
+            assert_eq!(avg_total.weight_sum_sq, avg_left.weight_sum_sq);
+            assert_almost_eq!(avg_total.weighted_avg, avg_left.weighted_avg, 1e-15);
+            assert_almost_eq!(avg_total.unweighted_avg, avg_left.unweighted_avg, 1e-15);
             assert_almost_eq!(avg_total.v, avg_left.v, 1e-14);
         }
     }
