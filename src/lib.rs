@@ -2,16 +2,19 @@
 //! sequence of numbers, and for their standard errors. The typical workflow
 //! looks like this:
 //!
-//! 1. Initialize your estimator of choice (`Average` or `WeightedAverage`) with
-//!    `new()`.
+//! 1. Initialize your estimator of choice ([`Average`] or [`WeightedAverage`])
+//!    with `new()`.
 //! 2. Add some subset (called "samples") of the sequence of numbers (called
 //!    "population") for which you want to estimate the average, using `add()`
 //!    or `collect()`.
 //! 3. Calculate the arithmetic mean with `mean()` and its standard error with
-//!    `error().
+//!    `error()`.
 //!
 //! You can run several estimators in parallel and merge them into one with
 //! `merge()`.
+//!
+//! [`Average`]: ./average/struct.Average.html
+//! [`WeightedAverage`]: ./weighted_average/struct.WeightedAverage.html
 //!
 //! ## Example
 //!
