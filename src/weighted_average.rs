@@ -40,6 +40,7 @@ impl WeightedAverage {
     }
 
     /// Add a weighted element sampled from the population.
+    #[inline]
     pub fn add(&mut self, sample: f64, weight: f64) {
         // The algorithm for the unweighted average was suggested by Welford in 1962.
         // The algorithm for the weighted average was suggested by West in 1979.

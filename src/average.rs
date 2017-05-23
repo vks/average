@@ -37,6 +37,7 @@ impl Average {
     }
 
     /// Add an element sampled from the population.
+    #[inline]
     pub fn add(&mut self, sample: f64) {
         // This algorithm introduced by Welford in 1962 trades numerical
         // stability for a division inside the loop.
