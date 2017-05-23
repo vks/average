@@ -54,4 +54,6 @@ fn normal_distribution() {
     }
     assert_almost_eq!(a.mean(), 2.0, 1e-2);
     assert_almost_eq!(a.sample_variance().sqrt(), 3.0, 1e-2);
+    assert_almost_eq!(a.population_variance().sqrt(), 3.0, 1e-2);
+    assert_almost_eq!(a.error(), 0.0, 1e-2);
 }
