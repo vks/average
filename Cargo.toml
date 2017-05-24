@@ -20,3 +20,7 @@ streaming-stats = "0.1"
 [[bench]]
 name = "average"
 harness = false
+
+[[bench]]
+name = "min"
+harness = false
