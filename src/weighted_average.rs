@@ -140,6 +140,7 @@ pub struct WeightedAverageWithError {
 
 impl WeightedAverageWithError {
     /// Create a new weighted and unweighted average estimator.
+    #[inline]
     pub fn new() -> WeightedAverageWithError {
         WeightedAverageWithError {
             weight_sum_sq: 0.,

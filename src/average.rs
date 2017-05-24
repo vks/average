@@ -28,6 +28,7 @@ pub struct Average {
 
 impl Average {
     /// Create a new average estimator.
+    #[inline]
     pub fn new() -> Average {
         Average { avg: 0., n: 0 }
     }

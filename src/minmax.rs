@@ -28,6 +28,7 @@ pub struct Min {
 
 impl Min {
     /// Create a new minium estimator from a given value.
+    #[inline]
     pub fn from_value(x: f64) -> Min {
         Min {
             r: Reduce::from_value_and_fn(x, min),
@@ -35,16 +36,19 @@ impl Min {
     }
 
     /// Create a new minimum estimator.
+    #[inline]
     pub fn new() -> Min {
         Min::from_value(::core::f64::INFINITY)
     }
 
     /// Add an element sampled from the population.
+    #[inline]
     pub fn add(&mut self, x: f64) {
         self.r.add(x);
     }
 
     /// Estimate the minium of the population.
+    #[inline]
     pub fn min(&self) -> f64 {
         self.r.reduction()
     }
@@ -65,6 +69,7 @@ impl Min {
     /// min_left.merge(&min_right);
     /// assert_eq!(min_total.min(), min_left.min());
     /// ```
+    #[inline]
     pub fn merge(&mut self, other: &Min) {
         self.r.merge(&other.r);
     }
