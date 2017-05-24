@@ -14,9 +14,6 @@ fn max(a: f64, b: f64) -> f64 {
 
 /// Estimate the minimum of a sequence of numbers ("population").
 ///
-/// Everything is calculated iteratively using constant memory, so the sequence
-/// of numbers can be an iterator.
-///
 ///
 /// ## Example
 ///
@@ -46,7 +43,7 @@ impl Min {
         Min::from_value(::core::f64::INFINITY)
     }
 
-    /// Add an element sampled from the population.
+    /// Add an observation sampled from the population.
     #[inline]
     pub fn add(&mut self, x: f64) {
         self.r.add(x);
@@ -94,9 +91,6 @@ impl core::iter::FromIterator<f64> for Min {
 
 /// Estimate the maximum of a sequence of numbers ("population").
 ///
-/// Everything is calculated iteratively using constant memory, so the sequence
-/// of numbers can be an iterator.
-///
 ///
 /// ## Example
 ///
@@ -126,7 +120,7 @@ impl Max {
         Max::from_value(::core::f64::NEG_INFINITY)
     }
 
-    /// Add an element sampled from the population.
+    /// Add an observation sampled from the population.
     #[inline]
     pub fn add(&mut self, x: f64) {
         self.r.add(x);

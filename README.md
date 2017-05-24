@@ -1,8 +1,8 @@
 # average
 
-Calculate the average of a sequence and its error iteratively, using constant
-memory and avoiding numerical problems. The calculation can be easily parallelized
-by using `Average::merge`.
+Calculate the average of a sequence and its error iteratively in a single pass,
+using constant memory and avoiding numerical problems. The calculation can be
+easily parallelized by using `merge`.
 
 [Documentation](https://docs.rs/average) |
 [crates.io](https://crates.io/crates/average)

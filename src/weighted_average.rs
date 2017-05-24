@@ -32,7 +32,7 @@ impl WeightedAverage {
         }
     }
 
-    /// Add a weighted element sampled from the population.
+    /// Add a weighted observation sampled from the population.
     #[inline]
     pub fn add(&mut self, sample: f64, weight: f64) {
         // The algorithm for the unweighted average was suggested by Welford in 1962.
@@ -61,7 +61,7 @@ impl WeightedAverage {
         self.weight_sum
     }
 
-    /// Estimate the weighted mean of the sequence.
+    /// Estimate the weighted mean of the population.
     #[inline]
     pub fn mean(&self) -> f64 {
         self.weighted_avg
@@ -149,7 +149,7 @@ impl WeightedAverageWithError {
         }
     }
 
-    /// Add a weighted element sampled from the population.
+    /// Add a weighted observation sampled from the population.
     #[inline]
     pub fn add(&mut self, sample: f64, weight: f64) {
         // The algorithm for the unweighted average was suggested by Welford in 1962.
@@ -182,19 +182,19 @@ impl WeightedAverageWithError {
         self.weight_sum_sq
     }
 
-    /// Estimate the weighted mean of the sequence.
+    /// Estimate the weighted mean of the population.
     #[inline]
     pub fn weighted_mean(&self) -> f64 {
         self.weighted_avg.mean()
     }
 
-    /// Estimate the unweighted mean of the sequence.
+    /// Estimate the unweighted mean of the population.
     #[inline]
     pub fn unweighted_mean(&self) -> f64 {
         self.unweighted_avg.mean()
     }
 
-    /// Return sample size.
+    /// Return the sample size.
     #[inline]
     pub fn len(&self) -> u64 {
         self.unweighted_avg.len()
@@ -224,7 +224,7 @@ impl WeightedAverageWithError {
         self.unweighted_avg.sample_variance()
     }
 
-    /// Estimate the standard error of the *weighted* mean of the sequence.
+    /// Estimate the standard error of the *weighted* mean of the population.
     ///
     /// Returns 0 if the sum of weights is 0.
     ///

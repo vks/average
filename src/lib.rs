@@ -13,6 +13,10 @@
 //! You can run several estimators in parallel and merge them into one with
 //! `merge()`.
 //!
+//! Everything is calculated iteratively in a single pass using constant memory,
+//! so the sequence of numbers can be an iterator. The used algorithms try to
+//! avoid numerical instabilities.
+//!
 //! [`Average`]: ./average/struct.Average.html
 //! [`AverageWithError`]: ./average/struct.AverageWithError.html
 //! [`WeightedAverage`]: ./weighted_average/struct.WeightedAverage.html

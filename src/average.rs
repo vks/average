@@ -5,10 +5,6 @@ use conv::ApproxFrom;
 
 /// Estimate the arithmetic mean of a sequence of numbers ("population").
 ///
-/// Everything is calculated iteratively using constant memory, so the sequence
-/// of numbers can be an iterator. The used algorithms try to avoid numerical
-/// instabilities.
-///
 ///
 /// ## Example
 ///
@@ -33,7 +29,7 @@ impl Average {
         Average { avg: 0., n: 0 }
     }
 
-    /// Add an element sampled from the population.
+    /// Add an observation sampled from the population.
     #[inline]
     pub fn add(&mut self, sample: f64) {
         // This algorithm introduced by Welford in 1962 trades numerical
@@ -45,7 +41,7 @@ impl Average {
         self.avg += delta / f64::approx_from(self.n).unwrap();
     }
 
-    /// Determine whether the samples are empty.
+    /// Determine whether the sample is empty.
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.n == 0
@@ -57,7 +53,7 @@ impl Average {
         self.avg
     }
 
-    /// Return the number of samples.
+    /// Return the sample size.
     #[inline]
     pub fn len(&self) -> u64 {
         self.n
@@ -120,10 +116,6 @@ impl core::iter::FromIterator<f64> for Average {
 ///
 /// This can be used to estimate the standard error of the mean.
 ///
-/// Everything is calculated iteratively using constant memory, so the sequence
-/// of numbers can be an iterator. The used algorithms try to avoid numerical
-/// instabilities.
-///
 ///
 /// ## Example
 ///
@@ -147,7 +139,7 @@ impl AverageWithError {
         AverageWithError { avg: Average::new(), v: 0. }
     }
 
-    /// Add an element sampled from the population.
+    /// Add an observation sampled from the population.
     #[inline]
     pub fn add(&mut self, sample: f64) {
         // This algorithm introduced by Welford in 1962 trades numerical
@@ -159,7 +151,7 @@ impl AverageWithError {
         self.v += delta * (sample - self.avg.mean());
     }
 
-    /// Determine whether the samples are empty.
+    /// Determine whether the sample is empty.
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.avg.is_empty()
@@ -171,7 +163,7 @@ impl AverageWithError {
         self.avg.mean()
     }
 
-    /// Return the number of samples.
+    /// Return the sample size.
     #[inline]
     pub fn len(&self) -> u64 {
         self.avg.len()
