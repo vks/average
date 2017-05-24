@@ -15,13 +15,13 @@ use conv::ApproxFrom;
 /// ## Example
 ///
 /// ```
-/// use average::Average;
+/// use average::AverageWithError;
 ///
-/// let a: Average = (1..6).map(Into::into).collect();
+/// let a: AverageWithError = (1..6).map(Into::into).collect();
 /// println!("The average is {} ± {}.", a.mean(), a.error());
 /// ```
 #[derive(Debug, Clone)]
-pub struct Average {
+pub struct AverageWithError {
     /// Average value.
     avg: f64,
     /// Number of samples.
@@ -30,10 +30,10 @@ pub struct Average {
     v: f64,
 }
 
-impl Average {
+impl AverageWithError {
     /// Create a new average estimator.
-    pub fn new() -> Average {
-        Average { avg: 0., n: 0, v: 0. }
+    pub fn new() -> AverageWithError {
+        AverageWithError { avg: 0., n: 0, v: 0. }
     }
 
     /// Add an element sampled from the population.
@@ -98,18 +98,18 @@ impl Average {
     /// ## Example
     ///
     /// ```
-    /// use average::Average;
+    /// use average::AverageWithError;
     ///
     /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
     /// let (left, right) = sequence.split_at(3);
-    /// let avg_total: Average = sequence.iter().map(|x| *x).collect();
-    /// let mut avg_left: Average = left.iter().map(|x| *x).collect();
-    /// let avg_right: Average = right.iter().map(|x| *x).collect();
+    /// let avg_total: AverageWithError = sequence.iter().map(|x| *x).collect();
+    /// let mut avg_left: AverageWithError = left.iter().map(|x| *x).collect();
+    /// let avg_right: AverageWithError = right.iter().map(|x| *x).collect();
     /// avg_left.merge(&avg_right);
     /// assert_eq!(avg_total.mean(), avg_left.mean());
     /// assert_eq!(avg_total.sample_variance(), avg_left.sample_variance());
     /// ```
-    pub fn merge(&mut self, other: &Average) {
+    pub fn merge(&mut self, other: &AverageWithError) {
         // This algorithm was proposed by Chan et al. in 1979.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
@@ -128,17 +128,17 @@ impl Average {
     }
 }
 
-impl core::default::Default for Average {
-    fn default() -> Average {
-        Average::new()
+impl core::default::Default for AverageWithError {
+    fn default() -> AverageWithError {
+        AverageWithError::new()
     }
 }
 
-impl core::iter::FromIterator<f64> for Average {
-    fn from_iter<T>(iter: T) -> Average
+impl core::iter::FromIterator<f64> for AverageWithError {
+    fn from_iter<T>(iter: T) -> AverageWithError
         where T: IntoIterator<Item=f64>
     {
-        let mut a = Average::new();
+        let mut a = AverageWithError::new();
         for i in iter {
             a.add(i);
         }
@@ -155,9 +155,9 @@ mod tests {
         let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
         for mid in 0..sequence.len() {
             let (left, right) = sequence.split_at(mid);
-            let avg_total: Average = sequence.iter().map(|x| *x).collect();
-            let mut avg_left: Average = left.iter().map(|x| *x).collect();
-            let avg_right: Average = right.iter().map(|x| *x).collect();
+            let avg_total: AverageWithError = sequence.iter().map(|x| *x).collect();
+            let mut avg_left: AverageWithError = left.iter().map(|x| *x).collect();
+            let avg_right: AverageWithError = right.iter().map(|x| *x).collect();
             avg_left.merge(&avg_right);
             assert_eq!(avg_total.n, avg_left.n);
             assert_eq!(avg_total.avg, avg_left.avg);

@@ -1,6 +1,6 @@
 use core;
 
-use super::Average;
+use super::AverageWithError;
 
 /// Estimate the weighted and unweighted arithmetic mean and the unweighted
 /// variance of a sequence of numbers ("population").
@@ -11,14 +11,14 @@ use super::Average;
 /// ## Example
 ///
 /// ```
-/// use average::WeightedAverage;
+/// use average::WeightedAverageWithError;
 ///
-/// let a: WeightedAverage = (1..6).zip(1..6)
+/// let a: WeightedAverageWithError = (1..6).zip(1..6)
 ///     .map(|(x, w)| (f64::from(x), f64::from(w))).collect();
 /// println!("The weighted average is {} ± {}.", a.weighted_mean(), a.error());
 /// ```
 #[derive(Debug, Clone)]
-pub struct WeightedAverage {
+pub struct WeightedAverageWithError {
     /// Sum of the weights.
     weight_sum: f64,
     /// Sum of the squares of the weights.
@@ -27,15 +27,15 @@ pub struct WeightedAverage {
     weighted_avg: f64,
 
     /// Estimator of unweighted average and its variance.
-    unweighted_avg: Average,
+    unweighted_avg: AverageWithError,
 }
 
-impl WeightedAverage {
+impl WeightedAverageWithError {
     /// Create a new weighted and unweighted average estimator.
-    pub fn new() -> WeightedAverage {
-        WeightedAverage {
+    pub fn new() -> WeightedAverageWithError {
+        WeightedAverageWithError {
             weight_sum: 0., weight_sum_sq: 0., weighted_avg: 0.,
-            unweighted_avg: Average::new(),
+            unweighted_avg: AverageWithError::new(),
         }
     }
 
@@ -134,20 +134,20 @@ impl WeightedAverage {
     /// ## Example
     ///
     /// ```
-    /// use average::WeightedAverage;
+    /// use average::WeightedAverageWithError;
     ///
     /// let weighted_sequence: &[(f64, f64)] = &[
     ///     (1., 0.1), (2., 0.2), (3., 0.3), (4., 0.4), (5., 0.5),
     ///     (6., 0.6), (7., 0.7), (8., 0.8), (9., 0.9)];
     /// let (left, right) = weighted_sequence.split_at(3);
-    /// let avg_total: WeightedAverage = weighted_sequence.iter().map(|&x| x).collect();
-    /// let mut avg_left: WeightedAverage = left.iter().map(|&x| x).collect();
-    /// let avg_right: WeightedAverage = right.iter().map(|&x| x).collect();
+    /// let avg_total: WeightedAverageWithError = weighted_sequence.iter().map(|&x| x).collect();
+    /// let mut avg_left: WeightedAverageWithError = left.iter().map(|&x| x).collect();
+    /// let avg_right: WeightedAverageWithError = right.iter().map(|&x| x).collect();
     /// avg_left.merge(&avg_right);
     /// assert!((avg_total.weighted_mean() - avg_left.weighted_mean()).abs() < 1e-15);
     /// assert!((avg_total.error() - avg_left.error()).abs() < 1e-15);
     /// ```
-    pub fn merge(&mut self, other: &WeightedAverage) {
+    pub fn merge(&mut self, other: &WeightedAverageWithError) {
         let total_weight_sum = self.weight_sum + other.weight_sum;
         self.weighted_avg = (self.weight_sum * self.weighted_avg
                              + other.weight_sum * other.weighted_avg)
@@ -159,17 +159,17 @@ impl WeightedAverage {
     }
 }
 
-impl core::default::Default for WeightedAverage {
-    fn default() -> WeightedAverage {
-        WeightedAverage::new()
+impl core::default::Default for WeightedAverageWithError {
+    fn default() -> WeightedAverageWithError {
+        WeightedAverageWithError::new()
     }
 }
 
-impl core::iter::FromIterator<(f64, f64)> for WeightedAverage {
-    fn from_iter<T>(iter: T) -> WeightedAverage
+impl core::iter::FromIterator<(f64, f64)> for WeightedAverageWithError {
+    fn from_iter<T>(iter: T) -> WeightedAverageWithError
         where T: IntoIterator<Item=(f64, f64)>
     {
-        let mut a = WeightedAverage::new();
+        let mut a = WeightedAverageWithError::new();
         for (i, w) in iter {
             a.add(i, w);
         }
@@ -186,9 +186,9 @@ mod tests {
         let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
         for mid in 0..sequence.len() {
             let (left, right) = sequence.split_at(mid);
-            let avg_total: WeightedAverage = sequence.iter().map(|x| (*x, 1.)).collect();
-            let mut avg_left: WeightedAverage = left.iter().map(|x| (*x, 1.)).collect();
-            let avg_right: WeightedAverage = right.iter().map(|x| (*x, 1.)).collect();
+            let avg_total: WeightedAverageWithError = sequence.iter().map(|x| (*x, 1.)).collect();
+            let mut avg_left: WeightedAverageWithError = left.iter().map(|x| (*x, 1.)).collect();
+            let avg_right: WeightedAverageWithError = right.iter().map(|x| (*x, 1.)).collect();
             avg_left.merge(&avg_right);
 
             assert_eq!(avg_total.weight_sum, avg_left.weight_sum);
@@ -209,9 +209,9 @@ mod tests {
             (6., 0.6), (7., 0.7), (8., 0.8), (9., 0.)];
         for mid in 0..sequence.len() {
             let (left, right) = sequence.split_at(mid);
-            let avg_total: WeightedAverage = sequence.iter().map(|&(x, w)| (x, w)).collect();
-            let mut avg_left: WeightedAverage = left.iter().map(|&(x, w)| (x, w)).collect();
-            let avg_right: WeightedAverage = right.iter().map(|&(x, w)| (x, w)).collect();
+            let avg_total: WeightedAverageWithError = sequence.iter().map(|&(x, w)| (x, w)).collect();
+            let mut avg_left: WeightedAverageWithError = left.iter().map(|&(x, w)| (x, w)).collect();
+            let avg_right: WeightedAverageWithError = right.iter().map(|&(x, w)| (x, w)).collect();
             avg_left.merge(&avg_right);
             assert_eq!(avg_total.unweighted_avg.len(), avg_left.unweighted_avg.len());
             assert_almost_eq!(avg_total.weight_sum, avg_left.weight_sum, 1e-15);
