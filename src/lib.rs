@@ -36,6 +36,8 @@ extern crate conv;
 #[macro_use] mod macros;
 mod average;
 mod weighted_average;
+mod minmax;
 
 pub use average::{Average, AverageWithError};
 pub use weighted_average::{WeightedAverage, WeightedAverageWithError};
+pub use minmax::Min;
