@@ -1,5 +1,12 @@
 use core;
 
+use super::reduce::Reduce;
+
+/// Calculate the minimum of `a` and `b`.
+fn min(a: f64, b: f64) -> f64 {
+    a.min(b)
+}
+
 /// Estimate the minimum of a sequence of numbers ("population").
 ///
 /// Everything is calculated iteratively using constant memory, so the sequence
@@ -16,32 +23,30 @@ use core;
 /// ```
 #[derive(Debug, Clone)]
 pub struct Min {
-    x: f64,
-}
-
-fn min<T: PartialOrd>(a: T, b: T) -> T {
-    if a < b { a } else { b }
+    r: Reduce<fn(f64, f64) -> f64>,
 }
 
 impl Min {
-    /// Create a new minimum estimator.
-    pub fn new() -> Min {
-        Min { x: ::core::f64::INFINITY }
-    }
-
     /// Create a new minium estimator from a given value.
     pub fn from_value(x: f64) -> Min {
-        Min { x: x }
+        Min {
+            r: Reduce::from_value_and_fn(x, min),
+        }
+    }
+
+    /// Create a new minimum estimator.
+    pub fn new() -> Min {
+        Min::from_value(::core::f64::INFINITY)
     }
 
     /// Add an element sampled from the population.
     pub fn add(&mut self, x: f64) {
-        self.x = min(self.x, x);
+        self.r.add(x);
     }
 
     /// Estimate the minium of the population.
     pub fn min(&self) -> f64 {
-        self.x
+        self.r.reduction()
     }
 
     /// Merge another sample into this one.
@@ -61,7 +66,7 @@ impl Min {
     /// assert_eq!(min_total.min(), min_left.min());
     /// ```
     pub fn merge(&mut self, other: &Min) {
-        self.add(other.x);
+        self.r.merge(&other.r);
     }
 }
 

@@ -37,6 +37,7 @@ extern crate conv;
 mod average;
 mod weighted_average;
 mod minmax;
+mod reduce;
 
 pub use average::{Average, AverageWithError};
 pub use weighted_average::{WeightedAverage, WeightedAverageWithError};
