@@ -45,6 +45,21 @@ fn numerically_unstable() {
 }
 
 #[test]
+fn merge() {
+    let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
+    for mid in 0..sequence.len() {
+        let (left, right) = sequence.split_at(mid);
+        let avg_total: AverageWithError = sequence.iter().map(|x| *x).collect();
+        let mut avg_left: AverageWithError = left.iter().map(|x| *x).collect();
+        let avg_right: AverageWithError = right.iter().map(|x| *x).collect();
+        avg_left.merge(&avg_right);
+        assert_eq!(avg_total.len(), avg_left.len());
+        assert_eq!(avg_total.mean(), avg_left.mean());
+        assert_eq!(avg_total.sample_variance(), avg_left.sample_variance());
+    }
+}
+
+#[test]
 fn normal_distribution() {
     use rand::distributions::{Normal, IndependentSample};
     let normal = Normal::new(2.0, 3.0);

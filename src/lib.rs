@@ -2,8 +2,8 @@
 //! sequence of numbers, and for their standard errors. The typical workflow
 //! looks like this:
 //!
-//! 1. Initialize your estimator of choice ([`AverageWithError`] or
-//!    [`WeightedAverageWithError`]) with `new()`.
+//! 1. Initialize your estimator of choice ([`Average`], [`AverageWithError`],
+//!    [`WeightedAverage`] or [`WeightedAverageWithError`]) with `new()`.
 //! 2. Add some subset (called "samples") of the sequence of numbers (called
 //!    "population") for which you want to estimate the average, using `add()`
 //!    or `collect()`.
@@ -13,8 +13,11 @@
 //! You can run several estimators in parallel and merge them into one with
 //! `merge()`.
 //!
-//! [`AverageWithError`]: ./average/struct.Average.html
-//! [`WeightedAverageWithError`]: ./weighted_average/struct.WeightedAverage.html
+//! [`Average`]: ./average/struct.Average.html
+//! [`AverageWithError`]: ./average/struct.AverageWithError.html
+//! [`WeightedAverage`]: ./weighted_average/struct.WeightedAverage.html
+//! [`WeightedAverageWithError`]: ./weighted_average/struct.WeightedAverageWithError.html
+//!
 //!
 //! ## Example
 //!
@@ -29,12 +32,10 @@
 #![no_std]
 
 extern crate conv;
-#[cfg(test)] extern crate rand;
-#[cfg(test)] #[macro_use] extern crate std;
 
 #[macro_use] mod macros;
 mod average;
 mod weighted_average;
 
-pub use average::AverageWithError;
-pub use weighted_average::WeightedAverageWithError;
+pub use average::{Average, AverageWithError};
+pub use weighted_average::{WeightedAverage, WeightedAverageWithError};

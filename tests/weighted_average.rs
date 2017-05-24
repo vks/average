@@ -64,3 +64,43 @@ fn error_corner_case() {
         .map(|(x, w)| (*x, *w)).collect();
     assert_eq!(a.error(), 0.5);
 }
+
+#[test]
+fn merge_unweighted() {
+    let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
+    for mid in 0..sequence.len() {
+        let (left, right) = sequence.split_at(mid);
+        let avg_total: WeightedAverageWithError = sequence.iter().map(|x| (*x, 1.)).collect();
+        let mut avg_left: WeightedAverageWithError = left.iter().map(|x| (*x, 1.)).collect();
+        let avg_right: WeightedAverageWithError = right.iter().map(|x| (*x, 1.)).collect();
+        avg_left.merge(&avg_right);
+
+        assert_eq!(avg_total.sum_weights(), avg_left.sum_weights());
+        assert_eq!(avg_total.sum_weights_sq(), avg_left.sum_weights_sq());
+
+        assert_eq!(avg_total.len(), avg_left.len());
+        assert_eq!(avg_total.unweighted_mean(), avg_left.unweighted_mean());
+        assert_eq!(avg_total.weighted_mean(), avg_left.weighted_mean());
+        assert_eq!(avg_total.sample_variance(), avg_left.sample_variance());
+    }
+}
+
+#[test]
+fn merge_weighted() {
+    let sequence: &[(f64, f64)] = &[
+        (1., 0.1), (2., 0.2), (3., 0.3), (4., 0.4), (5., 0.5),
+        (6., 0.6), (7., 0.7), (8., 0.8), (9., 0.)];
+    for mid in 0..sequence.len() {
+        let (left, right) = sequence.split_at(mid);
+        let avg_total: WeightedAverageWithError = sequence.iter().map(|&(x, w)| (x, w)).collect();
+        let mut avg_left: WeightedAverageWithError = left.iter().map(|&(x, w)| (x, w)).collect();
+        let avg_right: WeightedAverageWithError = right.iter().map(|&(x, w)| (x, w)).collect();
+        avg_left.merge(&avg_right);
+        assert_eq!(avg_total.len(), avg_left.len());
+        assert_almost_eq!(avg_total.sum_weights(), avg_left.sum_weights(), 1e-15);
+        assert_eq!(avg_total.sum_weights_sq(), avg_left.sum_weights_sq());
+        assert_almost_eq!(avg_total.weighted_mean(), avg_left.weighted_mean(), 1e-15);
+        assert_almost_eq!(avg_total.unweighted_mean(), avg_left.unweighted_mean(), 1e-15);
+        assert_almost_eq!(avg_total.sample_variance(), avg_left.sample_variance(), 1e-14);
+    }
+}
