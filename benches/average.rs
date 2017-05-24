@@ -23,7 +23,7 @@ fn initialize_vec() -> Vec<f64> {
 fn bench_average(b: &mut Bencher) {
     let values = initialize_vec();
     b.iter(|| {
-        let a: average::Average = values.iter().map(|x| *x).collect();
+        let a: average::AverageWithError = values.iter().map(|x| *x).collect();
         a
     });
 }
