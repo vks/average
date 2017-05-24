@@ -41,4 +41,4 @@ mod reduce;
 
 pub use average::{Average, AverageWithError};
 pub use weighted_average::{WeightedAverage, WeightedAverageWithError};
-pub use minmax::Min;
+pub use minmax::{Min, Max};
