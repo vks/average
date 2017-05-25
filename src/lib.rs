@@ -36,13 +36,16 @@
 #![no_std]
 
 extern crate conv;
+extern crate quickersort;
 
 #[macro_use] mod macros;
 mod average;
 mod weighted_average;
 mod minmax;
 mod reduce;
+mod quantile;
 
 pub use average::{Average, AverageWithError};
 pub use weighted_average::{WeightedAverage, WeightedAverageWithError};
 pub use minmax::{Min, Max};
+pub use quantile::Quantile;

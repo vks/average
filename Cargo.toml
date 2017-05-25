@@ -11,6 +11,7 @@ keywords = ["statistics", "stats"]
 
 [dependencies]
 conv = "0.3"
+quickersort = "2"
 
 [dev-dependencies]
 bencher = "0.1"
