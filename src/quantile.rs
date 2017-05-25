@@ -16,8 +16,11 @@ pub struct Quantile {
 
 impl Quantile {
     /// Create a new p-quantile estimator.
+    ///
+    /// Panics if `p` is not between 0 and 1.
     #[inline]
     pub fn new(p: f64) -> Quantile {
+        assert!(0. <= p && p <= 1.);
         Quantile {
             q: [0.; 5],
             n: [1, 2, 3, 4, 0],
