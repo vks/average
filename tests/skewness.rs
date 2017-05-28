@@ -2,8 +2,6 @@
 
 extern crate core;
 
-extern crate rand;
-
 use core::iter::Iterator;
 
 use average::Skewness;
@@ -54,20 +52,4 @@ fn merge() {
         assert_almost_eq!(avg_total.sample_variance(), avg_left.sample_variance(), 1e-14);
         assert_almost_eq!(avg_total.skewness(), avg_left.skewness(), 1e-14);
     }
-}
-
-#[test]
-fn exponential_distribution() {
-    use rand::distributions::{Exp, IndependentSample};
-    let lambda = 2.0;
-    let normal = Exp::new(lambda);
-    let mut a = Skewness::new();
-    for _ in 0..2_000_000 {
-        a.add(normal.ind_sample(&mut ::rand::thread_rng()));
-    }
-    assert_almost_eq!(a.mean(), 1./lambda, 1e-2);
-    assert_almost_eq!(a.sample_variance().sqrt(), 1./lambda, 1e-2);
-    assert_almost_eq!(a.population_variance().sqrt(), 1./lambda, 1e-2);
-    assert_almost_eq!(a.error_mean(), 0.0, 1e-2);
-    assert_almost_eq!(a.skewness(), 2.0, 1e-2);
 }

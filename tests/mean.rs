@@ -2,8 +2,6 @@
 
 extern crate core;
 
-extern crate rand;
-
 use core::iter::Iterator;
 
 use average::MeanWithError;
@@ -57,18 +55,4 @@ fn merge() {
         assert_eq!(avg_total.mean(), avg_left.mean());
         assert_eq!(avg_total.sample_variance(), avg_left.sample_variance());
     }
-}
-
-#[test]
-fn normal_distribution() {
-    use rand::distributions::{Normal, IndependentSample};
-    let normal = Normal::new(2.0, 3.0);
-    let mut a = MeanWithError::new();
-    for _ in 0..1_000_000 {
-        a.add(normal.ind_sample(&mut ::rand::thread_rng()));
-    }
-    assert_almost_eq!(a.mean(), 2.0, 1e-2);
-    assert_almost_eq!(a.sample_variance().sqrt(), 3.0, 1e-2);
-    assert_almost_eq!(a.population_variance().sqrt(), 3.0, 1e-2);
-    assert_almost_eq!(a.error(), 0.0, 1e-2);
 }
