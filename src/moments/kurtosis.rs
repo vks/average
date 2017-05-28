@@ -11,7 +11,7 @@ pub struct Kurtosis {
 }
 
 impl Kurtosis {
-    /// Create a new skewness estimator.
+    /// Create a new kurtosis estimator.
     #[inline]
     pub fn new() -> Kurtosis {
         Kurtosis {
