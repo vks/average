@@ -45,7 +45,7 @@ mod minmax;
 mod reduce;
 mod quantile;
 
-pub use moments::{Mean, Variance, MeanWithError};
+pub use moments::{Mean, Variance, Skewness, MeanWithError};
 pub use weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use minmax::{Min, Max};
 pub use quantile::Quantile;
