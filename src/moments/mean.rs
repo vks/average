@@ -42,7 +42,7 @@ impl Mean {
     ///
     /// This does not update anything else.
     #[inline]
-    pub fn increment(&mut self) {
+    fn increment(&mut self) {
         self.n += 1;
     }
 
@@ -51,7 +51,7 @@ impl Mean {
     /// size was already updated.
     ///
     /// This is useful for avoiding unnecessary divisions in the inner loop.
-    pub fn add_inner(&mut self, delta_n: f64) {
+    fn add_inner(&mut self, delta_n: f64) {
         // This algorithm introduced by Welford in 1962 trades numerical
         // stability for a division inside the loop.
         //
