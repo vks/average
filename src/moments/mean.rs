@@ -9,24 +9,24 @@ use conv::ApproxFrom;
 /// ## Example
 ///
 /// ```
-/// use average::Average;
+/// use average::Mean;
 ///
-/// let a: Average = (1..6).map(Into::into).collect();
-/// println!("The average is {}.", a.mean());
+/// let a: Mean = (1..6).map(Into::into).collect();
+/// println!("The mean is {}.", a.mean());
 /// ```
 #[derive(Debug, Clone)]
-pub struct Average {
-    /// Average value.
+pub struct Mean {
+    /// Mean value.
     avg: f64,
     /// Sample size.
     n: u64,
 }
 
-impl Average {
-    /// Create a new average estimator.
+impl Mean {
+    /// Create a new mean estimator.
     #[inline]
-    pub fn new() -> Average {
-        Average { avg: 0., n: 0 }
+    pub fn new() -> Mean {
+        Mean { avg: 0., n: 0 }
     }
 
     /// Add an observation sampled from the population.
@@ -85,18 +85,18 @@ impl Average {
     /// ## Example
     ///
     /// ```
-    /// use average::Average;
+    /// use average::Mean;
     ///
     /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
     /// let (left, right) = sequence.split_at(3);
-    /// let avg_total: Average = sequence.iter().map(|x| *x).collect();
-    /// let mut avg_left: Average = left.iter().map(|x| *x).collect();
-    /// let avg_right: Average = right.iter().map(|x| *x).collect();
+    /// let avg_total: Mean = sequence.iter().map(|x| *x).collect();
+    /// let mut avg_left: Mean = left.iter().map(|x| *x).collect();
+    /// let avg_right: Mean = right.iter().map(|x| *x).collect();
     /// avg_left.merge(&avg_right);
     /// assert_eq!(avg_total.mean(), avg_left.mean());
     /// ```
     #[inline]
-    pub fn merge(&mut self, other: &Average) {
+    pub fn merge(&mut self, other: &Mean) {
         // This algorithm was proposed by Chan et al. in 1979.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
@@ -113,17 +113,17 @@ impl Average {
     }
 }
 
-impl core::default::Default for Average {
-    fn default() -> Average {
-        Average::new()
+impl core::default::Default for Mean {
+    fn default() -> Mean {
+        Mean::new()
     }
 }
 
-impl core::iter::FromIterator<f64> for Average {
-    fn from_iter<T>(iter: T) -> Average
+impl core::iter::FromIterator<f64> for Mean {
+    fn from_iter<T>(iter: T) -> Mean
         where T: IntoIterator<Item=f64>
     {
-        let mut a = Average::new();
+        let mut a = Mean::new();
         for i in iter {
             a.add(i);
         }

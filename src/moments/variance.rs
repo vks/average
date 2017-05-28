@@ -7,23 +7,23 @@
 /// ## Example
 ///
 /// ```
-/// use average::AverageWithError;
+/// use average::Variance;
 ///
-/// let a: AverageWithError = (1..6).map(Into::into).collect();
+/// let a: Variance = (1..6).map(Into::into).collect();
 /// println!("The average is {} ± {}.", a.mean(), a.error());
 /// ```
 #[derive(Debug, Clone)]
-pub struct AverageWithError {
+pub struct Variance {
     /// Estimator of average.
-    avg: Average,
+    avg: Mean,
     /// Intermediate sum of squares for calculating the variance.
     sum_2: f64,
 }
 
-impl AverageWithError {
+impl Variance {
     /// Create a new average estimator.
-    pub fn new() -> AverageWithError {
-        AverageWithError { avg: Average::new(), sum_2: 0. }
+    pub fn new() -> Variance {
+        Variance { avg: Mean::new(), sum_2: 0. }
     }
 
     /// Add an observation sampled from the population.
@@ -117,19 +117,19 @@ impl AverageWithError {
     /// ## Example
     ///
     /// ```
-    /// use average::AverageWithError;
+    /// use average::Variance;
     ///
     /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
     /// let (left, right) = sequence.split_at(3);
-    /// let avg_total: AverageWithError = sequence.iter().map(|x| *x).collect();
-    /// let mut avg_left: AverageWithError = left.iter().map(|x| *x).collect();
-    /// let avg_right: AverageWithError = right.iter().map(|x| *x).collect();
+    /// let avg_total: Variance = sequence.iter().map(|x| *x).collect();
+    /// let mut avg_left: Variance = left.iter().map(|x| *x).collect();
+    /// let avg_right: Variance = right.iter().map(|x| *x).collect();
     /// avg_left.merge(&avg_right);
     /// assert_eq!(avg_total.mean(), avg_left.mean());
     /// assert_eq!(avg_total.sample_variance(), avg_left.sample_variance());
     /// ```
     #[inline]
-    pub fn merge(&mut self, other: &AverageWithError) {
+    pub fn merge(&mut self, other: &Variance) {
         // This algorithm was proposed by Chan et al. in 1979.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
@@ -142,17 +142,17 @@ impl AverageWithError {
     }
 }
 
-impl core::default::Default for AverageWithError {
-    fn default() -> AverageWithError {
-        AverageWithError::new()
+impl core::default::Default for Variance {
+    fn default() -> Variance {
+        Variance::new()
     }
 }
 
-impl core::iter::FromIterator<f64> for AverageWithError {
-    fn from_iter<T>(iter: T) -> AverageWithError
+impl core::iter::FromIterator<f64> for Variance {
+    fn from_iter<T>(iter: T) -> Variance
         where T: IntoIterator<Item=f64>
     {
-        let mut a = AverageWithError::new();
+        let mut a = Variance::new();
         for i in iter {
             a.add(i);
         }

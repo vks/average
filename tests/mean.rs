@@ -6,11 +6,11 @@ extern crate rand;
 
 use core::iter::Iterator;
 
-use average::AverageWithError;
+use average::MeanWithError;
 
 #[test]
 fn trivial() {
-    let mut a = AverageWithError::new();
+    let mut a = MeanWithError::new();
     assert_eq!(a.len(), 0);
     a.add(1.0);
     assert_eq!(a.mean(), 1.0);
@@ -28,7 +28,7 @@ fn trivial() {
 
 #[test]
 fn simple() {
-    let a: AverageWithError = (1..6).map(f64::from).collect();
+    let a: MeanWithError = (1..6).map(f64::from).collect();
     assert_eq!(a.mean(), 3.0);
     assert_eq!(a.len(), 5);
     assert_eq!(a.sample_variance(), 2.5);
@@ -40,7 +40,7 @@ fn numerically_unstable() {
     // The naive algorithm fails for this example due to cancelation.
     let big = 1e9;
     let sample = &[big + 4., big + 7., big + 13., big + 16.];
-    let a: AverageWithError = sample.iter().map(|x| *x).collect();
+    let a: MeanWithError = sample.iter().map(|x| *x).collect();
     assert_eq!(a.sample_variance(), 30.);
 }
 
@@ -49,9 +49,9 @@ fn merge() {
     let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
     for mid in 0..sequence.len() {
         let (left, right) = sequence.split_at(mid);
-        let avg_total: AverageWithError = sequence.iter().map(|x| *x).collect();
-        let mut avg_left: AverageWithError = left.iter().map(|x| *x).collect();
-        let avg_right: AverageWithError = right.iter().map(|x| *x).collect();
+        let avg_total: MeanWithError = sequence.iter().map(|x| *x).collect();
+        let mut avg_left: MeanWithError = left.iter().map(|x| *x).collect();
+        let avg_right: MeanWithError = right.iter().map(|x| *x).collect();
         avg_left.merge(&avg_right);
         assert_eq!(avg_total.len(), avg_left.len());
         assert_eq!(avg_total.mean(), avg_left.mean());
@@ -63,7 +63,7 @@ fn merge() {
 fn normal_distribution() {
     use rand::distributions::{Normal, IndependentSample};
     let normal = Normal::new(2.0, 3.0);
-    let mut a = AverageWithError::new();
+    let mut a = MeanWithError::new();
     for _ in 0..1_000_000 {
         a.add(normal.ind_sample(&mut ::rand::thread_rng()));
     }

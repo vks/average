@@ -2,8 +2,8 @@
 //! sequence of numbers, and for their standard errors. The typical workflow
 //! looks like this:
 //!
-//! 1. Initialize your estimator of choice ([`Average`], [`AverageWithError`],
-//!    [`WeightedAverage`] or [`WeightedAverageWithError`]) with `new()`.
+//! 1. Initialize your estimator of choice ([`Mean`], [`MeanWithError`],
+//!    [`WeightedMean`] or [`WeightedMeanWithError`]) with `new()`.
 //! 2. Add some subset (called "samples") of the sequence of numbers (called
 //!    "population") for which you want to estimate the average, using `add()`
 //!    or `collect()`.
@@ -17,18 +17,18 @@
 //! so the sequence of numbers can be an iterator. The used algorithms try to
 //! avoid numerical instabilities.
 //!
-//! [`Average`]: ./average/struct.Average.html
-//! [`AverageWithError`]: ./average/struct.AverageWithError.html
-//! [`WeightedAverage`]: ./weighted_average/struct.WeightedAverage.html
-//! [`WeightedAverageWithError`]: ./weighted_average/struct.WeightedAverageWithError.html
+//! [`Mean`]: ./average/struct.Mean.html
+//! [`MeanWithError`]: ./average/struct.MeanWithError.html
+//! [`WeightedMean`]: ./weighted_average/struct.WeightedMean.html
+//! [`WeightedMeanWithError`]: ./weighted_average/struct.WeightedMeanWithError.html
 //!
 //!
 //! ## Example
 //!
 //! ```
-//! use average::AverageWithError;
+//! use average::MeanWithError;
 //!
-//! let mut a: AverageWithError = (1..6).map(Into::into).collect();
+//! let mut a: MeanWithError = (1..6).map(Into::into).collect();
 //! a.add(42.);
 //! println!("The average is {} ± {}.", a.mean(), a.error());
 //! ```
@@ -40,12 +40,12 @@ extern crate quickersort;
 
 #[macro_use] mod macros;
 mod moments;
-mod weighted_average;
+mod weighted_mean;
 mod minmax;
 mod reduce;
 mod quantile;
 
-pub use moments::{Average, AverageWithError};
-pub use weighted_average::{WeightedAverage, WeightedAverageWithError};
+pub use moments::{Mean, Variance, MeanWithError};
+pub use weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use minmax::{Min, Max};
 pub use quantile::Quantile;
