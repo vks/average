@@ -15,6 +15,17 @@
 //! avoid numerical instabilities.
 //!
 //!
+//! ### Example
+//!
+//! ```
+//! use average::MeanWithError;
+//!
+//! let mut a: MeanWithError = (1..6).map(Into::into).collect();
+//! a.add(42.);
+//! println!("The mean is {} ± {}.", a.mean(), a.error());
+//! ```
+//!
+//!
 //! ## Estimators
 //!
 //! * Mean ([`Mean`]) and its error ([`MeanWithError`]).
@@ -48,15 +59,44 @@
 //! only need to include the highest moment in your struct.
 //!
 //!
-//! ## Example
+//! ### Example
 //!
 //! ```
-//! use average::MeanWithError;
+//! use average::{Min, Max};
 //!
-//! let mut a: MeanWithError = (1..6).map(Into::into).collect();
-//! a.add(42.);
-//! println!("The mean is {} ± {}.", a.mean(), a.error());
+//! struct MinMax {
+//!     min: Min,
+//!     max: Max,
+//! }
+//!
+//! impl MinMax {
+//!     pub fn new() -> MinMax {
+//!         MinMax { min: Min::new(), max: Max::new() }
+//!     }
+//!
+//!     pub fn add(&mut self, x: f64) {
+//!         self.min.add(x);
+//!         self.max.add(x);
+//!     }
+//!
+//!     pub fn min(&self) -> f64 {
+//!         self.min.min()
+//!     }
+//!
+//!     pub fn max(&self) -> f64 {
+//!         self.max.max()
+//!     }
+//! }
+//!
+//! let mut s = MinMax::new();
+//! for i in 1..6 {
+//!     s.add(i as f64);
+//! }
+//!
+//! assert_eq!(s.min(), 1.0);
+//! assert_eq!(s.max(), 5.0);
 //! ```
+
 
 #![no_std]
 
