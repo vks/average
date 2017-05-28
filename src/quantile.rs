@@ -1,4 +1,4 @@
-use conv::ApproxFrom;
+use conv::{ApproxFrom, ConvAsUtil, ValueFrom};
 use quickersort::sort_floats;
 
 /// Estimate the p-quantile of a sequence of numbers ("population").
@@ -34,7 +34,7 @@ impl Quantile {
     pub fn add(&mut self, x: f64) {
         // n[4] is the sample size.
         if self.n[4] < 5 {
-            self.q[self.n[4] as usize] = x;
+            self.q[usize::value_from(self.n[4]).unwrap()] = x;  // n[4] < 5
             self.n[4] += 1;
             if self.n[4] == 5 {
                 sort_floats(&mut self.q);
@@ -80,7 +80,7 @@ impl Quantile {
                 } else {
                     self.q[i] = self.linear(i, d);
                 }
-                self.n[i] += d as i64;
+                self.n[i] += d.approx().unwrap();  // d == +-1
             }
         }
     }
@@ -89,7 +89,7 @@ impl Quantile {
     #[inline]
     fn parabolic(&self, i: usize, d: f64) -> f64 {
         debug_assert_eq!(d.abs(), 1.);
-        let s = d as i64;
+        let s: i64 = d.approx().unwrap();
         self.q[i] + d / f64::approx_from(self.n[i + 1] - self.n[i - 1]).unwrap()
             * (f64::approx_from(self.n[i] - self.n[i - 1] + s).unwrap()
                * (self.q[i + 1] - self.q[i])
@@ -103,7 +103,7 @@ impl Quantile {
     #[inline]
     fn linear(&self, i: usize, d: f64) -> f64 {
         debug_assert_eq!(d.abs(), 1.);
-        let s = d as usize;
+        let s: usize = d.approx().unwrap();
         self.q[i] + d * (self.q[i + s] - self.q[i])
             / f64::approx_from(self.n[i + s] - self.n[i]).unwrap()
     }
@@ -117,7 +117,8 @@ impl Quantile {
     /// Return the sample size.
     #[inline]
     pub fn len(&self) -> u64 {
-        self.n[4] as u64
+        u64::value_from(self.n[4]).unwrap()
+        //^ Shouldn't fail on any known platform.
     }
 }
 
