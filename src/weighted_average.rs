@@ -56,12 +56,16 @@ impl WeightedAverage {
     }
 
     /// Return the sum of the weights.
+    ///
+    /// Returns 0 for an empty sample.
     #[inline]
     pub fn sum_weights(&self) -> f64 {
         self.weight_sum
     }
 
     /// Estimate the weighted mean of the population.
+    ///
+    /// Returns 0 for an empty sample.
     #[inline]
     pub fn mean(&self) -> f64 {
         self.weighted_avg
@@ -171,24 +175,32 @@ impl WeightedAverageWithError {
     }
 
     /// Return the sum of the weights.
+    ///
+    /// Returns 0 for an empty sample.
     #[inline]
     pub fn sum_weights(&self) -> f64 {
         self.weighted_avg.sum_weights()
     }
 
     /// Return the sum of the squared weights.
+    ///
+    /// Returns 0 for an empty sample.
     #[inline]
     pub fn sum_weights_sq(&self) -> f64 {
         self.weight_sum_sq
     }
 
     /// Estimate the weighted mean of the population.
+    ///
+    /// Returns 0 for an empty sample.
     #[inline]
     pub fn weighted_mean(&self) -> f64 {
         self.weighted_avg.mean()
     }
 
     /// Estimate the unweighted mean of the population.
+    ///
+    /// Returns 0 for an empty sample.
     #[inline]
     pub fn unweighted_mean(&self) -> f64 {
         self.unweighted_avg.mean()

@@ -48,6 +48,8 @@ impl Average {
     }
 
     /// Estimate the mean of the population.
+    ///
+    /// Returns 0 for an empty sample.
     #[inline]
     pub fn mean(&self) -> f64 {
         self.avg
@@ -158,6 +160,8 @@ impl AverageWithError {
     }
 
     /// Estimate the mean of the population.
+    ///
+    /// Returns 0 for an empty sample.
     #[inline]
     pub fn mean(&self) -> f64 {
         self.avg.mean()

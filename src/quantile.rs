@@ -1,3 +1,5 @@
+use core::cmp::min;
+
 use conv::{ApproxFrom, ConvAsUtil, ValueFrom};
 use quickersort::sort_floats;
 
@@ -27,6 +29,12 @@ impl Quantile {
             m: [1., 1. + 2.*p, 1. + 4.*p, 3. + 2.*p, 5.],
             dm: [0., p/2., p, (1. + p)/2., 1.],
         }
+    }
+
+    /// Return the value of `p` for this p-quantile.
+    #[inline]
+    pub fn p(&self) -> f64 {
+        self.dm[2]
     }
 
     /// Add an observation sampled from the population.
@@ -109,26 +117,59 @@ impl Quantile {
     }
 
     /// Estimate the p-quantile of the population.
+    ///
+    /// Returns 0 for an empty sample.
     #[inline]
     pub fn quantile(&self) -> f64 {
-        self.q[2]
+        if self.len() >= 5 {
+            return self.q[2];
+        }
+
+        // Estimate quantile by sorting the sample.
+        if self.is_empty() {
+            return 0.;
+        }
+        let mut heights: [f64; 4] = [
+            self.q[0], self.q[1], self.q[2], self.q[3]
+        ];
+        let len = usize::value_from(self.len()).unwrap();  // < 5
+        sort_floats(&mut heights[..len]);
+        let desired_index = f64::approx_from(len).unwrap() * self.p() - 1.;
+        let mut index = desired_index.ceil();
+        if desired_index == index && index >= 0. {
+            let index: usize = index.approx().unwrap();  // < 5
+            if index < len - 1 {
+                // `q[index]` and `q[index + 1]` are equally valid estimates,
+                // by convention we take their average.
+                return 0.5*self.q[index] + 0.5*self.q[index + 1];
+            }
+        }
+        index = index.max(0.);
+        let mut index: usize = index.approx().unwrap();  // < 5
+        index = min(index, len - 1);
+        self.q[index]
     }
 
     /// Return the sample size.
     #[inline]
     pub fn len(&self) -> u64 {
-        u64::value_from(self.n[4]).unwrap()
-        //^ Shouldn't fail on any known platform.
+        u64::value_from(self.n[4]).unwrap()  // n[4] >= 0
+    }
+
+    /// Determine whether the sample is empty.
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 }
 
 #[test]
 fn reference() {
     let observations = [
-    0.02, 0.5, 0.74, 3.39, 0.83,
-    22.37, 10.15, 15.43, 38.62, 15.92,
-    34.60, 10.28, 1.47, 0.40, 0.05,
-    11.39, 0.27, 0.42, 0.09, 11.37,
+        0.02, 0.5, 0.74, 3.39, 0.83,
+        22.37, 10.15, 15.43, 38.62, 15.92,
+        34.60, 10.28, 1.47, 0.40, 0.05,
+        11.39, 0.27, 0.42, 0.09, 11.37,
     ];
     let mut q = Quantile::new(0.5);
     for &o in observations.iter() {
@@ -138,4 +179,23 @@ fn reference() {
     assert_eq!(q.m, [1., 5.75, 10.50, 15.25, 20.0]);
     assert_eq!(q.len(), 20);
     assert_eq!(q.quantile(), 4.2462394088036435);
+}
+
+#[test]
+fn few_observations() {
+    let mut q = Quantile::new(0.5);
+    assert_eq!(q.len(), 0);
+    assert_eq!(q.quantile(), 0.);
+    q.add(1.);
+    assert_eq!(q.len(), 1);
+    assert_eq!(q.quantile(), 1.);
+    q.add(2.);
+    assert_eq!(q.len(), 2);
+    assert_eq!(q.quantile(), 1.5);
+    q.add(3.);
+    assert_eq!(q.len(), 3);
+    assert_eq!(q.quantile(), 2.);
+    q.add(4.);
+    assert_eq!(q.len(), 4);
+    assert_eq!(q.quantile(), 2.5);
 }
