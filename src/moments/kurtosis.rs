@@ -1,22 +1,22 @@
-/// Estimate the arithmetic mean, the variance and the skewness of a sequence of
-/// numbers ("population").
+/// Estimate the arithmetic mean, the variance, the skewness and the kurtosis of
+/// a sequence of numbers ("population").
 ///
 /// This can be used to estimate the standard error of the mean.
 #[derive(Debug, Clone)]
-pub struct Skewness {
-    /// Estimator of mean and variance.
-    avg: MeanWithError,
-    /// Intermediate sum of cubes for calculating the skewness.
-    sum_3: f64,
+pub struct Kurtosis {
+    /// Estimator of mean, variance and skewness.
+    avg: Skewness,
+    /// Intermediate sum of terms to the fourth for calculating the skewness.
+    sum_4: f64,
 }
 
-impl Skewness {
+impl Kurtosis {
     /// Create a new skewness estimator.
     #[inline]
-    pub fn new() -> Skewness {
-        Skewness {
-            avg: MeanWithError::new(),
-            sum_3: 0.,
+    pub fn new() -> Kurtosis {
+        Kurtosis {
+            avg: Skewness::new(),
+            sum_4: 0.,
         }
     }
 
@@ -49,9 +49,11 @@ impl Skewness {
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
         let n = f64::approx_from(self.len()).unwrap();
         let term = delta * delta_n * (n - 1.);
-        self.sum_3 += term * delta_n * (n - 2.)
-            - 3.*delta_n * self.avg.sum_2;
-        self.avg.add_inner(delta_n);
+        let delta_n_sq = delta_n*delta_n;
+        self.sum_4 += term * delta_n_sq * (n*n - 3.*n + 3.)
+            + 6. * delta_n_sq * self.avg.avg.sum_2
+            - 4. * delta_n * self.avg.sum_3;
+        self.avg.add_inner(delta, delta_n);
     }
 
     /// Determine whether the sample is empty.
@@ -93,41 +95,48 @@ impl Skewness {
     /// Estimate the standard error of the mean of the population.
     #[inline]
     pub fn error_mean(&self) -> f64 {
-        self.avg.error()
+        self.avg.error_mean()
     }
 
     /// Estimate the skewness of the population.
     #[inline]
     pub fn skewness(&self) -> f64 {
-        if self.sum_3 == 0. {
+        self.avg.skewness()
+    }
+
+    /// Estimate the kurtosis of the population.
+    #[inline]
+    pub fn kurtosis(&self) -> f64 {
+        if self.sum_4 == 0. {
             return 0.;
         }
         let n = f64::approx_from(self.len()).unwrap();
-        let sum_2 = self.avg.sum_2;
-        debug_assert!(sum_2 != 0.);
-        n.sqrt() * self.sum_3 / (sum_2*sum_2*sum_2).sqrt()
+        n * self.sum_4 / (self.avg.avg.sum_2 * self.avg.avg.sum_2) - 3.
     }
 
     /// Merge another sample into this one.
     #[inline]
-    pub fn merge(&mut self, other: &Skewness) {
+    pub fn merge(&mut self, other: &Kurtosis) {
         let len_self = f64::approx_from(self.len()).unwrap();
         let len_other = f64::approx_from(other.len()).unwrap();
         let len_total = len_self + len_other;
         let delta = other.mean() - self.mean();
         let delta_n = delta / len_total;
-        self.sum_3 += other.sum_3
-            + delta*delta_n*delta_n * len_self*len_other*(len_self - len_other)
-            + 3.*delta_n * (len_self * other.avg.sum_2 - len_other * self.avg.sum_2);
+        let delta_n_sq = delta_n * delta_n;
+        self.sum_4 += other.sum_4
+            + delta * delta_n*delta_n_sq * len_self*len_other
+              * (len_self*len_self - len_self*len_other + len_other*len_other)
+            + 6.*delta_n_sq * (len_self*len_self * other.avg.avg.sum_2 + len_other*len_other * self.avg.avg.sum_2)
+            + 4.*delta_n * (len_self * other.avg.sum_3 - len_other * self.avg.sum_3);
         self.avg.merge(&other.avg);
     }
 }
 
-impl core::iter::FromIterator<f64> for Skewness {
-    fn from_iter<T>(iter: T) -> Skewness
+impl core::iter::FromIterator<f64> for Kurtosis {
+    fn from_iter<T>(iter: T) -> Kurtosis
         where T: IntoIterator<Item=f64>
     {
-        let mut a = Skewness::new();
+        let mut a = Kurtosis::new();
         for i in iter {
             a.add(i);
         }

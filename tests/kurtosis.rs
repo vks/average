@@ -6,11 +6,11 @@ extern crate rand;
 
 use core::iter::Iterator;
 
-use average::Skewness;
+use average::Kurtosis;
 
 #[test]
 fn trivial() {
-    let mut a = Skewness::new();
+    let mut a = Kurtosis::new();
     assert_eq!(a.len(), 0);
     a.add(1.0);
     assert_eq!(a.mean(), 1.0);
@@ -30,7 +30,7 @@ fn trivial() {
 
 #[test]
 fn simple() {
-    let mut a: Skewness = (1..6).map(f64::from).collect();
+    let mut a: Kurtosis = (1..6).map(f64::from).collect();
     assert_eq!(a.mean(), 3.0);
     assert_eq!(a.len(), 5);
     assert_eq!(a.sample_variance(), 2.5);
@@ -38,21 +38,23 @@ fn simple() {
     assert_eq!(a.skewness(), 0.0);
     a.add(1.0);
     assert_almost_eq!(a.skewness(), 0.2795084971874741, 1e-15);
+    assert_almost_eq!(a.kurtosis(), -1.365, 1e-15);
 }
 
 #[test]
 fn merge() {
-    let sequence: &[f64] = &[1., 2., 3., -4., 5., 6., 7., 8., 9., 1.];
+    let sequence: &[f64] = &[1., 2., 3., -4., 5.1, 6.3, 7.3, -8., 9., 1.];
     for mid in 0..sequence.len() {
         let (left, right) = sequence.split_at(mid);
-        let avg_total: Skewness = sequence.iter().map(|x| *x).collect();
-        let mut avg_left: Skewness = left.iter().map(|x| *x).collect();
-        let avg_right: Skewness = right.iter().map(|x| *x).collect();
+        let avg_total: Kurtosis = sequence.iter().map(|x| *x).collect();
+        let mut avg_left: Kurtosis = left.iter().map(|x| *x).collect();
+        let avg_right: Kurtosis = right.iter().map(|x| *x).collect();
         avg_left.merge(&avg_right);
         assert_eq!(avg_total.len(), avg_left.len());
         assert_almost_eq!(avg_total.mean(), avg_left.mean(), 1e-14);
         assert_almost_eq!(avg_total.sample_variance(), avg_left.sample_variance(), 1e-14);
         assert_almost_eq!(avg_total.skewness(), avg_left.skewness(), 1e-14);
+        assert_almost_eq!(avg_total.kurtosis(), avg_left.kurtosis(), 1e-14);
     }
 }
 
@@ -61,8 +63,8 @@ fn exponential_distribution() {
     use rand::distributions::{Exp, IndependentSample};
     let lambda = 2.0;
     let normal = Exp::new(lambda);
-    let mut a = Skewness::new();
-    for _ in 0..2_000_000 {
+    let mut a = Kurtosis::new();
+    for _ in 0..6_000_000 {
         a.add(normal.ind_sample(&mut ::rand::thread_rng()));
     }
     assert_almost_eq!(a.mean(), 1./lambda, 1e-2);
@@ -70,4 +72,5 @@ fn exponential_distribution() {
     assert_almost_eq!(a.population_variance().sqrt(), 1./lambda, 1e-2);
     assert_almost_eq!(a.error_mean(), 0.0, 1e-2);
     assert_almost_eq!(a.skewness(), 2.0, 1e-2);
+    assert_almost_eq!(a.kurtosis(), 6.0, 4e-2);
 }
