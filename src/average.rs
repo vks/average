@@ -32,13 +32,31 @@ impl Average {
     /// Add an observation sampled from the population.
     #[inline]
     pub fn add(&mut self, sample: f64) {
+        self.increment();
+        let delta_n = (sample - self.avg)
+            / f64::approx_from(self.n).unwrap();
+        self.add_inner(delta_n);
+    }
+
+    /// Increment the sample size.
+    ///
+    /// This does not update anything else.
+    #[inline]
+    pub fn increment(&mut self) {
+        self.n += 1;
+    }
+
+    /// Add an observation given an already calculated difference from the mean
+    /// divided by the number of samples, assuming the inner count of the sample
+    /// size was already updated.
+    ///
+    /// This is useful for avoiding unnecessary divisions in the inner loop.
+    pub fn add_inner(&mut self, delta_n: f64) {
         // This algorithm introduced by Welford in 1962 trades numerical
         // stability for a division inside the loop.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
-        self.n += 1;
-        let delta = sample - self.avg;
-        self.avg += delta / f64::approx_from(self.n).unwrap();
+        self.avg += delta_n;
     }
 
     /// Determine whether the sample is empty.
@@ -144,13 +162,33 @@ impl AverageWithError {
     /// Add an observation sampled from the population.
     #[inline]
     pub fn add(&mut self, sample: f64) {
+        self.increment();
+        let delta_n = (sample - self.avg.mean())
+            / f64::approx_from(self.len()).unwrap();
+        self.add_inner(delta_n);
+    }
+
+    /// Increment the sample size.
+    ///
+    /// This does not update anything else.
+    #[inline]
+    pub fn increment(&mut self) {
+        self.avg.increment();
+    }
+
+    /// Add an observation given an already calculated difference from the mean
+    /// divided by the number of samples, assuming the inner count of the sample
+    /// size was already updated.
+    ///
+    /// This is useful for avoiding unnecessary divisions in the inner loop.
+    pub fn add_inner(&mut self, delta_n: f64) {
         // This algorithm introduced by Welford in 1962 trades numerical
         // stability for a division inside the loop.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
-        let delta = sample - self.avg.mean();
-        self.avg.add(sample);
-        self.v += delta * (sample - self.avg.mean());
+        let n = f64::approx_from(self.avg.len()).unwrap();
+        self.avg.add_inner(delta_n);
+        self.v += delta_n * delta_n * n * (n - 1.);
     }
 
     /// Determine whether the sample is empty.

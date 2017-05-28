@@ -22,7 +22,7 @@ fn average_vs_streaming_stats_small() {
     let a: average::AverageWithError = values.iter().map(|x| *x).collect();
     let b: stats::OnlineStats = values.iter().map(|x| *x).collect();
     assert_almost_eq!(a.mean(), b.mean(), 1e-16);
-    assert_almost_eq!(a.population_variance(), b.variance(), 1e-16);
+    assert_almost_eq!(a.population_variance(), b.variance(), 1e-14);
 }
 
 #[test]
