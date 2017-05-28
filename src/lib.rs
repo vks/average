@@ -55,7 +55,7 @@
 //!
 //! let mut a: MeanWithError = (1..6).map(Into::into).collect();
 //! a.add(42.);
-//! println!("The average is {} ± {}.", a.mean(), a.error());
+//! println!("The mean is {} ± {}.", a.mean(), a.error());
 //! ```
 
 #![no_std]
