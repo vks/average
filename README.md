@@ -1,7 +1,7 @@
 # average
 
-Calculate the average of a sequence and its error iteratively in a single pass,
-using constant memory and avoiding numerical problems. The calculation can be
+Calculate statistics of a sequence iteratively in a single pass, using
+constant memory and avoiding numerical problems. The calculations can be
 easily parallelized by using `merge`.
 
 [Documentation](https://docs.rs/average) |
@@ -9,7 +9,9 @@ easily parallelized by using `merge`.
 
 [![Build Status](https://travis-ci.org/vks/average.svg?branch=master)](https://travis-ci.org/vks/average)
 
-## Advantages over naive calculation of average and variance
+## Implemented statistics
 
-* Avoids loss of precision due to cancellation.
-* Only needs a single pass over the samples, at the cost of a division inside the loop.
+* Mean and its error.
+* Variance, skewness, kurtosis.
+* Minium and maximum.
+* Quantile.

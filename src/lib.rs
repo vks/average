@@ -1,14 +1,11 @@
-//! This crate provides estimators for the weighted and unweighted average of a
-//! sequence of numbers, and for their standard errors. The typical workflow
-//! looks like this:
+//! This crate provides estimators for statistics on a sequence of numbers. The
+//! typical workflow looks like this:
 //!
-//! 1. Initialize your estimator of choice ([`Mean`], [`MeanWithError`],
-//!    [`WeightedMean`] or [`WeightedMeanWithError`]) with `new()`.
-//! 2. Add some subset (called "samples") of the sequence of numbers (called
-//!    "population") for which you want to estimate the average, using `add()`
+//! 1. Initialize the estimator of your choice with `new()`.
+//! 2. Add some subset (called "sample") of the sequence of numbers (called
+//!    "population") for which you want to estimate the statistic, using `add()`
 //!    or `collect()`.
-//! 3. Calculate the arithmetic mean with `mean()` and its standard error with
-//!    `error()`.
+//! 3. Calculate the statistic with `mean()` or similar.
 //!
 //! You can run several estimators in parallel and merge them into one with
 //! `merge()`.
@@ -17,10 +14,38 @@
 //! so the sequence of numbers can be an iterator. The used algorithms try to
 //! avoid numerical instabilities.
 //!
-//! [`Mean`]: ./average/struct.Mean.html
-//! [`MeanWithError`]: ./average/struct.MeanWithError.html
-//! [`WeightedMean`]: ./weighted_average/struct.WeightedMean.html
-//! [`WeightedMeanWithError`]: ./weighted_average/struct.WeightedMeanWithError.html
+//!
+//! ## Estimators
+//!
+//! * Mean ([`Mean`]) and its error ([`MeanWithError`]).
+//! * Weighted mean ([`WeightedMean`]) and its error
+//!   ([`WeightedMeanWithError`]).
+//! * Variance ([`Variance`]), skewness ([`Skewness`]) and kurtosis
+//!   ([`Kurtosis`]).
+//! * Quantiles ([`Quantile`]).
+//! * Minimum ([`Min`]) and maximum ([`Max`]).
+//!
+//! [`Mean`]: ./struct.Mean.html
+//! [`MeanWithError`]: ./type.MeanWithError.html
+//! [`WeightedMean`]: ./struct.WeightedMean.html
+//! [`WeightedMeanWithError`]: ./struct.WeightedMeanWithError.html
+//! [`Variance`]: ./struct.Variance.html
+//! [`Skewness`]: ./struct.Skewness.html
+//! [`Kurtosis`]: ./struct.Kurtosis.html
+//! [`Quantile`]: ./struct.Quantile.html
+//! [`Min`]: ./struct.Min.html
+//! [`Max`]: ./struct.Max.html
+//!
+//!
+//! ## Estimating several statistics at once
+//!
+//! The estimators are designed to have minimal state. The recommended way to
+//! calculate several of them at once is to create a struct with all the
+//! estimators you need. You can then implement `add` for your struct by
+//! forwarding to the underlying estimators.
+//!
+//! Note that calculating moments requires calculating the lower moments, so you
+//! only need to include the highest moment in your struct.
 //!
 //!
 //! ## Example

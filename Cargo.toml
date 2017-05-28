@@ -4,10 +4,11 @@ name = "average"
 version = "0.5.0"
 license = "MIT/Apache-2.0"
 repository = "https://github.com/vks/average"
-description = "Calculate the average of a sequence and its error iteratively"
+description = "Calculate statistics iteratively"
 readme = "README.md"
 categories = ["science", "no-std"]
-keywords = ["statistics", "stats"]
+keywords = ["statistics", "stats", "mean", "variance", "skewness",
+            "kurtosis", "quantile"]
 
 [dependencies]
 conv = "0.3"
