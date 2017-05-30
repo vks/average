@@ -104,7 +104,7 @@ impl Skewness {
         }
         let n = f64::approx_from(self.len()).unwrap();
         let sum_2 = self.avg.sum_2;
-        debug_assert!(sum_2 != 0.);
+        debug_assert_ne!(sum_2, 0.);
         n.sqrt() * self.sum_3 / (sum_2*sum_2*sum_2).sqrt()
     }
 
