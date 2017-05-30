@@ -10,7 +10,7 @@ categories = ["science", "no-std"]
 keywords = ["statistics", "stats", "skewness", "kurtosis", "quantile"]
 
 [dependencies]
-conv = "0.3"
+conv = { version = "0.3", default-features = false }
 quickersort = "2"
 
 [dev-dependencies]
