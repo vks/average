@@ -1,3 +1,5 @@
+#![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
+
 #[macro_use] extern crate bencher;
 extern crate rand;
 

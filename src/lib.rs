@@ -97,6 +97,7 @@
 //! assert_eq!(s.max(), 5.0);
 //! ```
 
+#![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
 
 #![no_std]
 
