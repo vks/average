@@ -77,6 +77,12 @@ impl Min {
     }
 }
 
+impl core::default::Default for Min {
+    fn default() -> Min {
+        Min::new()
+    }
+}
+
 impl core::iter::FromIterator<f64> for Min {
     fn from_iter<T>(iter: T) -> Min
         where T: IntoIterator<Item=f64>
@@ -151,6 +157,12 @@ impl Max {
     #[inline]
     pub fn merge(&mut self, other: &Max) {
         self.r.merge(&other.r);
+    }
+}
+
+impl core::default::Default for Max {
+    fn default() -> Max {
+        Max::new()
     }
 }
 
