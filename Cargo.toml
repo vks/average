@@ -11,7 +11,7 @@ keywords = ["statistics", "stats", "skewness", "kurtosis", "quantile"]
 
 [dependencies]
 conv = { version = "0.3", default-features = false }
-quickersort = "2"
+quickersort = "3"
 
 [dev-dependencies]
 bencher = "0.1"
