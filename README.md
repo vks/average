@@ -13,5 +13,5 @@ easily parallelized by using `merge`.
 
 * Mean and its error.
 * Variance, skewness, kurtosis.
-* Minium and maximum.
+* Minimum and maximum.
 * Quantile.
