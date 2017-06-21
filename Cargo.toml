@@ -7,7 +7,7 @@ repository = "https://github.com/vks/average"
 description = "Calculate statistics iteratively"
 readme = "README.md"
 categories = ["science", "no-std"]
-keywords = ["statistics", "stats", "skewness", "kurtosis", "quantile"]
+keywords = ["stats", "mean", "skewness", "kurtosis", "quantile"]
 
 [dependencies]
 conv = { version = "0.3", default-features = false }
