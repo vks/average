@@ -36,6 +36,20 @@
 //! * Quantiles ([`Quantile`]).
 //! * Minimum ([`Min`]) and maximum ([`Max`]).
 //!
+//! ## Estimating several statistics at once
+//!
+//! The estimators are designed to have minimal state. The recommended way to
+//! calculate several of them at once is to create a struct with all the
+//! estimators you need. You can then implement `add` for your struct by
+//! forwarding to the underlying estimators. Everything is inlined, so there
+//! should be no overhead.
+//!
+//! You can avoid the boilerplate code by using the [`concatenate`] macro.
+//!
+//! Note that calculating moments requires calculating the lower moments, so you
+//! only need to include the highest moment in your struct.
+//!
+//!
 //! [`Mean`]: ./struct.Mean.html
 //! [`MeanWithError`]: ./type.MeanWithError.html
 //! [`WeightedMean`]: ./struct.WeightedMean.html
@@ -46,56 +60,7 @@
 //! [`Quantile`]: ./struct.Quantile.html
 //! [`Min`]: ./struct.Min.html
 //! [`Max`]: ./struct.Max.html
-//!
-//!
-//! ## Estimating several statistics at once
-//!
-//! The estimators are designed to have minimal state. The recommended way to
-//! calculate several of them at once is to create a struct with all the
-//! estimators you need. You can then implement `add` for your struct by
-//! forwarding to the underlying estimators.
-//!
-//! Note that calculating moments requires calculating the lower moments, so you
-//! only need to include the highest moment in your struct.
-//!
-//!
-//! ### Example
-//!
-//! ```
-//! use average::{Min, Max};
-//!
-//! struct MinMax {
-//!     min: Min,
-//!     max: Max,
-//! }
-//!
-//! impl MinMax {
-//!     pub fn new() -> MinMax {
-//!         MinMax { min: Min::new(), max: Max::new() }
-//!     }
-//!
-//!     pub fn add(&mut self, x: f64) {
-//!         self.min.add(x);
-//!         self.max.add(x);
-//!     }
-//!
-//!     pub fn min(&self) -> f64 {
-//!         self.min.min()
-//!     }
-//!
-//!     pub fn max(&self) -> f64 {
-//!         self.max.max()
-//!     }
-//! }
-//!
-//! let mut s = MinMax::new();
-//! for i in 1..6 {
-//!     s.add(i as f64);
-//! }
-//!
-//! assert_eq!(s.min(), 1.0);
-//! assert_eq!(s.max(), 5.0);
-//! ```
+//! [`concatenate`]: ./macro.concatenate.html
 
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
 
