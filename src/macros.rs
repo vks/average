@@ -29,6 +29,10 @@ macro_rules! assert_almost_eq {
 /// For moments, only an estimator for the highest moment should be used and
 /// reused for the lower moments (see the example below).
 ///
+/// The following methods will be implemented: `new`, `add`, `$statistic`.
+///
+/// The following traits will be implemented: `Default`, `FromIterator<f64>`.
+///
 ///
 /// # Examples
 ///
