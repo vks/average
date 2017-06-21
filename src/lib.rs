@@ -1,11 +1,12 @@
 //! This crate provides estimators for statistics on a sequence of numbers. The
 //! typical workflow looks like this:
 //!
-//! 1. Initialize the estimator of your choice with `new()`.
-//! 2. Add some subset (called "sample") of the sequence of numbers (called
+//! 1. If necessary, build your custom estimator using [`concatenate`].
+//! 2. Initialize the estimator of your choice with `new()`.
+//! 3. Add some subset (called "sample") of the sequence of numbers (called
 //!    "population") for which you want to estimate the statistic, using `add()`
 //!    or `collect()`.
-//! 3. Calculate the statistic with `mean()` or similar.
+//! 4. Calculate the statistic with `mean()` or similar.
 //!
 //! You can run several estimators in parallel and merge them into one with
 //! `merge()`.
