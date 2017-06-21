@@ -104,6 +104,7 @@ macro_rules! concatenate {
         }
 
         impl $name {
+            #[inline]
             pub fn new() -> $name {
                 $name {
                 $(
@@ -112,6 +113,7 @@ macro_rules! concatenate {
                 }
             }
 
+            #[inline]
             pub fn add(&mut self, x: f64) {
                 $(
                     self.$field.add(x);
@@ -119,6 +121,7 @@ macro_rules! concatenate {
             }
 
             $( $(
+                #[inline]
                 pub fn $statistic(&self) -> f64 {
                     self.$field.$statistic()
                 }
