@@ -1,3 +1,4 @@
+use core;
 use core::cmp::min;
 
 use conv::{ApproxFrom, ConvAsUtil, ValueFrom};
@@ -160,6 +161,13 @@ impl Quantile {
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.len() == 0
+    }
+}
+
+impl core::default::Default for Quantile {
+    /// Create a new median estimator.
+    fn default() -> Quantile {
+        Quantile::new(0.5)
     }
 }
 
