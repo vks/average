@@ -17,17 +17,20 @@ macro_rules! assert_almost_eq {
 
 /// Concatenate several iterative estimators into one.
 ///
-/// `$name` is the name of the new type. `$statistic` is the name of a statistic
-/// and must exist as a method of the corresponding type `$estimator`.
+/// `$name` is the name of the new struct. `$statistic` is the name of a
+/// statistic and must exist as a method of the corresponding type `$estimator`.
 /// `$estimator` must have an `add` method for adding new observations to the
 /// sample (taking an `f64` as an argument). It must also implement `Default`.
 ///
+/// If the short syntax is used, the fields will be named `$statistic`. Use the
+/// long syntax and `$field` to give them explicit names. The long syntax also
+/// supports calculating several statistics from one estimator.
+///
 /// For moments, only an estimator for the highest moment should be used and
-/// reused for the lower moments. This is currently not supported by this macro
-/// and has to be done by hand.
+/// reused for the lower moments (see the example below).
 ///
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// # extern crate core;
@@ -35,7 +38,7 @@ macro_rules! assert_almost_eq {
 /// # fn main() {
 /// use average::{Min, Max};
 ///
-/// concatenate!(MinMax, min, Min, max, Max);
+/// concatenate!(MinMax, [Min, min], [Max, max]);
 ///
 /// let s: MinMax = (1..6).map(Into::into).collect();
 ///
@@ -73,12 +76,30 @@ macro_rules! assert_almost_eq {
 ///     }
 /// }
 /// ```
+///
+/// If you want to calculate the mean, variance and the median in one pass, you
+/// can do the following:
+///
+/// ```
+/// # extern crate core;
+/// # #[macro_use] extern crate average;
+/// # fn main() {
+/// use average::{Variance, Quantile};
+///
+/// concatenate!(Estimator,
+///     [Variance, variance, mean, sample_variance],
+///     [Quantile, quantile, quantile]);
+/// # }
+/// ```
 #[macro_export]
 macro_rules! concatenate {
-    ( $name:ident, $($statistic:ident, $estimator:ident),* ) => {
+    ( $name:ident, $([$estimator:ident, $statistic:ident]),+ ) => {
+        concatenate!( $name, $([$estimator, $statistic, $statistic]),* )
+    };
+    ( $name:ident, $( [$estimator:ident, $field:ident, $($statistic:ident),+] ),+ ) => {
         struct $name {
         $(
-            $statistic: $estimator,
+            $field: $estimator,
         )*
         }
 
@@ -86,22 +107,22 @@ macro_rules! concatenate {
             pub fn new() -> $name {
                 $name {
                 $(
-                    $statistic: ::core::default::Default::default(),
+                    $field: ::core::default::Default::default(),
                 )*
                 }
             }
 
             pub fn add(&mut self, x: f64) {
                 $(
-                    self.$statistic.add(x);
+                    self.$field.add(x);
                 )*
             }
 
-            $(
+            $( $(
                 pub fn $statistic(&self) -> f64 {
-                    self.$statistic.$statistic()
+                    self.$field.$statistic()
                 }
-            )*
+            )* )*
         }
 
         impl Default for $name {
