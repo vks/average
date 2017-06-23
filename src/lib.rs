@@ -76,8 +76,10 @@ mod weighted_mean;
 mod minmax;
 mod reduce;
 mod quantile;
+mod traits;
 
 pub use moments::{Mean, Variance, Skewness, Kurtosis, MeanWithError};
 pub use weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use minmax::{Min, Max};
 pub use quantile::Quantile;
+pub use traits::{Estimate, Merge};

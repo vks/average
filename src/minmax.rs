@@ -83,17 +83,7 @@ impl core::default::Default for Min {
     }
 }
 
-impl core::iter::FromIterator<f64> for Min {
-    fn from_iter<T>(iter: T) -> Min
-        where T: IntoIterator<Item=f64>
-    {
-        let mut a = Min::new();
-        for i in iter {
-            a.add(i);
-        }
-        a
-    }
-}
+impl_from_iterator!(Min);
 
 /// Estimate the maximum of a sequence of numbers ("population").
 ///
