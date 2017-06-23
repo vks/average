@@ -120,14 +120,4 @@ impl core::default::Default for Mean {
     }
 }
 
-impl core::iter::FromIterator<f64> for Mean {
-    fn from_iter<T>(iter: T) -> Mean
-        where T: IntoIterator<Item=f64>
-    {
-        let mut a = Mean::new();
-        for i in iter {
-            a.add(i);
-        }
-        a
-    }
-}
+impl_from_iterator!(Mean);

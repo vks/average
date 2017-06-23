@@ -138,6 +138,14 @@ macro_rules! concatenate {
             }
         }
 
+        impl_from_iterator!($name);
+    };
+}
+
+/// Implement `FromIterator<f64>` for an iterative estimator.
+#[macro_export]
+macro_rules! impl_from_iterator {
+    ( $name:ident ) => {
         impl ::core::iter::FromIterator<f64> for $name {
             fn from_iter<T>(iter: T) -> $name
                 where T: IntoIterator<Item=f64>

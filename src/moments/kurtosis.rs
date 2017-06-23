@@ -132,14 +132,4 @@ impl Kurtosis {
     }
 }
 
-impl core::iter::FromIterator<f64> for Kurtosis {
-    fn from_iter<T>(iter: T) -> Kurtosis
-        where T: IntoIterator<Item=f64>
-    {
-        let mut a = Kurtosis::new();
-        for i in iter {
-            a.add(i);
-        }
-        a
-    }
-}
+impl_from_iterator!(Kurtosis);

@@ -123,14 +123,4 @@ impl Skewness {
     }
 }
 
-impl core::iter::FromIterator<f64> for Skewness {
-    fn from_iter<T>(iter: T) -> Skewness
-        where T: IntoIterator<Item=f64>
-    {
-        let mut a = Skewness::new();
-        for i in iter {
-            a.add(i);
-        }
-        a
-    }
-}
+impl_from_iterator!(Skewness);

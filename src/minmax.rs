@@ -166,14 +166,4 @@ impl core::default::Default for Max {
     }
 }
 
-impl core::iter::FromIterator<f64> for Max {
-    fn from_iter<T>(iter: T) -> Max
-        where T: IntoIterator<Item=f64>
-    {
-        let mut a = Max::new();
-        for i in iter {
-            a.add(i);
-        }
-        a
-    }
-}
+impl_from_iterator!(Max);

@@ -150,14 +150,4 @@ impl core::default::Default for Variance {
     }
 }
 
-impl core::iter::FromIterator<f64> for Variance {
-    fn from_iter<T>(iter: T) -> Variance
-        where T: IntoIterator<Item=f64>
-    {
-        let mut a = Variance::new();
-        for i in iter {
-            a.add(i);
-        }
-        a
-    }
-}
+impl_from_iterator!(Variance);
