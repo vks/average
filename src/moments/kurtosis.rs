@@ -20,15 +20,6 @@ impl Kurtosis {
         }
     }
 
-    /// Add an observation sampled from the population.
-    #[inline]
-    pub fn add(&mut self, x: f64) {
-        let delta = x - self.mean();
-        self.increment();
-        let n = f64::approx_from(self.len()).unwrap();
-        self.add_inner(delta, delta/n);
-    }
-
     /// Increment the sample size.
     ///
     /// This does not update anything else.
@@ -114,9 +105,26 @@ impl Kurtosis {
         n * self.sum_4 / (self.avg.avg.sum_2 * self.avg.avg.sum_2) - 3.
     }
 
-    /// Merge another sample into this one.
+}
+
+impl Estimate for Kurtosis {
     #[inline]
-    pub fn merge(&mut self, other: &Kurtosis) {
+    fn add(&mut self, x: f64) {
+        let delta = x - self.mean();
+        self.increment();
+        let n = f64::approx_from(self.len()).unwrap();
+        self.add_inner(delta, delta/n);
+    }
+
+    #[inline]
+    fn estimate(&self) -> f64 {
+        self.kurtosis()
+    }
+}
+
+impl Merge for Kurtosis {
+    #[inline]
+    fn merge(&mut self, other: &Kurtosis) {
         let len_self = f64::approx_from(self.len()).unwrap();
         let len_other = f64::approx_from(other.len()).unwrap();
         let len_total = len_self + len_other;

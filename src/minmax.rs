@@ -1,6 +1,7 @@
 use core;
 
 use super::reduce::Reduce;
+use super::{Estimate, Merge};
 
 /// Calculate the minimum of `a` and `b`.
 fn min(a: f64, b: f64) -> f64 {
@@ -43,37 +44,10 @@ impl Min {
         Min::from_value(::core::f64::INFINITY)
     }
 
-    /// Add an observation sampled from the population.
-    #[inline]
-    pub fn add(&mut self, x: f64) {
-        self.r.add(x);
-    }
-
     /// Estimate the minium of the population.
     #[inline]
     pub fn min(&self) -> f64 {
         self.r.reduction()
-    }
-
-    /// Merge another sample into this one.
-    ///
-    ///
-    /// ## Example
-    ///
-    /// ```
-    /// use average::Min;
-    ///
-    /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
-    /// let (left, right) = sequence.split_at(3);
-    /// let min_total: Min = sequence.iter().map(|x| *x).collect();
-    /// let mut min_left: Min = left.iter().map(|x| *x).collect();
-    /// let min_right: Min = right.iter().map(|x| *x).collect();
-    /// min_left.merge(&min_right);
-    /// assert_eq!(min_total.min(), min_left.min());
-    /// ```
-    #[inline]
-    pub fn merge(&mut self, other: &Min) {
-        self.r.merge(&other.r);
     }
 }
 
@@ -84,6 +58,41 @@ impl core::default::Default for Min {
 }
 
 impl_from_iterator!(Min);
+
+impl Estimate for Min {
+    #[inline]
+    fn add(&mut self, x: f64) {
+        self.r.add(x);
+    }
+
+    #[inline]
+    fn estimate(&self) -> f64 {
+        self.min()
+    }
+}
+
+impl Merge for Min {
+    /// Merge another sample into this one.
+    ///
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use average::{Min, Merge};
+    ///
+    /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
+    /// let (left, right) = sequence.split_at(3);
+    /// let min_total: Min = sequence.iter().map(|x| *x).collect();
+    /// let mut min_left: Min = left.iter().map(|x| *x).collect();
+    /// let min_right: Min = right.iter().map(|x| *x).collect();
+    /// min_left.merge(&min_right);
+    /// assert_eq!(min_total.min(), min_left.min());
+    /// ```
+    #[inline]
+    fn merge(&mut self, other: &Min) {
+        self.r.merge(&other.r);
+    }
+}
 
 /// Estimate the maximum of a sequence of numbers ("population").
 ///
@@ -116,37 +125,10 @@ impl Max {
         Max::from_value(::core::f64::NEG_INFINITY)
     }
 
-    /// Add an observation sampled from the population.
-    #[inline]
-    pub fn add(&mut self, x: f64) {
-        self.r.add(x);
-    }
-
     /// Estimate the maxium of the population.
     #[inline]
     pub fn max(&self) -> f64 {
         self.r.reduction()
-    }
-
-    /// Merge another sample into this one.
-    ///
-    ///
-    /// ## Example
-    ///
-    /// ```
-    /// use average::Max;
-    ///
-    /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
-    /// let (left, right) = sequence.split_at(3);
-    /// let max_total: Max = sequence.iter().map(|x| *x).collect();
-    /// let mut max_left: Max = left.iter().map(|x| *x).collect();
-    /// let max_right: Max = right.iter().map(|x| *x).collect();
-    /// max_left.merge(&max_right);
-    /// assert_eq!(max_total.max(), max_left.max());
-    /// ```
-    #[inline]
-    pub fn merge(&mut self, other: &Max) {
-        self.r.merge(&other.r);
     }
 }
 
@@ -157,3 +139,38 @@ impl core::default::Default for Max {
 }
 
 impl_from_iterator!(Max);
+
+impl Estimate for Max {
+    #[inline]
+    fn add(&mut self, x: f64) {
+        self.r.add(x);
+    }
+
+    #[inline]
+    fn estimate(&self) -> f64 {
+        self.max()
+    }
+}
+
+impl Merge for Max {
+    /// Merge another sample into this one.
+    ///
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use average::{Max, Merge};
+    ///
+    /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
+    /// let (left, right) = sequence.split_at(3);
+    /// let max_total: Max = sequence.iter().map(|x| *x).collect();
+    /// let mut max_left: Max = left.iter().map(|x| *x).collect();
+    /// let max_right: Max = right.iter().map(|x| *x).collect();
+    /// max_left.merge(&max_right);
+    /// assert_eq!(max_total.max(), max_left.max());
+    /// ```
+    #[inline]
+    fn merge(&mut self, other: &Max) {
+        self.r.merge(&other.r);
+    }
+}

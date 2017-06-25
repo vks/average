@@ -4,7 +4,7 @@
 
 extern crate rand;
 
-use average::Kurtosis;
+use average::{Kurtosis, Estimate};
 
 #[test]
 fn normal_distribution() {

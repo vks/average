@@ -1,6 +1,6 @@
 use core;
 
-use super::MeanWithError;
+use super::{MeanWithError, Estimate, Merge};
 
 
 /// Estimate the weighted and unweighted arithmetic mean of a sequence of
@@ -32,7 +32,7 @@ impl WeightedMean {
         }
     }
 
-    /// Add a weighted observation sampled from the population.
+    /// Add an observation sampled from the population.
     #[inline]
     pub fn add(&mut self, sample: f64, weight: f64) {
         // The algorithm for the unweighted mean was suggested by Welford in 1962.
@@ -70,33 +70,6 @@ impl WeightedMean {
     pub fn mean(&self) -> f64 {
         self.weighted_avg
     }
-
-    /// Merge another sample into this one.
-    ///
-    ///
-    /// ## Example
-    ///
-    /// ```
-    /// use average::WeightedMean;
-    ///
-    /// let weighted_sequence: &[(f64, f64)] = &[
-    ///     (1., 0.1), (2., 0.2), (3., 0.3), (4., 0.4), (5., 0.5),
-    ///     (6., 0.6), (7., 0.7), (8., 0.8), (9., 0.9)];
-    /// let (left, right) = weighted_sequence.split_at(3);
-    /// let avg_total: WeightedMean = weighted_sequence.iter().map(|&x| x).collect();
-    /// let mut avg_left: WeightedMean = left.iter().map(|&x| x).collect();
-    /// let avg_right: WeightedMean = right.iter().map(|&x| x).collect();
-    /// avg_left.merge(&avg_right);
-    /// assert!((avg_total.mean() - avg_left.mean()).abs() < 1e-15);
-    /// ```
-    #[inline]
-    pub fn merge(&mut self, other: &WeightedMean) {
-        let total_weight_sum = self.weight_sum + other.weight_sum;
-        self.weighted_avg = (self.weight_sum * self.weighted_avg
-                             + other.weight_sum * other.weighted_avg)
-                            / total_weight_sum;
-        self.weight_sum = total_weight_sum;
-    }
 }
 
 impl core::default::Default for WeightedMean {
@@ -114,6 +87,35 @@ impl core::iter::FromIterator<(f64, f64)> for WeightedMean {
             a.add(i, w);
         }
         a
+    }
+}
+
+impl Merge for WeightedMean {
+    /// Merge another sample into this one.
+    ///
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use average::{WeightedMean, Merge};
+    ///
+    /// let weighted_sequence: &[(f64, f64)] = &[
+    ///     (1., 0.1), (2., 0.2), (3., 0.3), (4., 0.4), (5., 0.5),
+    ///     (6., 0.6), (7., 0.7), (8., 0.8), (9., 0.9)];
+    /// let (left, right) = weighted_sequence.split_at(3);
+    /// let avg_total: WeightedMean = weighted_sequence.iter().map(|&x| x).collect();
+    /// let mut avg_left: WeightedMean = left.iter().map(|&x| x).collect();
+    /// let avg_right: WeightedMean = right.iter().map(|&x| x).collect();
+    /// avg_left.merge(&avg_right);
+    /// assert!((avg_total.mean() - avg_left.mean()).abs() < 1e-15);
+    /// ```
+    #[inline]
+    fn merge(&mut self, other: &WeightedMean) {
+        let total_weight_sum = self.weight_sum + other.weight_sum;
+        self.weighted_avg = (self.weight_sum * self.weighted_avg
+                             + other.weight_sum * other.weighted_avg)
+                            / total_weight_sum;
+        self.weight_sum = total_weight_sum;
     }
 }
 
@@ -153,7 +155,7 @@ impl WeightedMeanWithError {
         }
     }
 
-    /// Add a weighted observation sampled from the population.
+    /// Add an observation sampled from the population.
     #[inline]
     pub fn add(&mut self, sample: f64, weight: f64) {
         // The algorithm for the unweighted mean was suggested by Welford in 1962.
@@ -225,6 +227,7 @@ impl WeightedMeanWithError {
     /// Calculate the *unweighted* population variance of the sample.
     ///
     /// This is a biased estimator of the variance of the population.
+    #[inline]
     pub fn population_variance(&self) -> f64 {
         self.unweighted_avg.population_variance()
     }
@@ -232,6 +235,7 @@ impl WeightedMeanWithError {
     /// Calculate the *unweighted* sample variance.
     ///
     /// This is an unbiased estimator of the variance of the population.
+    #[inline]
     pub fn sample_variance(&self) -> f64 {
         self.unweighted_avg.sample_variance()
     }
@@ -242,6 +246,7 @@ impl WeightedMeanWithError {
     ///
     /// This unbiased estimator assumes that the samples were independently
     /// drawn from the same population with constant variance.
+    #[inline]
     pub fn error(&self) -> f64 {
         // This uses the same estimate as WinCross, which should provide better
         // results than the ones used by SPSS or Mentor.
@@ -254,14 +259,16 @@ impl WeightedMeanWithError {
         let inv_effective_len = self.weight_sum_sq / (weight_sum * weight_sum);
         (self.sample_variance() * inv_effective_len).sqrt()
     }
+}
 
+impl Merge for WeightedMeanWithError {
     /// Merge another sample into this one.
     ///
     ///
     /// ## Example
     ///
     /// ```
-    /// use average::WeightedMeanWithError;
+    /// use average::{WeightedMeanWithError, Merge};
     ///
     /// let weighted_sequence: &[(f64, f64)] = &[
     ///     (1., 0.1), (2., 0.2), (3., 0.3), (4., 0.4), (5., 0.5),
@@ -274,7 +281,8 @@ impl WeightedMeanWithError {
     /// assert!((avg_total.weighted_mean() - avg_left.weighted_mean()).abs() < 1e-15);
     /// assert!((avg_total.error() - avg_left.error()).abs() < 1e-15);
     /// ```
-    pub fn merge(&mut self, other: &WeightedMeanWithError) {
+    #[inline]
+    fn merge(&mut self, other: &WeightedMeanWithError) {
         self.weight_sum_sq += other.weight_sum_sq;
         self.weighted_avg.merge(&other.weighted_avg);
         self.unweighted_avg.merge(&other.unweighted_avg);

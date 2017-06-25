@@ -2,6 +2,8 @@
 
 extern crate core;
 
+use average::Estimate;
+
 #[test]
 fn concatenate_simple() {
     use average::{Min, Max};

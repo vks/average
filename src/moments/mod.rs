@@ -1,3 +1,9 @@
+use core;
+
+use conv::ApproxFrom;
+
+use super::{Estimate, Merge};
+
 include!("mean.rs");
 include!("variance.rs");
 include!("skewness.rs");

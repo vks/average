@@ -40,7 +40,7 @@ macro_rules! assert_almost_eq {
 /// # extern crate core;
 /// # #[macro_use] extern crate average;
 /// # fn main() {
-/// use average::{Min, Max};
+/// use average::{Min, Max, Estimate};
 ///
 /// concatenate!(MinMax, [Min, min], [Max, max]);
 ///
@@ -54,7 +54,7 @@ macro_rules! assert_almost_eq {
 /// The generated code looks roughly like this:
 ///
 /// ```
-/// # use average::{Min, Max};
+/// # use average::{Min, Max, Estimate};
 /// #
 /// struct MinMax {
 ///     min: Min,
@@ -88,7 +88,7 @@ macro_rules! assert_almost_eq {
 /// # extern crate core;
 /// # #[macro_use] extern crate average;
 /// # fn main() {
-/// use average::{Variance, Quantile};
+/// use average::{Variance, Quantile, Estimate};
 ///
 /// concatenate!(Estimator,
 ///     [Variance, variance, mean, sample_variance],

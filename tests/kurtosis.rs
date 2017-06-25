@@ -6,7 +6,7 @@ extern crate core;
 
 use core::iter::Iterator;
 
-use average::Kurtosis;
+use average::{Kurtosis, Estimate, Merge};
 
 #[test]
 fn trivial() {

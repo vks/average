@@ -6,7 +6,7 @@ extern crate core;
 
 use core::iter::Iterator;
 
-use average::Min;
+use average::{Min, Estimate, Merge};
 
 #[test]
 fn trivial() {

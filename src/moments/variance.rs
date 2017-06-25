@@ -27,15 +27,6 @@ impl Variance {
         Variance { avg: Mean::new(), sum_2: 0. }
     }
 
-    /// Add an observation sampled from the population.
-    #[inline]
-    pub fn add(&mut self, sample: f64) {
-        self.increment();
-        let delta_n = (sample - self.avg.mean())
-            / f64::approx_from(self.len()).unwrap();
-        self.add_inner(delta_n);
-    }
-
     /// Increment the sample size.
     ///
     /// This does not update anything else.
@@ -113,13 +104,37 @@ impl Variance {
         (self.sample_variance() / f64::approx_from(n).unwrap()).sqrt()
     }
 
+}
+
+impl core::default::Default for Variance {
+    fn default() -> Variance {
+        Variance::new()
+    }
+}
+
+impl Estimate for Variance {
+    #[inline]
+    fn add(&mut self, sample: f64) {
+        self.increment();
+        let delta_n = (sample - self.avg.mean())
+            / f64::approx_from(self.len()).unwrap();
+        self.add_inner(delta_n);
+    }
+
+    #[inline]
+    fn estimate(&self) -> f64 {
+        self.population_variance()
+    }
+}
+
+impl Merge for Variance {
     /// Merge another sample into this one.
     ///
     ///
     /// ## Example
     ///
     /// ```
-    /// use average::Variance;
+    /// use average::{Variance, Merge};
     ///
     /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
     /// let (left, right) = sequence.split_at(3);
@@ -131,7 +146,7 @@ impl Variance {
     /// assert_eq!(avg_total.sample_variance(), avg_left.sample_variance());
     /// ```
     #[inline]
-    pub fn merge(&mut self, other: &Variance) {
+    fn merge(&mut self, other: &Variance) {
         // This algorithm was proposed by Chan et al. in 1979.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
@@ -141,12 +156,6 @@ impl Variance {
         let delta = other.mean() - self.mean();
         self.avg.merge(&other.avg);
         self.sum_2 += other.sum_2 + delta*delta * len_self * len_other / len_total;
-    }
-}
-
-impl core::default::Default for Variance {
-    fn default() -> Variance {
-        Variance::new()
     }
 }
 

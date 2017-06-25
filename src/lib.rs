@@ -19,7 +19,7 @@
 //! ### Example
 //!
 //! ```
-//! use average::MeanWithError;
+//! use average::{MeanWithError, Estimate};
 //!
 //! let mut a: MeanWithError = (1..6).map(Into::into).collect();
 //! a.add(42.);

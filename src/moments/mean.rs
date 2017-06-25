@@ -1,8 +1,3 @@
-use core;
-
-use conv::ApproxFrom;
-
-
 /// Estimate the arithmetic mean of a sequence of numbers ("population").
 ///
 ///
@@ -27,15 +22,6 @@ impl Mean {
     #[inline]
     pub fn new() -> Mean {
         Mean { avg: 0., n: 0 }
-    }
-
-    /// Add an observation sampled from the population.
-    #[inline]
-    pub fn add(&mut self, sample: f64) {
-        self.increment();
-        let delta_n = (sample - self.avg)
-            / f64::approx_from(self.n).unwrap();
-        self.add_inner(delta_n);
     }
 
     /// Increment the sample size.
@@ -80,13 +66,36 @@ impl Mean {
         self.n
     }
 
+}
+
+impl core::default::Default for Mean {
+    fn default() -> Mean {
+        Mean::new()
+    }
+}
+
+impl Estimate for Mean {
+    #[inline]
+    fn add(&mut self, sample: f64) {
+        self.increment();
+        let delta_n = (sample - self.avg)
+            / f64::approx_from(self.n).unwrap();
+        self.add_inner(delta_n);
+    }
+
+    fn estimate(&self) -> f64 {
+        self.mean()
+    }
+}
+
+impl Merge for Mean {
     /// Merge another sample into this one.
     ///
     ///
     /// ## Example
     ///
     /// ```
-    /// use average::Mean;
+    /// use average::{Mean, Merge};
     ///
     /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
     /// let (left, right) = sequence.split_at(3);
@@ -97,7 +106,7 @@ impl Mean {
     /// assert_eq!(avg_total.mean(), avg_left.mean());
     /// ```
     #[inline]
-    pub fn merge(&mut self, other: &Mean) {
+    fn merge(&mut self, other: &Mean) {
         // This algorithm was proposed by Chan et al. in 1979.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
@@ -111,12 +120,6 @@ impl Mean {
         //     self.avg += delta * len_other / len_total;
         //
         // instead but this results in cancelation if the number of samples are similar.
-    }
-}
-
-impl core::default::Default for Mean {
-    fn default() -> Mean {
-        Mean::new()
     }
 }
 

@@ -1,3 +1,5 @@
+use super::{Estimate, Merge};
+
 /// Estimate the reduction of a sequence of numbers ("population").
 ///
 /// The reduction is a given function `Fn(f64, f64) -> f64`.
@@ -10,19 +12,11 @@ pub struct Reduce<F> {
     reduce: F,
 }
 
-impl<F> Reduce<F>
-    where F: Fn(f64, f64) -> f64
-{
+impl<F> Reduce<F> {
     /// Create a new reduction estimator given an initial value and a reduction.
     #[inline]
     pub fn from_value_and_fn(x: f64, f: F) -> Reduce<F> {
         Reduce { x: x, reduce: f }
-    }
-
-    /// Add an element sampled from the population.
-    #[inline]
-    pub fn add(&mut self, x: f64) {
-        self.x = (self.reduce)(self.x, x);
     }
 
     /// Estimate the reduction of the population.
@@ -31,9 +25,28 @@ impl<F> Reduce<F>
         self.x
     }
 
+}
+
+impl<F> Estimate for Reduce<F>
+    where F: Fn(f64, f64) -> f64,
+{
+    #[inline]
+    fn add(&mut self, x: f64) {
+        self.x = (self.reduce)(self.x, x);
+    }
+
+    #[inline]
+    fn estimate(&self) -> f64 {
+        self.reduction()
+    }
+}
+
+impl<F> Merge for Reduce<F>
+    where F: Fn(f64, f64) -> f64,
+{
     /// Merge another sample into this one.
     #[inline]
-    pub fn merge(&mut self, other: &Reduce<F>) {
+    fn merge(&mut self, other: &Reduce<F>) {
         self.add(other.x);
     }
 }

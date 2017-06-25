@@ -6,7 +6,7 @@ extern crate core;
 
 use core::iter::Iterator;
 
-use average::Skewness;
+use average::{Skewness, Estimate, Merge};
 
 #[test]
 fn trivial() {

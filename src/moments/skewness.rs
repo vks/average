@@ -20,15 +20,6 @@ impl Skewness {
         }
     }
 
-    /// Add an observation sampled from the population.
-    #[inline]
-    pub fn add(&mut self, x: f64) {
-        let delta = x - self.mean();
-        self.increment();
-        let n = f64::approx_from(self.len()).unwrap();
-        self.add_inner(delta, delta/n);
-    }
-
     /// Increment the sample size.
     ///
     /// This does not update anything else.
@@ -107,10 +98,32 @@ impl Skewness {
         debug_assert_ne!(sum_2, 0.);
         n.sqrt() * self.sum_3 / (sum_2*sum_2*sum_2).sqrt()
     }
+}
 
-    /// Merge another sample into this one.
+impl Default for Skewness {
+    fn default() -> Skewness {
+        Skewness::new()
+    }
+}
+
+impl Estimate for Skewness {
     #[inline]
-    pub fn merge(&mut self, other: &Skewness) {
+    fn add(&mut self, x: f64) {
+        let delta = x - self.mean();
+        self.increment();
+        let n = f64::approx_from(self.len()).unwrap();
+        self.add_inner(delta, delta/n);
+    }
+
+    #[inline]
+    fn estimate(&self) -> f64 {
+        self.skewness()
+    }
+}
+
+impl Merge for Skewness {
+    #[inline]
+    fn merge(&mut self, other: &Skewness) {
         let len_self = f64::approx_from(self.len()).unwrap();
         let len_other = f64::approx_from(other.len()).unwrap();
         let len_total = len_self + len_other;

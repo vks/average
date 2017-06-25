@@ -4,6 +4,8 @@ use core::cmp::min;
 use conv::{ApproxFrom, ConvAsUtil, ValueFrom};
 use quickersort::sort_floats;
 
+use super::Estimate;
+
 /// Estimate the p-quantile of a sequence of numbers ("population").
 #[derive(Debug, Clone)]
 pub struct Quantile {
@@ -36,62 +38,6 @@ impl Quantile {
     #[inline]
     pub fn p(&self) -> f64 {
         self.dm[2]
-    }
-
-    /// Add an observation sampled from the population.
-    #[inline]
-    pub fn add(&mut self, x: f64) {
-        // n[4] is the sample size.
-        if self.n[4] < 5 {
-            self.q[usize::value_from(self.n[4]).unwrap()] = x;  // n[4] < 5
-            self.n[4] += 1;
-            if self.n[4] == 5 {
-                sort_floats(&mut self.q);
-            }
-            return;
-        }
-
-        // Find cell k.
-        let mut k: usize;
-        if x < self.q[0] {
-            self.q[0] = x;
-            k = 0;
-        } else {
-            k = 4;
-            for i in 1..5 {
-                if x < self.q[i] {
-                    k = i;
-                    break;
-                }
-            }
-            if self.q[4] < x {
-                self.q[4] = x;
-            }
-        };
-
-        // Increment all positions greater than k.
-        for i in k..5 {
-            self.n[i] += 1;
-        }
-        for i in 0..5 {
-            self.m[i] += self.dm[i];
-        }
-
-        // Adjust height of markers.
-        for i in 1..4 {
-            let d: f64 = self.m[i] - f64::approx_from(self.n[i]).unwrap();
-            if d >= 1. && self.n[i + 1] - self.n[i] > 1 ||
-               d <= -1. && self.n[i - 1] - self.n[i] < -1 {
-                let d = d.signum();
-                let q_new = self.parabolic(i, d);
-                if self.q[i - 1] < q_new && q_new < self.q[i + 1] {
-                    self.q[i] = q_new;
-                } else {
-                    self.q[i] = self.linear(i, d);
-                }
-                self.n[i] += d.approx().unwrap();  // d == +-1
-            }
-        }
     }
 
     /// Parabolic prediction for marker height.
@@ -168,6 +114,67 @@ impl core::default::Default for Quantile {
     /// Create a new median estimator.
     fn default() -> Quantile {
         Quantile::new(0.5)
+    }
+}
+
+impl Estimate for Quantile {
+    #[inline]
+    fn add(&mut self, x: f64) {
+        // n[4] is the sample size.
+        if self.n[4] < 5 {
+            self.q[usize::value_from(self.n[4]).unwrap()] = x;  // n[4] < 5
+            self.n[4] += 1;
+            if self.n[4] == 5 {
+                sort_floats(&mut self.q);
+            }
+            return;
+        }
+
+        // Find cell k.
+        let mut k: usize;
+        if x < self.q[0] {
+            self.q[0] = x;
+            k = 0;
+        } else {
+            k = 4;
+            for i in 1..5 {
+                if x < self.q[i] {
+                    k = i;
+                    break;
+                }
+            }
+            if self.q[4] < x {
+                self.q[4] = x;
+            }
+        };
+
+        // Increment all positions greater than k.
+        for i in k..5 {
+            self.n[i] += 1;
+        }
+        for i in 0..5 {
+            self.m[i] += self.dm[i];
+        }
+
+        // Adjust height of markers.
+        for i in 1..4 {
+            let d: f64 = self.m[i] - f64::approx_from(self.n[i]).unwrap();
+            if d >= 1. && self.n[i + 1] - self.n[i] > 1 ||
+               d <= -1. && self.n[i - 1] - self.n[i] < -1 {
+                let d = d.signum();
+                let q_new = self.parabolic(i, d);
+                if self.q[i - 1] < q_new && q_new < self.q[i + 1] {
+                    self.q[i] = q_new;
+                } else {
+                    self.q[i] = self.linear(i, d);
+                }
+                self.n[i] += d.approx().unwrap();  // d == +-1
+            }
+        }
+    }
+
+    fn estimate(&self) -> f64 {
+        self.quantile()
     }
 }
 
