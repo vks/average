@@ -7,6 +7,8 @@ use quickersort::sort_floats;
 use super::Estimate;
 
 /// Estimate the p-quantile of a sequence of numbers ("population").
+// This uses the P² algorithm introduced here:
+// http://www.cs.wustl.edu/~jain/papers/ftp/psqr.pdf
 #[derive(Debug, Clone)]
 pub struct Quantile {
     /// Marker heights.
