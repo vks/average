@@ -168,7 +168,8 @@ impl Estimate for Quantile {
                 } else {
                     self.q[i] = self.linear(i, d);
                 }
-                self.n[i] += d.approx().unwrap();  // d == +-1
+                let delta: i64 = d.approx().unwrap();  // d == +-1
+                self.n[i] += delta;
             }
         }
     }
