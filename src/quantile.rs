@@ -1,7 +1,7 @@
 use core;
 use core::cmp::min;
 
-use conv::{ApproxFrom, ConvAsUtil, ValueFrom};
+use conv::{ApproxFrom, ConvAsUtil, ConvUtil, ValueFrom};
 use quickersort::sort_floats;
 
 use super::Estimate;
@@ -83,7 +83,7 @@ impl Quantile {
         ];
         let len = usize::value_from(self.len()).unwrap();  // < 5
         sort_floats(&mut heights[..len]);
-        let desired_index = f64::approx_from(len).unwrap() * self.p() - 1.;
+        let desired_index = ConvUtil::approx_as::<f64>(len).unwrap() * self.p() - 1.;
         let mut index = desired_index.ceil();
         if desired_index == index && index >= 0. {
             let index: usize = index.approx().unwrap();  // < 5
@@ -170,7 +170,8 @@ impl Estimate for Quantile {
                 } else {
                     self.q[i] = self.linear(i, d);
                 }
-                self.n[i] += d.approx().unwrap();  // d == +-1
+                let delta: i64 = d.approx().unwrap();  // d == +-1
+                self.n[i] += delta;
             }
         }
     }
