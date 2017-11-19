@@ -60,9 +60,9 @@ impl Quantile {
     #[inline]
     fn linear(&self, i: usize, d: f64) -> f64 {
         debug_assert_eq!(d.abs(), 1.);
-        let s: usize = d.approx().unwrap();
-        self.q[i] + d * (self.q[i + s] - self.q[i])
-            / f64::approx_from(self.n[i + s] - self.n[i]).unwrap()
+        let sum = if d < 0. { i - 1 } else { i + 1 };
+        self.q[i] + d * (self.q[sum] - self.q[i])
+            / f64::approx_from(self.n[sum] - self.n[i]).unwrap()
     }
 
     /// Estimate the p-quantile of the population.
