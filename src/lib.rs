@@ -14,6 +14,14 @@
 //! Everything is calculated iteratively in a single pass using constant memory,
 //! so the sequence of numbers can be an iterator. The used algorithms try to
 //! avoid numerical instabilities.
+//! 
+//! If you want [Serde](https://github.com/serde-rs/serde) support,
+//! include `"serde"` in your list of features.
+//!
+//! > Note that deserializing does not currently check for all invalid inputs.
+//! For example if you deserialize a corrupted [`Variance`] it may return
+//! a negative value for variance, even though that is mathematically impossible.
+//! In a future miner release some of these checks may be added.
 //!
 //!
 //! ### Example
