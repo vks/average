@@ -13,7 +13,7 @@ keywords = ["stats", "mean", "skewness", "kurtosis", "quantile"]
 [dependencies]
 conv = { version = "0.3", default-features = false }
 quickersort = "3"
-serde = { version = "1", default-features = false, optional = true, features = ["derive"]}
+serde = { version = "1", optional = true, features = ["derive"]}
 
 [dev-dependencies]
 bencher = "0.1"

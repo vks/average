@@ -5,10 +5,16 @@ rust:
   - nightly
 
 env:
-  - ARCH=x86_64
-  - ARCH=i686
+  - ARCH=x86_64 FEATURES=''
+  - ARCH=i686 FEATURES=''
+  - ARCH=x86_64 FEATURES='serde'
+  - ARCH=i686 FEATURES='serde'
 
 addons:
   apt:
     packages:
       - gcc-multilib
+
+script:
+  - cargo build --verbose --features "$FEATURES"
+  - cargo test --verbose --features "$FEATURES"
