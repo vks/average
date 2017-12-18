@@ -1,6 +1,5 @@
 use core;
 
-use super::reduce::Reduce;
 use super::{Estimate, Merge};
 
 /// Calculate the minimum of `a` and `b`.
@@ -27,7 +26,7 @@ fn max(a: f64, b: f64) -> f64 {
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Min {
-    r: Reduce<fn(f64, f64) -> f64>,
+    x: f64,
 }
 
 impl Min {
@@ -35,7 +34,7 @@ impl Min {
     #[inline]
     pub fn from_value(x: f64) -> Min {
         Min {
-            r: Reduce::from_value_and_fn(x, min),
+            x: x,
         }
     }
 
@@ -48,7 +47,7 @@ impl Min {
     /// Estimate the minium of the population.
     #[inline]
     pub fn min(&self) -> f64 {
-        self.r.reduction()
+        self.x
     }
 }
 
@@ -63,7 +62,7 @@ impl_from_iterator!(Min);
 impl Estimate for Min {
     #[inline]
     fn add(&mut self, x: f64) {
-        self.r.add(x);
+        self.x = min(self.x, x);
     }
 
     #[inline]
@@ -91,7 +90,7 @@ impl Merge for Min {
     /// ```
     #[inline]
     fn merge(&mut self, other: &Min) {
-        self.r.merge(&other.r);
+        self.add(other.x);
     }
 }
 
@@ -109,7 +108,7 @@ impl Merge for Min {
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Max {
-    r: Reduce<fn(f64, f64) -> f64>,
+    x: f64,
 }
 
 impl Max {
@@ -117,7 +116,7 @@ impl Max {
     #[inline]
     pub fn from_value(x: f64) -> Max {
         Max {
-            r: Reduce::from_value_and_fn(x, max),
+            x: x,
         }
     }
 
@@ -130,7 +129,7 @@ impl Max {
     /// Estimate the maxium of the population.
     #[inline]
     pub fn max(&self) -> f64 {
-        self.r.reduction()
+        self.x
     }
 }
 
@@ -145,7 +144,7 @@ impl_from_iterator!(Max);
 impl Estimate for Max {
     #[inline]
     fn add(&mut self, x: f64) {
-        self.r.add(x);
+        self.x = max(self.x, x);
     }
 
     #[inline]
@@ -173,6 +172,6 @@ impl Merge for Max {
     /// ```
     #[inline]
     fn merge(&mut self, other: &Max) {
-        self.r.merge(&other.r);
+        self.add(other.x);
     }
 }

@@ -77,7 +77,6 @@ extern crate serde;
 mod moments;
 mod weighted_mean;
 mod minmax;
-mod reduce;
 mod quantile;
 mod traits;
 
