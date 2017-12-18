@@ -7,6 +7,7 @@ use super::{Estimate, Merge};
 /// Everything is calculated iteratively using constant memory, so the sequence
 /// of numbers can be an iterator.
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Reduce<F> {
     x: f64,
     reduce: F,

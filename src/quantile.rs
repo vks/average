@@ -10,6 +10,7 @@ use super::Estimate;
 // This uses the P² algorithm introduced here:
 // http://www.cs.wustl.edu/~jain/papers/ftp/psqr.pdf
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Quantile {
     /// Marker heights.
     q: [f64; 5],

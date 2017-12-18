@@ -10,6 +10,7 @@
 /// println!("The mean is {}.", a.mean());
 /// ```
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Mean {
     /// Mean value.
     avg: f64,

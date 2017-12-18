@@ -13,6 +13,7 @@
 /// println!("The mean is {} ± {}.", a.mean(), a.error());
 /// ```
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Variance {
     /// Estimator of average.
     avg: Mean,

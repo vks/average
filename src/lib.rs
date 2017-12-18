@@ -69,6 +69,9 @@
 
 extern crate conv;
 extern crate quickersort;
+#[cfg(feature = "serde")]
+#[macro_use]
+extern crate serde;
 
 #[macro_use] mod macros;
 mod moments;
