@@ -19,6 +19,7 @@ serde = { version = "1", optional = true, features = ["derive"]}
 bencher = "0.1"
 rand = "0.3"
 streaming-stats = "0.1"
+serde_json = "1"
 
 [[bench]]
 name = "mean"

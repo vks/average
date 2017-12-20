@@ -1,4 +1,6 @@
 extern crate average;
+#[cfg(feature = "serde")]
+extern crate serde_json;
 
 use average::{Estimate, Quantile};
 
@@ -19,6 +21,21 @@ fn few_observations() {
     q.add(4.);
     assert_eq!(q.len(), 4);
     assert_eq!(q.quantile(), 2.5);
+}
+
+#[cfg(feature = "serde")]
+#[test]
+fn few_observations_serde() {
+    let mut q = Quantile::new(0.5);
+    q.add(1.);
+    q.add(2.);
+    q.add(3.);
+    q.add(4.);
+    let b = serde_json::to_string(&q).unwrap();
+    assert_eq!(&b, "{\"q\":[1.0,2.0,3.0,4.0,0.0],\"n\":[1,2,3,4,4],\"m\":[1.0,2.0,3.0,4.0,5.0],\"dm\":[0.0,0.25,0.5,0.75,1.0]}");
+    let c: Quantile = serde_json::from_str(&b).unwrap();
+    assert_eq!(c.len(), 4);
+    assert_eq!(c.quantile(), 2.5);
 }
 
 #[test]

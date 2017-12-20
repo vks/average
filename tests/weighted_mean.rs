@@ -3,6 +3,8 @@
 #[macro_use] extern crate average;
 
 extern crate core;
+#[cfg(feature = "serde")]
+extern crate serde_json;
 
 use core::iter::Iterator;
 
@@ -41,6 +43,21 @@ fn simple() {
     assert_eq!(a.sum_weights(), 5.0);
     assert_eq!(a.sample_variance(), 2.5);
     assert_almost_eq!(a.error(), f64::sqrt(0.5), 1e-16);
+}
+
+#[cfg(feature = "serde")]
+#[test]
+fn simple_serde() {
+    let a: WeightedMeanWithError = (1..6).map(|x| (f64::from(x), 1.0)).collect();
+    let b = serde_json::to_string(&a).unwrap();
+    assert_eq!(&b, "{\"weight_sum_sq\":5.0,\"weighted_avg\":{\"weight_sum\":5.0,\"weighted_avg\":3.0},\"unweighted_avg\":{\"avg\":{\"avg\":3.0,\"n\":5},\"sum_2\":10.0}}");
+    let c: WeightedMeanWithError = serde_json::from_str(&b).unwrap();
+    assert_eq!(c.len(), 5);
+    assert_eq!(c.weighted_mean(), 3.0);
+    assert_eq!(c.unweighted_mean(), 3.0);
+    assert_eq!(c.sum_weights(), 5.0);
+    assert_eq!(c.sample_variance(), 2.5);
+    assert_almost_eq!(c.error(), f64::sqrt(0.5), 1e-16);
 }
 
 #[test]

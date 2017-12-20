@@ -3,6 +3,8 @@
 extern crate average;
 
 extern crate core;
+#[cfg(feature = "serde")]
+extern crate serde_json;
 
 use core::iter::Iterator;
 
@@ -17,6 +19,20 @@ fn trivial() {
     m.add(-1.);
     m.add(1.);
     assert_eq!(m.min(), -1.)
+}
+
+#[cfg(feature = "serde")]
+#[test]
+fn trivial_serde() {
+    let mut m = Min::new();
+    m.add(1.);
+    m.add(2.);
+    m.add(-1.);
+    m.add(1.);
+    let b = serde_json::to_string(&m).unwrap();
+    assert_eq!(&b, "{\"x\":-1.0}");
+    let c: Min = serde_json::from_str(&b).unwrap();
+    assert_eq!(c.min(), -1.)
 }
 
 #[test]
