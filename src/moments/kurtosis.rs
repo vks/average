@@ -108,6 +108,12 @@ impl Kurtosis {
 
 }
 
+impl core::default::Default for Kurtosis {
+    fn default() -> Kurtosis {
+        Kurtosis::new()
+    }
+}
+
 impl Estimate for Kurtosis {
     #[inline]
     fn add(&mut self, x: f64) {
