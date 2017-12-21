@@ -45,7 +45,7 @@ fn simple() {
 #[cfg(feature = "serde")]
 #[test]
 fn simple_serde() {
-    let mut a: Skewness = (1..6).map(f64::from).collect();
+    let a: Skewness = (1..6).map(f64::from).collect();
     let b = serde_json::to_string(&a).unwrap();
     assert_eq!(&b, "{\"avg\":{\"avg\":{\"avg\":3.0,\"n\":5},\"sum_2\":10.0},\"sum_3\":0.0}");
     let mut c: Skewness = serde_json::from_str(&b).unwrap();
