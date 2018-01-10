@@ -1,3 +1,5 @@
+#![cfg_attr(feature = "cargo-clippy", allow(float_cmp))]
+
 #[macro_use] extern crate average;
 
 extern crate core;
@@ -13,7 +15,7 @@ fn concatenate_simple() {
     {
         let mut s = MinMax::new();
         for i in 1..6 {
-            s.add(i as f64);
+            s.add(f64::from(i));
         }
 
         assert_eq!(s.min(), 1.0);
@@ -23,7 +25,7 @@ fn concatenate_simple() {
     {
         let mut s = MinMax::default();
         for i in 1..6 {
-            s.add(i as f64);
+            s.add(f64::from(i));
         }
 
         assert_eq!(s.min(), 1.0);
