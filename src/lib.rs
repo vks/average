@@ -71,7 +71,7 @@
 //! [`Max`]: ./struct.Max.html
 //! [`concatenate`]: ./macro.concatenate.html
 
-#![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
+#![cfg_attr(feature = "cargo-clippy", allow(float_cmp))]
 
 #![no_std]
 
