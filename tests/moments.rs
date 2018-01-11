@@ -51,24 +51,30 @@ fn simple() {
     assert_almost_eq!(a.standardized_moment(4), -1.365 + 3.0, 1e-14);
 }
 
-/*
 #[cfg(feature = "serde")]
 #[test]
 fn simple_serde() {
-    let a: Kurtosis = (1..6).map(f64::from).collect();
+    let a: Moments = (1..6).map(f64::from).collect();
     let b = serde_json::to_string(&a).unwrap();
-    assert_eq!(&b, "{\"avg\":{\"avg\":{\"avg\":{\"avg\":3.0,\"n\":5},\"sum_2\":10.0},\"sum_3\":0.0},\"sum_4\":34.0}");
-    let mut c: Kurtosis = serde_json::from_str(&b).unwrap();
-    assert_eq!(c.mean(), 3.0);
+    assert_eq!(&b, "{\"n\":5,\"avg\":3.0,\"m\":[10.0,1.7763568394002506e-15,34.00000000000001]}");
+    let mut c: Moments = serde_json::from_str(&b).unwrap();
     assert_eq!(c.len(), 5);
-    assert_eq!(c.sample_variance(), 2.5);
-    assert_almost_eq!(c.error_mean(), f64::sqrt(0.5), 1e-16);
-    assert_eq!(c.skewness(), 0.0);
+    assert_eq!(c.mean(), 3.0);
+    assert_eq!(c.central_moment(0), 1.0);
+    assert_eq!(c.central_moment(1), 0.0);
+    // variance
+    assert_eq!(c.central_moment(2), 2.0);
+    assert_eq!(c.standardized_moment(0), 5.0);
+    assert_eq!(c.standardized_moment(1), 0.0);
+    assert_eq!(c.standardized_moment(2), 1.0);
+    assert_almost_eq!(c.sample_skewness(), 0.0, 1e-15);
+    assert_almost_eq!(c.standardized_moment(3), 0.0, 1e-15);
     c.add(1.0);
-    assert_almost_eq!(c.skewness(), 0.2795084971874741, 1e-15);
-    assert_almost_eq!(c.kurtosis(), -1.365, 1e-15);
+    // skewness
+    assert_almost_eq!(c.standardized_moment(3), 0.2795084971874741, 1e-15);
+    // kurtosis
+    assert_almost_eq!(c.standardized_moment(4), -1.365 + 3.0, 1e-14);
 }
-*/
 
 #[test]
 fn merge() {
