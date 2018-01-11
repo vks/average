@@ -102,7 +102,7 @@ impl Moments {
     }
 
     #[inline]
-    pub fn sample_kurtosis(&self) -> f64 {
+    pub fn sample_excess_kurtosis(&self) -> f64 {
         if self.n < 4 {
             return 0.;
         }
