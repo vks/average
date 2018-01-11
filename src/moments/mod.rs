@@ -150,30 +150,25 @@ impl Moments {
 impl Merge for Moments {
     #[inline]
     fn merge(&mut self, other: &Moments) {
-        let mut result = Moments::new();
-        result.n = self.n + other.n;
-        if result.n == 0 {
-            return;
-        }
-        for i in 0..result.m.len() {
-            result.m[i] = self.m[i] + other.m[i];
-        }
-        let n = f64::approx_from(result.n).unwrap();
         let n_a = f64::approx_from(self.n).unwrap();
         let n_b = f64::approx_from(other.n).unwrap();
+        let delta = other.avg - self.avg;
+
+        self.n += other.n;
+        let n = f64::approx_from(self.n).unwrap();
         let n_a_over_n = n_a / n;
         let n_b_over_n = n_b / n;
-        let delta = other.avg - self.avg;
-        result.avg = self.avg + n_b_over_n * delta;
+        self.avg += n_b_over_n * delta;
 
         let factor_a = -n_b_over_n * delta;
         let factor_b = n_a_over_n * delta;
         let mut term_a = n_a * factor_a;
         let mut term_b = n_b * factor_b;
+        let prev_m = self.m;
         for p in 2..=MAX_P {
             term_a *= factor_a;
             term_b *= factor_b;
-            result.m[p - 2] += term_a + term_b;
+            self.m[p - 2] += other.m[p - 2] + term_a + term_b;
 
             let mut coeff_a = 1.;
             let mut coeff_b = 1.;
@@ -184,13 +179,11 @@ impl Merge for Moments {
                 coeff_a *= -n_b_over_n;
                 coeff_b *= n_a_over_n;
                 coeff_delta *= delta;
-                result.m[p - 2] += f64::approx_from(binom.next().unwrap()).unwrap() *
+                self.m[p - 2] += f64::approx_from(binom.next().unwrap()).unwrap() *
                     coeff_delta *
-                    (self.m[p - 2 - k] * coeff_a + other.m[p - 2 - k] * coeff_b);
+                    (prev_m[p - 2 - k] * coeff_a + other.m[p - 2 - k] * coeff_b);
             }
         }
-
-        *self = result;
     }
 }
 
