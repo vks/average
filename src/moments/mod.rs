@@ -2,7 +2,7 @@ use core;
 
 use conv::ApproxFrom;
 use num_traits::pow;
-use num_integer::binomial;
+use num_integer::{IterBinomial, binomial};
 
 use super::{Estimate, Merge};
 
@@ -136,10 +136,12 @@ impl Moments {
             self.m[p - 2] += (term1 + term2) * coeff_delta;
 
             let mut coeff = 1.;
+            let mut binom = IterBinomial::new(p as u64);
+            binom.next().unwrap();  // Skip k = 0.
             for k in 1..=(p - 2) {
                 coeff *= factor_coeff;
                 println!("writing m[{}], accessing m[{}]", p - 2, p - 2 - k);
-                self.m[p - 2] += f64::approx_from(binomial(p, k)).unwrap() *
+                self.m[p - 2] += f64::approx_from(binom.next().unwrap()).unwrap() *
                     prev_m[p - 2 - k] * coeff;
             }
         }
