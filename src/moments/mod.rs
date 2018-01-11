@@ -11,14 +11,15 @@ include!("variance.rs");
 include!("skewness.rs");
 include!("kurtosis.rs");
 
-// It is possible to calculate higher moments the same way,
-// see https://doi.org/10.1007/s00180-015-0637-z.
 
 /// Alias for `Variance`.
 pub type MeanWithError = Variance;
 
 const MAX_P: usize = 4;
 
+#[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// https://doi.org/10.1007/s00180-015-0637-z.
 pub struct Moments {
     /// Number of samples.
     ///
@@ -134,47 +135,14 @@ impl Moments {
             coeff_delta *= delta;
             result.m[p - 2] = self.m[p - 2] + (term1 + term2) * coeff_delta;
 
-            //println!("before: p={} m={:?}", p, self.m);
             let mut coeff = 1.;
             for k in 1..=(p - 2) {
                 coeff *= factor_coeff;
                 result.m[p - 2] += f64::approx_from(binomial(p, k)).unwrap() *
                     self.m[p - 2 - k] * coeff;
             }
-            //println!("after: p={} m={:?}", p, self.m);
         }
         *self = result;
-        /*
-        self.n += 1;
-        let delta = x - self.avg;
-        let n = f64::approx_from(self.n).unwrap();
-        self.avg += delta / n;
-
-        let mut coeff_delta = delta;
-        let over_n = 1. / n;
-        let mut term1 = (n - 1.) * (-over_n);
-        let factor1 = -over_n;
-        let mut term2 = (n - 1.) * over_n;
-        let factor2 = (n - 1.) * over_n;
-
-        let factor_coeff = -delta * over_n;
-
-        for p in 2..=MAX_P {
-            term1 *= factor1;
-            term2 *= factor2;
-            coeff_delta *= delta;
-            self.m[p - 2] += (term1 + term2) * coeff_delta;
-
-            println!("before: p={} m={:?}", p, self.m);
-            let mut coeff = 1.;
-            for k in 1..=(p - 2) {
-                coeff *= factor_coeff;
-                self.m[p - 2] += f64::approx_from(binomial(p, k)).unwrap() *
-                    self.m[p - 2 - k] * coeff;
-            }
-            println!("after: p={} m={:?}", p, self.m);
-        }
-        */
     }
 
     #[inline]
@@ -219,6 +187,12 @@ impl Moments {
         }
 
         *self = result;
+    }
+}
+
+impl core::default::Default for Moments {
+    fn default() -> Moments {
+        Moments::new()
     }
 }
 
