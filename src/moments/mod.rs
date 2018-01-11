@@ -2,7 +2,7 @@ use core;
 
 use conv::ApproxFrom;
 use num_traits::pow;
-use num_integer::{IterBinomial, binomial};
+use num_integer::IterBinomial;
 
 use super::{Estimate, Merge};
 
@@ -178,14 +178,15 @@ impl Merge for Moments {
             let mut coeff_a = 1.;
             let mut coeff_b = 1.;
             let mut coeff_delta = 1.;
+            let mut binom = IterBinomial::new(p);
+            binom.next().unwrap();
             for k in 1..=(p - 2) {
                 coeff_a *= -n_b_over_n;
                 coeff_b *= n_a_over_n;
                 coeff_delta *= delta;
-                result.m[p - 2] += f64::approx_from(binomial(p, k)).unwrap() *
+                result.m[p - 2] += f64::approx_from(binom.next().unwrap()).unwrap() *
                     coeff_delta *
                     (self.m[p - 2 - k] * coeff_a + other.m[p - 2 - k] * coeff_b);
-                // TODO: use IterBinomial
             }
         }
 
