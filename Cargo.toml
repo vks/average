@@ -18,6 +18,10 @@ name = "mean"
 harness = false
 name = "min"
 
+[[bench]]
+harness = false
+name = "kurtosis"
+
 [dependencies]
 num-traits = "0.1"
 num-integer = "0.1"

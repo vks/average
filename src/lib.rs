@@ -74,8 +74,7 @@
 
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp))]
 
-//#![no_std]
-extern crate core;
+#![no_std]
 
 extern crate conv;
 extern crate quickersort;
