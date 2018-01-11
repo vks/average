@@ -114,11 +114,10 @@ impl Moments {
 
     #[inline]
     pub fn add(&mut self, x: f64) {
-        let mut result = Moments::new();
-        result.n = self.n + 1;
+        self.n += 1;
         let delta = x - self.avg;
-        let n = f64::approx_from(result.n).unwrap();
-        result.avg = self.avg + delta / n;
+        let n = f64::approx_from(self.n).unwrap();
+        self.avg += delta / n;
 
         let mut coeff_delta = delta;
         let over_n = 1. / n;
@@ -129,20 +128,22 @@ impl Moments {
 
         let factor_coeff = -delta * over_n;
 
+        let prev_m = self.m;
         for p in 2..=MAX_P {
             term1 *= factor1;
             term2 *= factor2;
             coeff_delta *= delta;
-            result.m[p - 2] = self.m[p - 2] + (term1 + term2) * coeff_delta;
+            self.m[p - 2] += (term1 + term2) * coeff_delta;
 
             let mut coeff = 1.;
             for k in 1..=(p - 2) {
                 coeff *= factor_coeff;
-                result.m[p - 2] += f64::approx_from(binomial(p, k)).unwrap() *
-                    self.m[p - 2 - k] * coeff;
+                println!("writing m[{}], accessing m[{}]", p - 2, p - 2 - k);
+                self.m[p - 2] += f64::approx_from(binomial(p, k)).unwrap() *
+                    prev_m[p - 2 - k] * coeff;
             }
         }
-        *self = result;
+        println!();
     }
 
     #[inline]
