@@ -140,16 +140,16 @@ impl Moments {
             binom.next().unwrap();  // Skip k = 0.
             for k in 1..=(p - 2) {
                 coeff *= factor_coeff;
-                println!("writing m[{}], accessing m[{}]", p - 2, p - 2 - k);
                 self.m[p - 2] += f64::approx_from(binom.next().unwrap()).unwrap() *
                     prev_m[p - 2 - k] * coeff;
             }
         }
-        println!();
     }
+}
 
+impl Merge for Moments {
     #[inline]
-    pub fn merge(&mut self, other: &Moments) {
+    fn merge(&mut self, other: &Moments) {
         let mut result = Moments::new();
         result.n = self.n + other.n;
         if result.n == 0 {
