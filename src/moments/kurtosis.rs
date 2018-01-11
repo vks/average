@@ -46,6 +46,7 @@ impl Kurtosis {
             + 6. * delta_n_sq * self.avg.avg.sum_2
             - 4. * delta_n * self.avg.sum_3;
         self.avg.add_inner(delta, delta_n);
+        println!("skewness={} kurtosis={}", self.skewness(), self.kurtosis());
     }
 
     /// Determine whether the sample is empty.
@@ -96,7 +97,7 @@ impl Kurtosis {
         self.avg.skewness()
     }
 
-    /// Estimate the kurtosis of the population.
+    /// Estimate the excess kurtosis of the population.
     #[inline]
     pub fn kurtosis(&self) -> f64 {
         if self.sum_4 == 0. {

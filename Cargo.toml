@@ -1,30 +1,39 @@
 [package]
 authors = ["Vinzent Steinberg <Vinzent.Steinberg@gmail.com>"]
-name = "average"
-version = "0.7.0"
-license = "MIT/Apache-2.0"
-repository = "https://github.com/vks/average"
+categories = ["science", "no-std"]
 description = "Calculate statistics iteratively"
 documentation = "https://docs.rs/average"
-readme = "README.md"
-categories = ["science", "no-std"]
 keywords = ["stats", "mean", "skewness", "kurtosis", "quantile"]
+license = "MIT/Apache-2.0"
+name = "average"
+readme = "README.md"
+repository = "https://github.com/vks/average"
+version = "0.7.0"
+
+[[bench]]
+harness = false
+name = "mean"
+
+[[bench]]
+harness = false
+name = "min"
 
 [dependencies]
-conv = { version = "0.3", default-features = false }
+num-traits = "0.1"
+num-integer = "0.1"
 quickersort = "3"
-serde = { version = "1", optional = true, features = ["derive"]}
+
+[dependencies.conv]
+default-features = false
+version = "0.3"
+
+[dependencies.serde]
+features = ["derive"]
+optional = true
+version = "1"
 
 [dev-dependencies]
 bencher = "0.1"
 rand = "0.3"
-streaming-stats = "0.1"
 serde_json = "1"
-
-[[bench]]
-name = "mean"
-harness = false
-
-[[bench]]
-name = "min"
-harness = false
+streaming-stats = "0.1"

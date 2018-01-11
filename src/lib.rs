@@ -70,16 +70,20 @@
 //! [`Min`]: ./struct.Min.html
 //! [`Max`]: ./struct.Max.html
 //! [`concatenate`]: ./macro.concatenate.html
+#![feature(inclusive_range_syntax)]
 
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp))]
 
-#![no_std]
+//#![no_std]
+extern crate core;
 
 extern crate conv;
 extern crate quickersort;
 #[cfg(feature = "serde")]
 #[macro_use]
 extern crate serde;
+extern crate num_traits;
+extern crate num_integer;
 
 #[macro_use] mod macros;
 mod moments;
@@ -88,7 +92,7 @@ mod minmax;
 mod quantile;
 mod traits;
 
-pub use moments::{Mean, Variance, Skewness, Kurtosis, MeanWithError};
+pub use moments::{Mean, Variance, Skewness, Kurtosis, MeanWithError, Moments};
 pub use weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use minmax::{Min, Max};
 pub use quantile::Quantile;
