@@ -70,7 +70,6 @@
 //! [`Min`]: ./struct.Min.html
 //! [`Max`]: ./struct.Max.html
 //! [`concatenate`]: ./macro.concatenate.html
-#![feature(inclusive_range_syntax)]
 
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp))]
 

@@ -129,7 +129,7 @@ impl Moments {
         let factor_coeff = -delta * over_n;
 
         let prev_m = self.m;
-        for p in 2..=MAX_P {
+        for p in 2..(MAX_P + 1) {
             term1 *= factor1;
             term2 *= factor2;
             coeff_delta *= delta;
@@ -138,7 +138,7 @@ impl Moments {
             let mut coeff = 1.;
             let mut binom = IterBinomial::new(p as u64);
             binom.next().unwrap();  // Skip k = 0.
-            for k in 1..=(p - 2) {
+            for k in 1..(p - 1) {
                 coeff *= factor_coeff;
                 self.m[p - 2] += f64::approx_from(binom.next().unwrap()).unwrap() *
                     prev_m[p - 2 - k] * coeff;
@@ -165,7 +165,7 @@ impl Merge for Moments {
         let mut term_a = n_a * factor_a;
         let mut term_b = n_b * factor_b;
         let prev_m = self.m;
-        for p in 2..=MAX_P {
+        for p in 2..(MAX_P + 1) {
             term_a *= factor_a;
             term_b *= factor_b;
             self.m[p - 2] += other.m[p - 2] + term_a + term_b;
@@ -175,7 +175,7 @@ impl Merge for Moments {
             let mut coeff_delta = 1.;
             let mut binom = IterBinomial::new(p);
             binom.next().unwrap();
-            for k in 1..=(p - 2) {
+            for k in 1..(p - 1) {
                 coeff_a *= -n_b_over_n;
                 coeff_b *= n_a_over_n;
                 coeff_delta *= delta;
