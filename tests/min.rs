@@ -40,11 +40,11 @@ fn merge() {
     let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
     for mid in 1..sequence.len() {
         let (left, right) = sequence.split_at(mid);
-        let min_total: Min = sequence.iter().map(|x| *x).collect();
+        let min_total: Min = sequence.iter().collect();
         assert_eq!(min_total.min(), 1.);
-        let mut min_left: Min = left.iter().map(|x| *x).collect();
+        let mut min_left: Min = left.iter().collect();
         assert_eq!(min_left.min(), 1.);
-        let min_right: Min = right.iter().map(|x| *x).collect();
+        let min_right: Min = right.iter().collect();
         assert_eq!(min_right.min(), sequence[mid]);
         min_left.merge(&min_right);
         assert_eq!(min_total.min(), min_left.min());

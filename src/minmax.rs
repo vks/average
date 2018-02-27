@@ -20,7 +20,7 @@ fn max(a: f64, b: f64) -> f64 {
 /// ```
 /// use average::Min;
 ///
-/// let a: Min = (1..6).map(Into::into).collect();
+/// let a: Min = (1..6).map(f64::from).collect();
 /// println!("The minimum is {}.", a.min());
 /// ```
 #[derive(Debug, Clone)]
@@ -82,9 +82,9 @@ impl Merge for Min {
     ///
     /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
     /// let (left, right) = sequence.split_at(3);
-    /// let min_total: Min = sequence.iter().map(|x| *x).collect();
-    /// let mut min_left: Min = left.iter().map(|x| *x).collect();
-    /// let min_right: Min = right.iter().map(|x| *x).collect();
+    /// let min_total: Min = sequence.iter().collect();
+    /// let mut min_left: Min = left.iter().collect();
+    /// let min_right: Min = right.iter().collect();
     /// min_left.merge(&min_right);
     /// assert_eq!(min_total.min(), min_left.min());
     /// ```
@@ -102,7 +102,7 @@ impl Merge for Min {
 /// ```
 /// use average::Max;
 ///
-/// let a: Max = (1..6).map(Into::into).collect();
+/// let a: Max = (1..6).map(f64::from).collect();
 /// assert_eq!(a.max(), 5.);
 /// ```
 #[derive(Debug, Clone)]
@@ -164,9 +164,9 @@ impl Merge for Max {
     ///
     /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
     /// let (left, right) = sequence.split_at(3);
-    /// let max_total: Max = sequence.iter().map(|x| *x).collect();
-    /// let mut max_left: Max = left.iter().map(|x| *x).collect();
-    /// let max_right: Max = right.iter().map(|x| *x).collect();
+    /// let max_total: Max = sequence.iter().collect();
+    /// let mut max_left: Max = left.iter().collect();
+    /// let max_right: Max = right.iter().collect();
     /// max_left.merge(&max_right);
     /// assert_eq!(max_total.max(), max_left.max());
     /// ```

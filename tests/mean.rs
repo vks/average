@@ -55,7 +55,7 @@ fn numerically_unstable() {
     // The naive algorithm fails for this example due to cancelation.
     let big = 1e9;
     let sample = &[big + 4., big + 7., big + 13., big + 16.];
-    let a: MeanWithError = sample.iter().map(|x| *x).collect();
+    let a: MeanWithError = sample.iter().collect();
     assert_eq!(a.sample_variance(), 30.);
 }
 
@@ -64,9 +64,9 @@ fn merge() {
     let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
     for mid in 0..sequence.len() {
         let (left, right) = sequence.split_at(mid);
-        let avg_total: MeanWithError = sequence.iter().map(|x| *x).collect();
-        let mut avg_left: MeanWithError = left.iter().map(|x| *x).collect();
-        let avg_right: MeanWithError = right.iter().map(|x| *x).collect();
+        let avg_total: MeanWithError = sequence.iter().collect();
+        let mut avg_left: MeanWithError = left.iter().collect();
+        let avg_right: MeanWithError = right.iter().collect();
         avg_left.merge(&avg_right);
         assert_eq!(avg_total.len(), avg_left.len());
         assert_eq!(avg_total.mean(), avg_left.mean());

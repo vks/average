@@ -91,6 +91,18 @@ impl core::iter::FromIterator<(f64, f64)> for WeightedMean {
     }
 }
 
+impl<'a> core::iter::FromIterator<&'a (f64, f64)> for WeightedMean {
+    fn from_iter<T>(iter: T) -> WeightedMean
+        where T: IntoIterator<Item=&'a (f64, f64)>
+    {
+        let mut a = WeightedMean::new();
+        for &(i, w) in iter {
+            a.add(i, w);
+        }
+        a
+    }
+}
+
 impl Merge for WeightedMean {
     /// Merge another sample into this one.
     ///
@@ -104,9 +116,9 @@ impl Merge for WeightedMean {
     ///     (1., 0.1), (2., 0.2), (3., 0.3), (4., 0.4), (5., 0.5),
     ///     (6., 0.6), (7., 0.7), (8., 0.8), (9., 0.9)];
     /// let (left, right) = weighted_sequence.split_at(3);
-    /// let avg_total: WeightedMean = weighted_sequence.iter().map(|&x| x).collect();
-    /// let mut avg_left: WeightedMean = left.iter().map(|&x| x).collect();
-    /// let avg_right: WeightedMean = right.iter().map(|&x| x).collect();
+    /// let avg_total: WeightedMean = weighted_sequence.iter().collect();
+    /// let mut avg_left: WeightedMean = left.iter().collect();
+    /// let avg_right: WeightedMean = right.iter().collect();
     /// avg_left.merge(&avg_right);
     /// assert!((avg_total.mean() - avg_left.mean()).abs() < 1e-15);
     /// ```
@@ -276,9 +288,9 @@ impl Merge for WeightedMeanWithError {
     ///     (1., 0.1), (2., 0.2), (3., 0.3), (4., 0.4), (5., 0.5),
     ///     (6., 0.6), (7., 0.7), (8., 0.8), (9., 0.9)];
     /// let (left, right) = weighted_sequence.split_at(3);
-    /// let avg_total: WeightedMeanWithError = weighted_sequence.iter().map(|&x| x).collect();
-    /// let mut avg_left: WeightedMeanWithError = left.iter().map(|&x| x).collect();
-    /// let avg_right: WeightedMeanWithError = right.iter().map(|&x| x).collect();
+    /// let avg_total: WeightedMeanWithError = weighted_sequence.iter().collect();
+    /// let mut avg_left: WeightedMeanWithError = left.iter().collect();
+    /// let avg_right: WeightedMeanWithError = right.iter().collect();
     /// avg_left.merge(&avg_right);
     /// assert!((avg_total.weighted_mean() - avg_left.weighted_mean()).abs() < 1e-15);
     /// assert!((avg_total.error() - avg_left.error()).abs() < 1e-15);
@@ -303,6 +315,18 @@ impl core::iter::FromIterator<(f64, f64)> for WeightedMeanWithError {
     {
         let mut a = WeightedMeanWithError::new();
         for (i, w) in iter {
+            a.add(i, w);
+        }
+        a
+    }
+}
+
+impl<'a> core::iter::FromIterator<&'a (f64, f64)> for WeightedMeanWithError {
+    fn from_iter<T>(iter: T) -> WeightedMeanWithError
+        where T: IntoIterator<Item=&'a (f64, f64)>
+    {
+        let mut a = WeightedMeanWithError::new();
+        for &(i, w) in iter {
             a.add(i, w);
         }
         a
