@@ -63,9 +63,9 @@ fn merge() {
     let sequence: &[f64] = &[1., 2., 3., -4., 5., 6., 7., 8., 9., 1.];
     for mid in 0..sequence.len() {
         let (left, right) = sequence.split_at(mid);
-        let avg_total: Skewness = sequence.iter().map(|x| *x).collect();
-        let mut avg_left: Skewness = left.iter().map(|x| *x).collect();
-        let avg_right: Skewness = right.iter().map(|x| *x).collect();
+        let avg_total: Skewness = sequence.iter().collect();
+        let mut avg_left: Skewness = left.iter().collect();
+        let avg_right: Skewness = right.iter().collect();
         avg_left.merge(&avg_right);
         assert_eq!(avg_total.len(), avg_left.len());
         assert_almost_eq!(avg_total.mean(), avg_left.mean(), 1e-14);

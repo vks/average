@@ -44,7 +44,7 @@ macro_rules! assert_almost_eq {
 ///
 /// concatenate!(MinMax, [Min, min], [Max, max]);
 ///
-/// let s: MinMax = (1..6).map(Into::into).collect();
+/// let s: MinMax = (1..6).map(f64::from).collect();
 ///
 /// assert_eq!(s.min(), 1.0);
 /// assert_eq!(s.max(), 5.0);
@@ -152,6 +152,18 @@ macro_rules! impl_from_iterator {
             {
                 let mut e = $name::new();
                 for i in iter {
+                    e.add(i);
+                }
+                e
+            }
+        }
+
+        impl<'a> ::core::iter::FromIterator<&'a f64> for $name {
+            fn from_iter<T>(iter: T) -> $name
+                where T: IntoIterator<Item=&'a f64>
+            {
+                let mut e = $name::new();
+                for &i in iter {
                     e.add(i);
                 }
                 e
