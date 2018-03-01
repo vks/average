@@ -9,7 +9,7 @@ use super::Estimate;
 /// Estimate the p-quantile of a sequence of numbers ("population").
 ///
 /// The algorithm uses constant space but does not provide any upper bound on
-/// the error. For algorithms that use variable space with bounded error, see
+/// the error. For algorithms that use growing space with bounded error, see
 /// the [`quantiles`](https://crates.io/crates/quantiles) crate. They are
 /// recommended over this algorithm for small samples.
 // This uses the P² algorithm introduced here:
