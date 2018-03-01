@@ -21,3 +21,8 @@ easily parallelized by using `merge`.
 * Variance, skewness, kurtosis.
 * Minimum and maximum.
 * Quantile.
+
+## Related Projects
+
+* [`quantiles`](https://crates.io/crates/quantiles):
+  Provides quantile estimates with bounded error but using variable memory.
