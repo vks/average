@@ -70,6 +70,18 @@ fn widths() {
 }
 
 #[test]
+fn centers() {
+    let inf = std::f64::INFINITY;
+    let h = Histogram10::from_ranges(
+        [-inf, 0.1, 0.2, 0.3, 0.4, 0.4, 0.7, 0.8, 0.9, 1.0, inf].iter().cloned()).unwrap();
+    let centers: Vec<f64> = h.centers().collect();
+    let expected = [-inf, 0.15, 0.25, 0.35, 0.4, 0.55, 0.75, 0.85, 0.95, inf];
+    for (a, b) in centers.iter().zip(expected.iter()) {
+        assert_almost_eq!(a, b, 1e-14);
+    }
+}
+
+#[test]
 fn from_ranges_infinity() {
     let inf = std::f64::INFINITY;
     let mut h = Histogram10::from_ranges(

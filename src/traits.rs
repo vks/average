@@ -28,6 +28,11 @@ pub trait Histogram:
     fn widths(&self) -> IterWidths<<&Self as IntoIterator>::IntoIter> {
         IterWidths { histogram_iter: self.into_iter() }
     }
+
+    /// Return an iterator over the bin centers.
+    fn centers(&self) -> IterBinCenters<<&Self as IntoIterator>::IntoIter> {
+        IterBinCenters { histogram_iter: self.into_iter() }
+    }
 }
 
 /// Iterate over the bins normalized by bin width.
@@ -63,5 +68,23 @@ impl<T> Iterator for IterWidths<T>
     #[inline]
     fn next(&mut self) -> Option<f64> {
         self.histogram_iter.next().map(|((a, b), _)| b - a)
+    }
+}
+
+/// Iterate over the bin centers.
+pub struct IterBinCenters<T>
+    where T: Iterator<Item = ((f64, f64), u64)>
+{
+    histogram_iter: T,
+}
+
+impl<T> Iterator for IterBinCenters<T>
+    where T: Iterator<Item = ((f64, f64), u64)>
+{
+    type Item = f64;
+
+    #[inline]
+    fn next(&mut self) -> Option<f64> {
+        self.histogram_iter.next().map(|((a, b), _)| 0.5 * (a + b))
     }
 }
