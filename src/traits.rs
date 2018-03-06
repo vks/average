@@ -20,16 +20,19 @@ pub trait Histogram:
     fn bins(&self) -> &[u64];
 
     /// Return an iterator over the bins normalized by the bin widths.
+    #[inline]
     fn normalized_bins(&self) -> IterNormalized<<&Self as IntoIterator>::IntoIter> {
         IterNormalized { histogram_iter: self.into_iter() }
     }
 
     /// Return an iterator over the bin widths.
+    #[inline]
     fn widths(&self) -> IterWidths<<&Self as IntoIterator>::IntoIter> {
         IterWidths { histogram_iter: self.into_iter() }
     }
 
     /// Return an iterator over the bin centers.
+    #[inline]
     fn centers(&self) -> IterBinCenters<<&Self as IntoIterator>::IntoIter> {
         IterBinCenters { histogram_iter: self.into_iter() }
     }
