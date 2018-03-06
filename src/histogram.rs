@@ -79,25 +79,37 @@ macro_rules! define_histogram {
                 })
             }
 
+            /// Find the index of the bin corresponding to the given sample.
+            ///
+            /// Fails if the sample is out of range of the histogram.
+            #[inline]
+            pub fn find(&self, x: f64) -> Result<usize, ()> {
+                // We made sure our ranges are valid at construction, so we can
+                // safely unwrap.
+                match self.range.binary_search_by(|p| p.partial_cmp(&x).unwrap()) {
+                    Ok(i) if i < LEN => {
+                        Ok(i)
+                    },
+                    Err(i) if i > 0 && i < LEN + 1 => {
+                        Ok(i - 1)
+                    },
+                    _ => {
+                        Err(())
+                    },
+                }
+            }
+
             /// Add a sample to the histogram.
             ///
             /// Fails if the sample is out of range of the histogram.
             #[inline]
             pub fn add(&mut self, x: f64) -> Result<(), ()> {
-                // We made sure our ranges are valid at construction, so we can
-                // safely unwrap.
-                match self.range.binary_search_by(|p| p.partial_cmp(&x).unwrap()) {
-                    Ok(i) if i < LEN => {
-                        self.bin[i] += 1;
-                    },
-                    Err(i) if i > 0 && i < LEN + 1 => {
-                        self.bin[i - 1] += 1;
-                    },
-                    _ => {
-                        return Err(());
-                    },
+                if let Ok(i) = self.find(x) {
+                    self.bin[i] += 1;
+                    Ok(())
+                } else {
+                    Err(())
                 }
-                Ok(())
             }
 
             /// Return the ranges of the histogram.
