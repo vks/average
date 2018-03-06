@@ -43,6 +43,33 @@ fn iter() {
 }
 
 #[test]
+fn normalized_bins() {
+    let inf = std::f64::INFINITY;
+    let mut h = Histogram10::from_ranges(
+        [-inf, 0.1, 0.2, 0.3, 0.4, 0.4, 0.7, 0.8, 0.9, 1.0, inf].iter().cloned()).unwrap();
+    for &i in &[0.05, 0.1, 0.7, 1.0, 1.5] {
+        h.add(i).unwrap();
+    }
+    let normalized: Vec<f64> = h.normalized_bins().collect();
+    let expected = [0., 10., 0., 0., 0., 0., 10., 0., 0., 0.];
+    for (a, b) in normalized.iter().zip(expected.iter()) {
+        assert_almost_eq!(a, b, 1e-14);
+    }
+}
+
+#[test]
+fn widths() {
+    let inf = std::f64::INFINITY;
+    let h = Histogram10::from_ranges(
+        [-inf, 0.1, 0.2, 0.3, 0.4, 0.4, 0.7, 0.8, 0.9, 1.0, inf].iter().cloned()).unwrap();
+    let widths: Vec<f64> = h.widths().collect();
+    let expected = [inf, 0.1, 0.1, 0.1, 0., 0.3, 0.1, 0.1, 0.1, inf];
+    for (a, b) in widths.iter().zip(expected.iter()) {
+        assert_almost_eq!(a, b, 1e-14);
+    }
+}
+
+#[test]
 fn from_ranges_infinity() {
     let inf = std::f64::INFINITY;
     let mut h = Histogram10::from_ranges(
