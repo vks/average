@@ -9,7 +9,7 @@
 /// ```
 /// use average::Variance;
 ///
-/// let a: Variance = (1..6).map(Into::into).collect();
+/// let a: Variance = (1..6).map(f64::from).collect();
 /// println!("The mean is {} ± {}.", a.mean(), a.error());
 /// ```
 #[derive(Debug, Clone)]
@@ -139,9 +139,9 @@ impl Merge for Variance {
     ///
     /// let sequence: &[f64] = &[1., 2., 3., 4., 5., 6., 7., 8., 9.];
     /// let (left, right) = sequence.split_at(3);
-    /// let avg_total: Variance = sequence.iter().map(|x| *x).collect();
-    /// let mut avg_left: Variance = left.iter().map(|x| *x).collect();
-    /// let avg_right: Variance = right.iter().map(|x| *x).collect();
+    /// let avg_total: Variance = sequence.iter().collect();
+    /// let mut avg_left: Variance = left.iter().collect();
+    /// let avg_right: Variance = right.iter().collect();
     /// avg_left.merge(&avg_right);
     /// assert_eq!(avg_total.mean(), avg_left.mean());
     /// assert_eq!(avg_total.sample_variance(), avg_left.sample_variance());

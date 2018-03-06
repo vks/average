@@ -7,6 +7,11 @@ use quickersort::sort_floats;
 use super::Estimate;
 
 /// Estimate the p-quantile of a sequence of numbers ("population").
+///
+/// The algorithm uses constant space but does not provide any upper bound on
+/// the error. For algorithms that use growing space with bounded error, see
+/// the [`quantiles`](https://crates.io/crates/quantiles) crate. They are
+/// recommended over this algorithm for small samples.
 // This uses the P² algorithm introduced here:
 // http://www.cs.wustl.edu/~jain/papers/ftp/psqr.pdf
 #[derive(Debug, Clone)]

@@ -111,9 +111,9 @@ fn merge_weighted() {
         (6., 0.6), (7., 0.7), (8., 0.8), (9., 0.)];
     for mid in 0..sequence.len() {
         let (left, right) = sequence.split_at(mid);
-        let avg_total: WeightedMeanWithError = sequence.iter().map(|&(x, w)| (x, w)).collect();
-        let mut avg_left: WeightedMeanWithError = left.iter().map(|&(x, w)| (x, w)).collect();
-        let avg_right: WeightedMeanWithError = right.iter().map(|&(x, w)| (x, w)).collect();
+        let avg_total: WeightedMeanWithError = sequence.iter().collect();
+        let mut avg_left: WeightedMeanWithError = left.iter().collect();
+        let avg_right: WeightedMeanWithError = right.iter().collect();
         avg_left.merge(&avg_right);
         assert_eq!(avg_total.len(), avg_left.len());
         assert_almost_eq!(avg_total.sum_weights(), avg_left.sum_weights(), 1e-15);

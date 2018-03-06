@@ -1,7 +1,7 @@
 # average
 
 Calculate statistics of a sequence iteratively in a single pass, using
-constant memory and avoiding numerical problems. The calculations can be
+constant space and avoiding numerical problems. The calculations can be
 easily parallelized by using `merge`.
 
 [![Documentation Status]][docs.rs]
@@ -21,3 +21,8 @@ easily parallelized by using `merge`.
 * Variance, skewness, kurtosis.
 * Minimum and maximum.
 * Quantile.
+
+## Related Projects
+
+* [`quantiles`](https://crates.io/crates/quantiles):
+  Provides quantile estimates with bounded error but using growing space.

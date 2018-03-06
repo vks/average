@@ -33,7 +33,7 @@ fn concatenate_simple() {
     }
 
     {
-        let s: MinMax = (1..6).map(Into::into).collect();
+        let s: MinMax = (1..6).map(f64::from).collect();
 
         assert_eq!(s.min(), 1.0);
         assert_eq!(s.max(), 5.0);
@@ -48,7 +48,7 @@ fn concatenate_moments() {
         [Variance, variance, mean, sample_variance],
         [Quantile, quantile, quantile]);
 
-    let e: Estimator = (1..6).map(Into::into).collect();
+    let e: Estimator = (1..6).map(f64::from).collect();
 
     assert_eq!(e.mean(), 3.0);
     assert_eq!(e.sample_variance(), 2.5);

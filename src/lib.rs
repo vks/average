@@ -29,7 +29,7 @@
 //! ```
 //! use average::{MeanWithError, Estimate};
 //!
-//! let mut a: MeanWithError = (1..6).map(Into::into).collect();
+//! let mut a: MeanWithError = (1..6).map(f64::from).collect();
 //! a.add(42.);
 //! println!("The mean is {} ± {}.", a.mean(), a.error());
 //! ```
