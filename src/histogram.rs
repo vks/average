@@ -112,6 +112,24 @@ macro_rules! define_histogram {
             pub fn iter(&self) -> IterHistogram {
                 self.into_iter()
             }
+
+            /// Reset all bins to zero.
+            #[inline]
+            pub fn reset(&mut self) {
+                self.bin = [0; LEN];
+            }
+
+            /// Return the lower range limit.
+            #[inline]
+            pub fn min(&self) -> f64 {
+                self.range[0]
+            }
+
+            /// Return the upper range limit.
+            #[inline]
+            pub fn max(&self) -> f64 {
+                self.range[LEN]
+            }
         }
 
         /// Iterate over all `(range, count)` pairs in the histogram.

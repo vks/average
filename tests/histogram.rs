@@ -127,3 +127,22 @@ fn out_of_range() {
     assert_eq!(h.add(100.0), Err(()));
     assert_eq!(h.add(100.1), Err(()));
 }
+
+
+#[test]
+fn reset() {
+    let mut h = Histogram10::with_const_width(0., 100.);
+    for i in 0..100 {
+        h.add(f64::from(i)).unwrap();
+    }
+    assert_eq!(h.bins(), &[10, 10, 10, 10, 10, 10, 10, 10, 10, 10]);
+    h.reset();
+    assert_eq!(h.bins(), &[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+}
+
+#[test]
+fn minmax() {
+    let h = Histogram10::with_const_width(0., 100.);
+    assert_eq!(h.min(), 0.);
+    assert_eq!(h.max(), 100.);
+}
