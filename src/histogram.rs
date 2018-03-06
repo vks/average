@@ -105,6 +105,44 @@ macro_rules! define_histogram {
             pub fn ranges(&self) -> &[f64] {
                 &self.range as &[f64]
             }
+
+            /// Return an iterator over the bins and corresponding ranges:
+            /// `((lower, upper), count)`
+            #[inline]
+            pub fn iter(&self) -> IterHistogram {
+                self.into_iter()
+            }
+        }
+
+        /// Iterate over all `(range, count)` pairs in the histogram.
+        pub struct IterHistogram<'a> {
+            remaining_bin: &'a [u64],
+            remaining_range: &'a [f64],
+        }
+
+        impl<'a> ::core::iter::Iterator for IterHistogram<'a> {
+            type Item = ((f64, f64), u64);
+            fn next(&mut self) -> Option<((f64, f64), u64)> {
+                if let Some((&bin, rest)) = self.remaining_bin.split_first() {
+                    let left = self.remaining_range[0];
+                    let right = self.remaining_range[1];
+                    self.remaining_bin = rest;
+                    self.remaining_range = &self.remaining_range[1..];
+                    return Some(((left, right), bin));
+                }
+                None
+            }
+        }
+
+        impl<'a> ::core::iter::IntoIterator for &'a $name {
+            type Item = ((f64, f64), u64);
+            type IntoIter = IterHistogram<'a>;
+            fn into_iter(self) -> IterHistogram<'a> {
+                IterHistogram {
+                    remaining_bin: self.bins(),
+                    remaining_range: self.ranges(),
+                }
+            }
         }
 
         impl $crate::Histogram for $name {

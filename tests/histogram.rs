@@ -28,6 +28,21 @@ fn from_ranges() {
 }
 
 #[test]
+fn iter() {
+    let mut h = Histogram10::from_ranges(
+        [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 2.0].iter().cloned()).unwrap();
+    for &i in &[0.05, 0.7, 1.0, 1.5] {
+        h.add(i).unwrap();
+    }
+    let iterated: Vec<((f64, f64), u64)> = h.iter().collect();
+    assert_eq!(&iterated, &[
+        ((0., 0.1), 1), ((0.1, 0.2), 0), ((0.2, 0.3), 0), ((0.3, 0.4), 0),
+        ((0.4, 0.5), 0), ((0.5, 0.7), 0), ((0.7, 0.8), 1), ((0.8, 0.9), 0),
+        ((0.9, 1.0), 0), ((1.0, 2.0), 2)
+    ]);
+}
+
+#[test]
 fn from_ranges_infinity() {
     let inf = std::f64::INFINITY;
     let mut h = Histogram10::from_ranges(
