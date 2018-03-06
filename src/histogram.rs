@@ -4,8 +4,10 @@
 /// # extern crate core;
 /// # #[macro_use] extern crate average;
 /// # fn main() {
-/// define_histogram!(Histogram, 10);
-/// let mut h = Histogram::with_const_width(0., 100.);
+/// use average::Histogram;
+///
+/// define_histogram!(Histogram10, 10);
+/// let mut h = Histogram10::with_const_width(0., 100.);
 /// for i in 0..100 {
 ///     h.add(i as f64).unwrap();
 /// }
@@ -98,16 +100,17 @@ macro_rules! define_histogram {
                 Ok(())
             }
 
-            /// Return the bins of the histogram.
-            #[inline]
-            pub fn bins(&self) -> &[u64] {
-                &self.bin as &[u64]
-            }
-
             /// Return the ranges of the histogram.
             #[inline]
             pub fn ranges(&self) -> &[f64] {
                 &self.range as &[f64]
+            }
+        }
+
+        impl $crate::Histogram for $name {
+            #[inline]
+            fn bins(&self) -> &[u64] {
+                &self.bin as &[u64]
             }
         }
     );

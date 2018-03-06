@@ -95,4 +95,4 @@ pub use moments::{Mean, Variance, Skewness, Kurtosis, MeanWithError, Moments};
 pub use weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use minmax::{Min, Max};
 pub use quantile::Quantile;
-pub use traits::{Estimate, Merge};
+pub use traits::{Estimate, Merge, Histogram};

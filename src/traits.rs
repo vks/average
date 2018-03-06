@@ -11,3 +11,9 @@ pub trait Estimate {
 pub trait Merge {
     fn merge(&mut self, other: &Self);
 }
+
+/// Get the bins and ranges from a histogram.
+pub trait Histogram {
+    /// Return the bins of the histogram.
+    fn bins(&self) -> &[u64];
+}
