@@ -89,6 +89,7 @@ mod weighted_mean;
 mod minmax;
 mod quantile;
 mod traits;
+#[macro_use] mod histogram;
 
 pub use moments::{Mean, Variance, Skewness, Kurtosis, MeanWithError, Moments};
 pub use weighted_mean::{WeightedMean, WeightedMeanWithError};
