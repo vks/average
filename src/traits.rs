@@ -21,12 +21,12 @@ pub trait Histogram:
 
     /// Return an iterator over the bins normalized by the bin widths.
     fn normalized_bins(&self) -> IterNormalized<<&Self as IntoIterator>::IntoIter> {
-        IterNormalized { histogram_iter: (&self).into_iter() }
+        IterNormalized { histogram_iter: self.into_iter() }
     }
 
     /// Return an iterator over the bin widths.
     fn widths(&self) -> IterWidths<<&Self as IntoIterator>::IntoIter> {
-        IterWidths { histogram_iter: (&self).into_iter() }
+        IterWidths { histogram_iter: self.into_iter() }
     }
 }
 

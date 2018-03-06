@@ -33,12 +33,12 @@ macro_rules! define_histogram {
             pub fn with_const_width(start: f64, end: f64) -> Self {
                 let step = (end - start) / (LEN as f64);
                 let mut range = [0.; LEN + 1];
-                for i in 0..(LEN + 1) {
-                    range[i] = step * (i as f64);
+                for (i, r) in range.iter_mut().enumerate() {
+                    *r = step * (i as f64);
                 }
 
                 Self {
-                    range: range,
+                    range,
                     bin: [0; LEN],
                 }
             }
@@ -74,7 +74,7 @@ macro_rules! define_histogram {
                     return Err(());
                 }
                 Ok(Self {
-                    range: range,
+                    range,
                     bin: [0; LEN],
                 })
             }

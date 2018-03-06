@@ -33,9 +33,7 @@ impl Min {
     /// Create a new minium estimator from a given value.
     #[inline]
     pub fn from_value(x: f64) -> Min {
-        Min {
-            x: x,
-        }
+        Min { x }
     }
 
     /// Create a new minimum estimator.
@@ -115,9 +113,7 @@ impl Max {
     /// Create a new maxium estimator from a given value.
     #[inline]
     pub fn from_value(x: f64) -> Max {
-        Max {
-            x: x,
-        }
+        Max { x }
     }
 
     /// Create a new maximum estimator.

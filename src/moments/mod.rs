@@ -45,6 +45,11 @@ impl Moments {
     }
 
     #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.n == 0
+    }
+
+    #[inline]
     pub fn len(&self) -> u64 {
         self.n
     }
