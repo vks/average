@@ -132,14 +132,18 @@ macro_rules! define_histogram {
             }
 
             /// Return the lower range limit.
+            ///
+            /// (The corresponding bin might be empty.)
             #[inline]
-            pub fn min(&self) -> f64 {
+            pub fn range_min(&self) -> f64 {
                 self.range[0]
             }
 
             /// Return the upper range limit.
+            ///
+            /// (The corresponding bin might be empty.)
             #[inline]
-            pub fn max(&self) -> f64 {
+            pub fn range_max(&self) -> f64 {
                 self.range[LEN]
             }
         }
@@ -179,6 +183,25 @@ macro_rules! define_histogram {
             #[inline]
             fn bins(&self) -> &[u64] {
                 &self.bin as &[u64]
+            }
+        }
+
+        impl<'a> ::core::ops::AddAssign<&'a Self> for $name {
+            #[inline]
+            fn add_assign(&mut self, other: &Self) {
+                assert_eq!(self.range, other.range);
+                for (x, y) in self.bin.iter_mut().zip(other.bin.iter()) {
+                    *x += y;
+                }
+            }
+        }
+
+        impl ::core::ops::MulAssign<u64> for $name {
+            #[inline]
+            fn mul_assign(&mut self, other: u64) {
+                for x in self.bin.iter_mut() {
+                    *x *= other;
+                }
             }
         }
     );

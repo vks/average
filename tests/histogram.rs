@@ -141,8 +141,43 @@ fn reset() {
 }
 
 #[test]
-fn minmax() {
+fn range_minmax() {
     let h = Histogram10::with_const_width(0., 100.);
-    assert_eq!(h.min(), 0.);
-    assert_eq!(h.max(), 100.);
+    assert_eq!(h.range_min(), 0.);
+    assert_eq!(h.range_max(), 100.);
+}
+
+#[test]
+fn add() {
+    let mut h1 = Histogram10::with_const_width(0., 100.);
+    let mut h2 = h1.clone();
+    let mut expected = h1.clone();
+
+    for i in 0..50 {
+        h1.add(f64::from(i)).unwrap();
+        expected.add(f64::from(i)).unwrap();
+    }
+    for i in 50..100 {
+        h2.add(f64::from(i)).unwrap();
+        expected.add(f64::from(i)).unwrap();
+    }
+    h1 += &h2;
+
+    assert_eq!(h1.bins(), expected.bins());
+}
+
+#[test]
+fn mul() {
+    let mut h = Histogram10::with_const_width(0., 100.);
+    let mut expected = h.clone();
+
+    for i in 0..100 {
+        h.add(f64::from(i)).unwrap();
+        expected.add(f64::from(i)).unwrap();
+        expected.add(f64::from(i)).unwrap();
+    }
+
+    h *= 2;
+
+    assert_eq!(h.bins(), expected.bins());
 }
