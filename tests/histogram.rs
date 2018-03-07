@@ -1,8 +1,10 @@
 #[macro_use] extern crate average;
 
 extern crate core;
+extern crate rand;
 
 use core::iter::Iterator;
+use rand::distributions::IndependentSample;
 
 use average::Histogram;
 
@@ -180,4 +182,22 @@ fn mul() {
     h *= 2;
 
     assert_eq!(h.bins(), expected.bins());
+}
+
+#[test]
+fn variance() {
+    let mut h = Histogram10::with_const_width(-3., 3.);
+    let normal = rand::distributions::Normal::new(0., 1.);
+    let mut rng = rand::weak_rng();
+    for _ in 0..1000000 {
+        let _ = h.add(normal.ind_sample(&mut rng));
+    }
+    println!("{:?}", h);
+    let sum: u64 = h.bins().iter().sum();
+    let sum = sum as f64;
+    for (i, v) in h.variances().enumerate() {
+        assert_almost_eq!(v, h.variance(i), 1e-14);
+        let poissonian_variance = h.bins()[i] as f64;
+        assert_almost_eq!(v.sqrt() / sum, poissonian_variance.sqrt() / sum, 1e-4);
+    }
 }
