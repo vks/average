@@ -34,7 +34,7 @@ macro_rules! define_histogram {
                 let step = (end - start) / (LEN as f64);
                 let mut range = [0.; LEN + 1];
                 for (i, r) in range.iter_mut().enumerate() {
-                    *r = step * (i as f64);
+                    *r = start + step * (i as f64);
                 }
 
                 Self {

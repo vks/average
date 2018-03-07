@@ -10,8 +10,8 @@ define_histogram!(Histogram10, 10);
 
 #[test]
 fn with_const_width() {
-    let mut h = Histogram10::with_const_width(0., 100.);
-    for i in 0..100 {
+    let mut h = Histogram10::with_const_width(-30., 70.);
+    for i in -30..70 {
         h.add(f64::from(i)).unwrap();
     }
     assert_eq!(h.bins(), &[10, 10, 10, 10, 10, 10, 10, 10, 10, 10]);
