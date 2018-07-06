@@ -2,7 +2,7 @@ use core;
 use core::cmp::min;
 
 use conv::{ApproxFrom, ConvAsUtil, ConvUtil, ValueFrom};
-use quickersort::sort_floats;
+use float_ord::sort as sort_floats;
 
 use super::Estimate;
 

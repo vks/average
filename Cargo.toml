@@ -25,7 +25,7 @@ name = "kurtosis"
 [dependencies]
 num-traits = "0.2"
 num-integer = "0.1"
-quickersort = "3"
+float-ord = "0.2"
 
 [dependencies.conv]
 default-features = false

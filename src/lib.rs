@@ -84,7 +84,7 @@
 #![no_std]
 
 extern crate conv;
-extern crate quickersort;
+extern crate float_ord;
 #[cfg(feature = "serde")]
 #[macro_use]
 extern crate serde;
