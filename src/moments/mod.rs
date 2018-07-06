@@ -15,11 +15,23 @@ include!("kurtosis.rs");
 /// Alias for `Variance`.
 pub type MeanWithError = Variance;
 
+/// The maximal order of the moment to be calculated.
 const MAX_P: usize = 4;
 
+/// Estimate the first N moments of a sequence of numbers a sequence of numbers
+/// ("population").
+///
+/// This uses a [general algorithm][paper] and is less efficient than the
+/// specialized implementations (such as [`Mean`], [`Variance`], [`Skewness`]
+/// and [`Kurtosis`]).
+///
+/// [paper]: https://doi.org/10.1007/s00180-015-0637-z.
+/// [`Mean`]: ./struct.Mean.html
+/// [`Variance`]: ./struct.Variance.html
+/// [`Skewness`]: ./struct.Skewness.html
+/// [`Kurtosis`]: ./struct.Kurtosis.html
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-// https://doi.org/10.1007/s00180-015-0637-z.
 pub struct Moments {
     /// Number of samples.
     ///
@@ -35,6 +47,7 @@ pub struct Moments {
 }
 
 impl Moments {
+    /// Create a new moments estimator.
     #[inline]
     pub fn new() -> Moments {
         Moments {
@@ -44,21 +57,27 @@ impl Moments {
         }
     }
 
+    /// Determine whether the sample is empty.
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.n == 0
     }
 
+    /// Return the sample size.
     #[inline]
     pub fn len(&self) -> u64 {
         self.n
     }
 
+    /// Estimate the mean of the population.
+    ///
+    /// Returns 0 for an empty sample.
     #[inline]
     pub fn mean(&self) -> f64 {
         self.avg
     }
 
+    /// Estimate the `p`th central moment of the population.
     #[inline]
     pub fn central_moment(&self, p: usize) -> f64 {
         let n = f64::approx_from(self.n).unwrap();
@@ -69,6 +88,7 @@ impl Moments {
         }
     }
 
+    /// Estimate the `p`th standardized moment of the population.
     #[inline]
     pub fn standardized_moment(&self, p: usize) -> f64 {
         let variance = self.central_moment(2);
@@ -82,6 +102,9 @@ impl Moments {
         }
     }
 
+    /// Calculate the sample variance.
+    ///
+    /// This is an unbiased estimator of the variance of the population.
     #[inline]
     pub fn sample_variance(&self) -> f64 {
         if self.n < 2 {
@@ -90,6 +113,7 @@ impl Moments {
         self.m[0] / f64::approx_from(self.n - 1).unwrap()
     }
 
+    /// Calculate the sample skewness.
     #[inline]
     pub fn sample_skewness(&self) -> f64 {
         if self.n < 2 {
@@ -106,6 +130,7 @@ impl Moments {
             self.central_moment(3) / (self.central_moment(2) / n).powf(1.5)
     }
 
+    /// Calculate the sample excess kurtosis.
     #[inline]
     pub fn sample_excess_kurtosis(&self) -> f64 {
         if self.n < 4 {
@@ -117,6 +142,7 @@ impl Moments {
             3. * pow(n - 1., 2) / ((n - 2.) * (n - 3.))
     }
 
+    /// Add an observation sampled from the population.
     #[inline]
     pub fn add(&mut self, x: f64) {
         self.n += 1;
