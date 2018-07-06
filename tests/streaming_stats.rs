@@ -7,13 +7,14 @@ extern crate stats;
 
 /// Create a random vector by sampling from a normal distribution.
 fn initialize_vec(size: usize) -> Vec<f64> {
-    use rand::distributions::{Normal, IndependentSample};
+    use rand::distributions::{Normal, Distribution};
     use rand::{XorShiftRng, SeedableRng};
     let normal = Normal::new(2.0, 3.0);
     let mut values = Vec::with_capacity(size);
-    let mut rng = XorShiftRng::from_seed([1, 2, 3, 4]);
+    let mut rng = XorShiftRng::from_seed(
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
     for _ in 0..size {
-        values.push(normal.ind_sample(&mut rng));
+        values.push(normal.sample(&mut rng));
     }
     values
 }
@@ -33,5 +34,5 @@ fn average_vs_streaming_stats_large() {
     let a: average::MeanWithError = values.iter().collect();
     let b: stats::OnlineStats = values.iter().map(|x| *x).collect();
     assert_almost_eq!(a.mean(), b.mean(), 1e-16);
-    assert_almost_eq!(a.population_variance(), b.variance(), 1e-13);
+    assert_almost_eq!(a.population_variance(), b.variance(), 1e-12);
 }

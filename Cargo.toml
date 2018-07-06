@@ -23,7 +23,7 @@ harness = false
 name = "kurtosis"
 
 [dependencies]
-num-traits = "0.1"
+num-traits = "0.2"
 num-integer = "0.1"
 quickersort = "3"
 
@@ -38,6 +38,6 @@ version = "1"
 
 [dev-dependencies]
 bencher = "0.1"
-rand = "0.3"
+rand = "0.5"
 serde_json = "1"
-streaming-stats = "0.1"
+streaming-stats = "0.2"

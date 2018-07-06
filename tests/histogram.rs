@@ -4,7 +4,8 @@ extern crate core;
 extern crate rand;
 
 use core::iter::Iterator;
-use rand::distributions::IndependentSample;
+use rand::distributions::Distribution;
+use rand::FromEntropy;
 
 use average::Histogram;
 
@@ -188,9 +189,9 @@ fn mul() {
 fn variance() {
     let mut h = Histogram10::with_const_width(-3., 3.);
     let normal = rand::distributions::Normal::new(0., 1.);
-    let mut rng = rand::weak_rng();
+    let mut rng = rand::rngs::SmallRng::from_entropy();
     for _ in 0..1000000 {
-        let _ = h.add(normal.ind_sample(&mut rng));
+        let _ = h.add(normal.sample(&mut rng));
     }
     println!("{:?}", h);
     let sum: u64 = h.bins().iter().sum();
