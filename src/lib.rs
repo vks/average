@@ -63,7 +63,9 @@
 //! ## Calculating histograms
 //!
 //! The [`define_histogram`] macro can be used to define a histogram struct that
-//! uses constant memory.
+//! uses constant memory. See [`Histogram10`] (defined using
+//! `define_histogram!(Histogram10, 10)`) and the extension trait [`Histogram`]
+//! for the methods available to the generated struct.
 //!
 //!
 //! [`Mean`]: ./struct.Mean.html
@@ -78,6 +80,8 @@
 //! [`Max`]: ./struct.Max.html
 //! [`concatenate`]: ./macro.concatenate.html
 //! [`define_histogram`]: ./macro.define_histogram.html
+//! [`Histogram10`]: ./struct.Histogram10.html
+//! [`Histogram`]: ./trait.Histogram.html
 
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp))]
 
@@ -104,3 +108,5 @@ pub use weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use minmax::{Min, Max};
 pub use quantile::Quantile;
 pub use traits::{Estimate, Merge, Histogram};
+
+define_histogram!(Histogram10, 10);
