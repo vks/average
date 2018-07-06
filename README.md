@@ -19,8 +19,10 @@ easily parallelized by using `merge`.
 
 * Mean and its error.
 * Variance, skewness, kurtosis.
+* Arbitrary moments.
 * Minimum and maximum.
 * Quantile.
+* Histogram.
 
 ## Related Projects
 
