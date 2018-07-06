@@ -14,7 +14,7 @@
 //! Everything is calculated iteratively in a single pass using constant memory,
 //! so the sequence of numbers can be an iterator. The used algorithms try to
 //! avoid numerical instabilities.
-//! 
+//!
 //! If you want [Serde](https://github.com/serde-rs/serde) support,
 //! include `"serde"` in your list of features.
 //!
@@ -45,6 +45,7 @@
 //! * Quantiles ([`Quantile`]).
 //! * Minimum ([`Min`]) and maximum ([`Max`]).
 //!
+//!
 //! ## Estimating several statistics at once
 //!
 //! The estimators are designed to have minimal state. The recommended way to
@@ -59,6 +60,12 @@
 //! only need to include the highest moment in your struct.
 //!
 //!
+//! ## Calculating histograms
+//!
+//! The [`define_histogram`] macro can be used to define a histogram struct that
+//! uses constant memory.
+//!
+//!
 //! [`Mean`]: ./struct.Mean.html
 //! [`MeanWithError`]: ./type.MeanWithError.html
 //! [`WeightedMean`]: ./struct.WeightedMean.html
@@ -70,6 +77,7 @@
 //! [`Min`]: ./struct.Min.html
 //! [`Max`]: ./struct.Max.html
 //! [`concatenate`]: ./macro.concatenate.html
+//! [`define_histogram`]: ./macro.define_histogram.html
 
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp))]
 

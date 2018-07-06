@@ -23,7 +23,9 @@ macro_rules! define_histogram {
         /// A histogram with a number of bins known at compile time.
         #[derive(Debug, Clone)]
         pub struct $name {
+            /// The ranges defining the bins of the histogram.
             range: [f64; LEN + 1],
+            /// The bins of the histogram.
             bin: [u64; LEN],
         }
 

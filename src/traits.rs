@@ -55,7 +55,7 @@ pub trait Histogram:
 
     /// Return an iterator over the bin variances.
     ///
-    /// This is more efficient than using `variance()` each bin.
+    /// This is more efficient than calling `variance()` for each bin.
     #[inline]
     fn variances(&self) -> IterVariances<<&Self as IntoIterator>::IntoIter> {
         let sum: u64 = self.bins().iter().sum();
