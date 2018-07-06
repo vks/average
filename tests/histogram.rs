@@ -7,7 +7,7 @@ use core::iter::Iterator;
 use rand::distributions::Distribution;
 use rand::FromEntropy;
 
-use average::Histogram;
+use average::{Histogram, Merge};
 
 define_histogram!(Histogram10, 10);
 
@@ -201,4 +201,27 @@ fn variance() {
         let poissonian_variance = h.bins()[i] as f64;
         assert_almost_eq!(v.sqrt() / sum, poissonian_variance.sqrt() / sum, 1e-4);
     }
+}
+
+#[test]
+fn merge() {
+    let mut h = Histogram10::from_ranges(
+        [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 2.0].iter().cloned()).unwrap();
+    let mut h1 = h.clone();
+    let mut h2 = h.clone();
+    for &i in &[0.05, 0.7, 1.0, 1.5] {
+        h.add(i).unwrap();
+        h1.add(i).unwrap();
+    }
+    for &i in &[0., 0.3, 0.5, 0.5, 0.9] {
+        h.add(i).unwrap();
+        h2.add(i).unwrap();
+    }
+    println!("{:?}", h.bins());
+    println!("{:?}", h1.bins());
+    println!("{:?}", h2.bins());
+    println!();
+    h1.merge(&h2);
+    println!("{:?}", h1.bins());
+    assert_eq!(h.bins(), h1.bins());
 }

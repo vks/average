@@ -206,5 +206,17 @@ macro_rules! define_histogram {
                 }
             }
         }
+
+        impl $crate::Merge for $name {
+            fn merge(&mut self, other: &Self) {
+                assert_eq!(self.bin.len(), other.bin.len());
+                for (a, b) in self.range.iter().zip(other.range.iter()) {
+                    assert_eq!(a, b, "Both histograms must have the same ranges");
+                }
+                for (a, b) in self.bin.iter_mut().zip(other.bin.iter()) {
+                    *a += *b;
+                }
+            }
+        }
     );
 }
