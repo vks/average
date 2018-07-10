@@ -3,8 +3,10 @@
 extern crate average;
 #[cfg(feature = "serde")]
 extern crate serde_json;
+extern crate quantiles;
 
 use average::{Estimate, Quantile};
+use quantiles::ckms::CKMS;
 
 #[test]
 fn few_observations() {
@@ -356,11 +358,31 @@ fn percentile_99_9() {
         52., 5., 38., 27., 29., 21., 27., 24., 36., 3., 24., 19., 0., 20., 20., 27., 27., 33., 28.,
         33., 34., 8., 37., 34., 37., 35., 40., 34., 37.];
 
-    let mut quantile = Quantile::new(0.999);
+    const TOL: f64 = 0.0001;
+    const P: f64 = 0.999;
+    let mut quantile = Quantile::new(P);
+    let mut ckms = CKMS::new(TOL);
 
     for &o in observations.iter() {
         quantile.add(o);
+        ckms.insert(o);
     }
 
-    let _ = quantile.quantile();
+    let q1 = quantile.quantile();
+    let (_, q2) = ckms.query(P).unwrap();
+    assert!((q1 - q2).abs() < 0.3, "{} vs. {}", q1, q2);
 }
+
+#[test]
+fn percentile_99() {
+    const TOL: f64 = 0.0001;
+    let mut q = Quantile::new(0.99);
+    for _ in 0..100 {
+        for i in 0..10 {
+            let f = f64::from(i);
+            q.add(f);
+        }
+    }
+    assert!((q.quantile() - 9.).abs() < TOL);
+}
+
