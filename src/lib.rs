@@ -96,17 +96,18 @@ extern crate num_traits;
 extern crate num_integer;
 
 #[macro_use] mod macros;
-mod moments;
+#[macro_use] mod moments;
 mod weighted_mean;
 mod minmax;
 mod quantile;
 mod traits;
 #[macro_use] mod histogram;
 
-pub use moments::{Mean, Variance, Skewness, Kurtosis, MeanWithError, Moments};
+pub use moments::{Mean, Variance, Skewness, Kurtosis, MeanWithError};
 pub use weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use minmax::{Min, Max};
 pub use quantile::Quantile;
 pub use traits::{Estimate, Merge, Histogram};
 
 define_histogram!(Histogram10, 10);
+define_moments!(Moments4, 4);
