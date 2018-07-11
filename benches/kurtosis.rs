@@ -33,7 +33,7 @@ fn bench_kurtosis(b: &mut Bencher) {
 fn bench_moments(b: &mut Bencher) {
     let values = initialize_vec();
     b.iter(|| {
-        let m: average::Moments = values.iter().map(|x| *x).collect();
+        let m: average::Moments4 = values.iter().map(|x| *x).collect();
         m
     });
 }
