@@ -15,6 +15,7 @@ easily parallelized by using `merge`.
 [Latest Version]: https://img.shields.io/crates/v/average.svg
 [crates.io]: https://crates.io/crates/average
 
+
 ## Implemented statistics
 
 * Mean and its error.
@@ -23,6 +24,14 @@ easily parallelized by using `merge`.
 * Minimum and maximum.
 * Quantile.
 * Histogram.
+
+
+## Crate features
+
+The following optional feature is available:
+
+* `serde1` enables serialization, via Serde version 1.
+
 
 ## Related Projects
 

@@ -89,9 +89,10 @@
 
 extern crate conv;
 extern crate float_ord;
-#[cfg(feature = "serde")]
-#[macro_use]
+#[cfg(feature = "serde1")]
 extern crate serde;
+#[cfg(feature = "serde1")]
+#[macro_use] extern crate serde_derive;
 extern crate num_traits;
 extern crate num_integer;
 

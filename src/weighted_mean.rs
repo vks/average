@@ -17,7 +17,7 @@ use super::{MeanWithError, Estimate, Merge};
 /// println!("The weighted mean is {}.", a.mean());
 /// ```
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
 pub struct WeightedMean  {
     /// Sum of the weights.
     weight_sum: f64,

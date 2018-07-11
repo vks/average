@@ -10,6 +10,9 @@ readme = "README.md"
 repository = "https://github.com/vks/average"
 version = "0.8.0"
 
+[features]
+serde1 = ["serde", "serde_derive"]
+
 [[bench]]
 harness = false
 name = "mean"
@@ -26,15 +29,12 @@ name = "kurtosis"
 num-traits = "0.2"
 num-integer = "0.1"
 float-ord = "0.2"
+serde = { version = "1", optional = true }
+serde_derive = { version = "1", optional = true }
 
 [dependencies.conv]
 default-features = false
 version = "0.3"
-
-[dependencies.serde]
-features = ["derive"]
-optional = true
-version = "1"
 
 [dev-dependencies]
 bencher = "0.1"

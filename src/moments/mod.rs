@@ -32,6 +32,10 @@ pub type MeanWithError = Variance;
 /// # extern crate conv;
 /// # extern crate num_integer;
 /// # extern crate num_traits;
+/// #[cfg(feature = "serde1")]
+/// extern crate serde;
+/// #[cfg(feature = "serde1")]
+/// #[macro_use] extern crate serde_derive;
 /// # #[macro_use] extern crate average;
 /// # fn main() {
 /// define_moments!(Moments4, 4);
@@ -65,7 +69,7 @@ macro_rules! define_moments {
         /// Estimate the first N moments of a sequence of numbers a sequence of numbers
         /// ("population").
         #[derive(Debug, Clone)]
-        #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+        #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
         pub struct $name {
             /// Number of samples.
             ///
@@ -126,13 +130,12 @@ macro_rules! define_moments {
             #[inline]
             pub fn standardized_moment(&self, p: usize) -> f64 {
                 match p {
-                    0 => n,
+                    0 => f64::approx_from(self.n).unwrap(),
                     1 => 0.,
                     2 => 1.,
                     _ => {
                         let variance = self.central_moment(2);
                         assert_ne!(variance, 0.);
-                        let n = f64::approx_from(self.n).unwrap();
                         self.central_moment(p) / pow(variance.sqrt(), p)
                     },
                 }
