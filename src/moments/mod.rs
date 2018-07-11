@@ -125,14 +125,16 @@ macro_rules! define_moments {
             /// Estimate the `p`th standardized moment of the population.
             #[inline]
             pub fn standardized_moment(&self, p: usize) -> f64 {
-                let variance = self.central_moment(2);
-                assert_ne!(variance, 0.);
-                let n = f64::approx_from(self.n).unwrap();
                 match p {
                     0 => n,
                     1 => 0.,
                     2 => 1.,
-                    _ => self.central_moment(p) / pow(variance.sqrt(), p),
+                    _ => {
+                        let variance = self.central_moment(2);
+                        assert_ne!(variance, 0.);
+                        let n = f64::approx_from(self.n).unwrap();
+                        self.central_moment(p) / pow(variance.sqrt(), p)
+                    },
                 }
             }
 

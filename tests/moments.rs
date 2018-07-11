@@ -14,6 +14,8 @@ use average::{Moments4, Merge};
 fn trivial() {
     let mut a = Moments4::new();
     assert_eq!(a.len(), 0);
+    assert_eq!(a.central_moment(1), 0.0);
+    assert_eq!(a.standardized_moment(2), 1.0);
     a.add(1.0);
     assert_eq!(a.len(), 1);
     assert_eq!(a.mean(), 1.0);
