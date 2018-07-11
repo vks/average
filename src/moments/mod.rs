@@ -53,7 +53,6 @@ pub type MeanWithError = Variance;
 /// # }
 /// ```
 #[macro_export]
-//#[allow(dead_code)]
 macro_rules! define_moments {
     ($name:ident, $MAX_MOMENT:expr) => (
         use ::conv::ApproxFrom;
