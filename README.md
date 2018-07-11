@@ -4,6 +4,8 @@ Calculate statistics of a sequence iteratively in a single pass, using
 constant space and avoiding numerical problems. The calculations can be
 easily parallelized by using `merge`.
 
+This crate works without `std`.
+
 [![Documentation Status]][docs.rs]
 [![Latest Version]][crates.io]
 [![Build Status]][travis]
