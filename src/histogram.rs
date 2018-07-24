@@ -140,7 +140,7 @@ macro_rules! define_histogram {
                 /// Return the ranges of the histogram.
                 #[inline]
                 pub fn ranges(&self) -> &[f64] {
-                    &self.range as &[f64]
+                    &self.range[..]
                 }
 
                 /// Return an iterator over the bins and corresponding ranges:
@@ -207,7 +207,7 @@ macro_rules! define_histogram {
             impl $crate::Histogram for Histogram {
                 #[inline]
                 fn bins(&self) -> &[u64] {
-                    &self.bin as &[u64]
+                    &self.bin[..]
                 }
             }
 
