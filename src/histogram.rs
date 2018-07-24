@@ -4,6 +4,8 @@
 /// module with the given name. This includes the `Histogram` struct, the number
 /// of bins `LEN` and the histogram iterator `HistogramIter`.
 ///
+/// Note that you need to make sure that `core` is accessible to the macro.
+///
 ///
 /// # Example
 ///
