@@ -64,7 +64,7 @@
 //!
 //! The [`define_histogram`] macro can be used to define a histogram struct that
 //! uses constant memory. See [`Histogram10`] (defined using
-//! `define_histogram!(Histogram10, 10)`) and the extension trait [`Histogram`]
+//! `define_histogram!(..., 10)`) and the extension trait [`Histogram`]
 //! for the methods available to the generated struct.
 //!
 //!
@@ -110,5 +110,6 @@ pub use minmax::{Min, Max};
 pub use quantile::Quantile;
 pub use traits::{Estimate, Merge, Histogram};
 
-define_histogram!(Histogram10, 10);
+define_histogram!(hist, 10);
+pub use hist::Histogram as Histogram10;
 define_moments!(Moments4, 4);

@@ -9,7 +9,10 @@ use rand::FromEntropy;
 
 use average::{Histogram, Merge};
 
-define_histogram!(Histogram10, 10);
+define_histogram!(hist10, 10);
+define_histogram!(hist100, 100);
+
+use hist10::Histogram as Histogram10;
 
 #[test]
 fn with_const_width() {
