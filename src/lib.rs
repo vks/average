@@ -1,7 +1,8 @@
 //! This crate provides estimators for statistics on a sequence of numbers. The
 //! typical workflow looks like this:
 //!
-//! 1. If necessary, build your custom estimator using [`concatenate`].
+//! 1. If necessary, build your custom estimator using [`concatenate`] or
+//!    [`define_moments`].
 //! 2. Initialize the estimator of your choice with `new()`.
 //! 3. Add some subset (called "sample") of the sequence of numbers (called
 //!    "population") for which you want to estimate the statistic, using `add()`
@@ -42,6 +43,7 @@
 //!   ([`WeightedMeanWithError`]).
 //! * Variance ([`Variance`]), skewness ([`Skewness`]) and kurtosis
 //!   ([`Kurtosis`]).
+//! * Arbitrary higher moments ([`define_moments`]).
 //! * Quantiles ([`Quantile`]).
 //! * Minimum ([`Min`]) and maximum ([`Max`]).
 //!
@@ -79,6 +81,7 @@
 //! [`Min`]: ./struct.Min.html
 //! [`Max`]: ./struct.Max.html
 //! [`concatenate`]: ./macro.concatenate.html
+//! [`define_moments`]: ./macro.define_moments.html
 //! [`define_histogram`]: ./macro.define_histogram.html
 //! [`Histogram10`]: ./struct.Histogram10.html
 //! [`Histogram`]: ./trait.Histogram.html
