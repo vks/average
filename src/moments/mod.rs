@@ -243,15 +243,16 @@ macro_rules! define_moments {
                     let mut coeff_a = 1.;
                     let mut coeff_b = 1.;
                     let mut coeff_delta = 1.;
-                    let mut binom = IterBinomial::new(p);
+                    let mut binom = IterBinomial::new(p as u64);
                     binom.next().unwrap();
                     for k in 1..(p - 1) {
                         coeff_a *= -n_b_over_n;
                         coeff_b *= n_a_over_n;
                         coeff_delta *= delta;
-                        self.m[p - 2] += f64::approx_from(binom.next().unwrap()).unwrap() *
-                            coeff_delta *
-                            (prev_m[p - 2 - k] * coeff_a + other.m[p - 2 - k] * coeff_b);
+                        self.m[p - 2] +=
+                            f64::approx_from(binom.next().unwrap()).unwrap() *
+                            coeff_delta * (prev_m[p - 2 - k] * coeff_a +
+                            other.m[p - 2 - k] * coeff_b);
                     }
                 }
             }
