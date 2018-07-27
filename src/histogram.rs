@@ -226,7 +226,7 @@ macro_rules! define_histogram {
             impl ::core::ops::MulAssign<u64> for Histogram {
                 #[inline]
                 fn mul_assign(&mut self, other: u64) {
-                    for x in self.bin.iter_mut() {
+                    for x in &mut self.bin[..] {
                         *x *= other;
                     }
                 }
