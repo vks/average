@@ -66,8 +66,7 @@ macro_rules! define_moments {
         /// The maximal order of the moment to be calculated.
         const MAX_MOMENT: usize = $MAX_MOMENT;
 
-        /// Estimate the first N moments of a sequence of numbers a sequence of numbers
-        /// ("population").
+        /// Estimate the first N moments of a sequence of numbers ("population").
         #[derive(Debug, Clone)]
         #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
         pub struct $name {
