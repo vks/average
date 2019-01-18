@@ -8,10 +8,11 @@ extern crate stats;
 /// Create a random vector by sampling from a normal distribution.
 fn initialize_vec(size: usize) -> Vec<f64> {
     use rand::distributions::{Normal, Distribution};
-    use rand::{XorShiftRng, SeedableRng};
+    use rand::SeedableRng;
+    use rand::rngs::SmallRng;
     let normal = Normal::new(2.0, 3.0);
     let mut values = Vec::with_capacity(size);
-    let mut rng = XorShiftRng::from_seed(
+    let mut rng = SmallRng::from_seed(
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
     for _ in 0..size {
         values.push(normal.sample(&mut rng));
