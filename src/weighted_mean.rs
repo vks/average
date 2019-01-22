@@ -148,7 +148,7 @@ impl Merge for WeightedMean {
 /// println!("The weighted mean is {} ± {}.", a.weighted_mean(), a.error());
 /// ```
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
 pub struct WeightedMeanWithError {
     /// Sum of the squares of the weights.
     weight_sum_sq: f64,

@@ -3,7 +3,7 @@
 #[macro_use] extern crate average;
 
 extern crate core;
-#[cfg(feature = "serde")]
+#[cfg(feature = "serde1")]
 extern crate serde_json;
 
 use core::iter::Iterator;
@@ -53,12 +53,12 @@ fn simple() {
     assert_almost_eq!(a.standardized_moment(4), -1.365 + 3.0, 1e-14);
 }
 
-#[cfg(feature = "serde")]
+#[cfg(feature = "serde1")]
 #[test]
 fn simple_serde() {
     let a: Moments4 = (1..6).map(f64::from).collect();
     let b = serde_json::to_string(&a).unwrap();
-    assert_eq!(&b, "{\"n\":5,\"avg\":3.0,\"m\":[10.0,1.7763568394002506e-15,34.00000000000001]}");
+    assert_eq!(&b, "{\"n\":5,\"avg\":3.0,\"m\":[10.0,1.7763568394002505e-15,34.00000000000001]}");
     let mut c: Moments4 = serde_json::from_str(&b).unwrap();
     assert_eq!(c.len(), 5);
     assert_eq!(c.mean(), 3.0);

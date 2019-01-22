@@ -11,7 +11,7 @@ repository = "https://github.com/vks/average"
 version = "0.9.3"
 
 [features]
-serde1 = ["serde", "serde_derive"]
+serde1 = ["serde", "serde_derive", "serde-big-array"]
 
 [[bench]]
 harness = false
@@ -31,6 +31,7 @@ num-integer = "0.1"
 float-ord = "0.2"
 serde = { version = "1", optional = true }
 serde_derive = { version = "1", optional = true }
+serde-big-array = { version = "0.1.4", optional = true }
 
 [dependencies.conv]
 default-features = false

@@ -1,7 +1,7 @@
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
 
 extern crate average;
-#[cfg(feature = "serde")]
+#[cfg(feature = "serde1")]
 extern crate serde_json;
 extern crate quantiles;
 
@@ -27,7 +27,7 @@ fn few_observations() {
     assert_eq!(q.quantile(), 2.5);
 }
 
-#[cfg(feature = "serde")]
+#[cfg(feature = "serde1")]
 #[test]
 fn few_observations_serde() {
     let mut q = Quantile::new(0.5);

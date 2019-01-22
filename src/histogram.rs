@@ -12,6 +12,8 @@
 /// ```
 /// # extern crate core;
 /// # #[macro_use] extern crate average;
+/// # #[cfg(feature = "serde1")] #[macro_use] extern crate serde_derive;
+/// # #[cfg(feature = "serde1")] #[macro_use] extern crate serde_big_array;
 /// # fn main() {
 /// use average::Histogram;
 ///
@@ -28,27 +30,33 @@ macro_rules! define_histogram {
     ($name:ident, $LEN:expr) => (
         mod $name {
             use $crate::Histogram as Trait;
+            #[cfg(feature = "serde1")] big_array! {
+                BigArray; LEN, (LEN + 1),
+            }
 
             /// The number of bins of the histogram.
             const LEN: usize = $LEN;
 
             /// A histogram with a number of bins known at compile time.
             #[derive(Clone)]
+            #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
             pub struct Histogram {
                 /// The ranges defining the bins of the histogram.
+                #[cfg_attr(feature = "serde1", serde(with = "BigArray"))]
                 range: [f64; LEN + 1],
                 /// The bins of the histogram.
+                #[cfg_attr(feature = "serde1", serde(with = "BigArray"))]
                 bin: [u64; LEN],
             }
 
             impl ::core::fmt::Debug for Histogram {
                 fn fmt(&self, formatter: &mut ::core::fmt::Formatter)
                     -> ::core::fmt::Result {
-                    write!(formatter, "Histogram {{ range: ")?;
+                    formatter.write_str("Histogram {{ range: ")?;
                     self.range[..].fmt(formatter)?;
-                    write!(formatter, ", bins: ")?;
+                    formatter.write_str(", bins: ")?;
                     self.bin[..].fmt(formatter)?;
-                    write!(formatter, " }}")
+                    formatter.write_str(" }}")
                 }
             }
 

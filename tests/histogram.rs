@@ -2,6 +2,12 @@
 
 extern crate core;
 extern crate rand;
+#[cfg(feature = "serde1")]
+#[macro_use] extern crate serde_derive;
+#[cfg(feature = "serde1")]
+extern crate serde_json;
+#[cfg(feature = "serde1")]
+#[macro_use] extern crate serde_big_array;
 
 use core::iter::Iterator;
 use rand::distributions::Distribution;
@@ -227,4 +233,20 @@ fn merge() {
     h1.merge(&h2);
     println!("{:?}", h1.bins());
     assert_eq!(h.bins(), h1.bins());
+}
+
+#[cfg(feature = "serde1")]
+#[test]
+fn simple_serde() {
+    /*
+    let mut a = Histogram10::from_ranges(
+        [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 2.0].iter().cloned()).unwrap();
+    for &i in &[0.05, 0.7, 1.0, 1.5] {
+        h.add(i).unwrap();
+    }
+    let b = serde_json::to_string(&a).unwrap();
+    assert_eq!(&b, "{\"avg\":{\"avg\":3.0,\"n\":5},\"sum_2\":10.0}");
+    let c: Histogram10 = serde_json::from_str(&b).unwrap();
+    assert_eq!(h.bins(), &[1, 0, 0, 0, 0, 0, 1, 0, 0, 2]);
+    */
 }

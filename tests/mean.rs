@@ -37,7 +37,7 @@ fn simple() {
     assert_almost_eq!(a.error(), f64::sqrt(0.5), 1e-16);
 }
 
-#[cfg(feature = "serde")]
+#[cfg(feature = "serde1")]
 #[test]
 fn simple_serde() {
     let a: MeanWithError = (1..6).map(f64::from).collect();
