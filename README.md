@@ -35,6 +35,11 @@ The following optional feature is available:
 * `serde1` enables serialization, via Serde version 1.
 
 
+## Rust version requirements
+
+Rustc version 1.22 or greater is supported.
+
+
 ## Related Projects
 
 * [`quantiles`](https://crates.io/crates/quantiles):
