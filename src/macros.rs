@@ -98,7 +98,7 @@ macro_rules! assert_almost_eq {
 #[macro_export]
 macro_rules! concatenate {
     ( $name:ident, $([$estimator:ident, $statistic:ident]),+ ) => {
-        concatenate!( $name, $([$estimator, $statistic, $statistic]),* )
+        concatenate!( $name, $([$estimator, $statistic, $statistic]),* );
     };
     ( $name:ident, $( [$estimator:ident, $field:ident, $($statistic:ident),+] ),+ ) => {
         struct $name {

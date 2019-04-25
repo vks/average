@@ -4,14 +4,12 @@
 
 extern crate core;
 
-use average::Estimate;
+use average::{Estimate, Min, Max};
+
+concatenate!(MinMax, [Min, min], [Max, max]);
 
 #[test]
 fn concatenate_simple() {
-    use average::{Min, Max};
-
-    concatenate!(MinMax, [Min, min], [Max, max]);
-
     {
         let mut s = MinMax::new();
         for i in 1..6 {
