@@ -2,6 +2,7 @@
 
 #[macro_use] extern crate bencher;
 extern crate rand;
+extern crate rand_xoshiro;
 
 extern crate average;
 extern crate stats;
@@ -10,13 +11,14 @@ use bencher::Bencher;
 
 /// Create a random vector of random floats in [0, 1].
 fn initialize_vec() -> Vec<f64> {
-    use rand::distributions::{Range, Distribution};
-    use rand::{XorShiftRng, SeedableRng};
-    let range = Range::new(0.0, 1.0);
+    use rand::distributions::{Uniform, Distribution};
+    use rand::SeedableRng;
+    let range = Uniform::new(0.0, 1.0);
     let n = 1_000_000;
     let mut values = Vec::with_capacity(n);
-    let mut rng = XorShiftRng::from_seed(
-        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+    let mut rng = rand_xoshiro::Xoshiro256StarStar::from_seed(
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+         17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]);
     for _ in 0..n {
         values.push(range.sample(&mut rng));
     }
