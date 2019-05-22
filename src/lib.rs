@@ -99,7 +99,6 @@ extern crate serde;
 #[cfg(feature = "serde1")]
 #[macro_use] extern crate serde_big_array;
 extern crate num_traits;
-extern crate num_integer;
 
 #[macro_use] mod macros;
 #[macro_use] mod moments;

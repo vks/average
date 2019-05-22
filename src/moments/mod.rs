@@ -14,9 +14,12 @@ pub type MeanWithError = Variance;
 
 /// Define an estimator of all moments up to a number given at compile time.
 ///
-/// This uses a [general algorithm][paper] and is less efficient than the
-/// specialized implementations (such as [`Mean`], [`Variance`], [`Skewness`]
-/// and [`Kurtosis`]), but it works for any number of moments >= 4.
+/// This uses a [general algorithm][paper] and is slightly less efficient than
+/// the specialized implementations (such as [`Mean`], [`Variance`],
+/// [`Skewness`] and [`Kurtosis`]), but it works for any number of moments >= 4.
+///
+/// (In practise, there is an upper limit due to integer overflow and possibly
+/// numerical issues.)
 ///
 /// [paper]: https://doi.org/10.1007/s00180-015-0637-z.
 /// [`Mean`]: ./struct.Mean.html
@@ -30,7 +33,6 @@ pub type MeanWithError = Variance;
 /// ```
 /// # extern crate core;
 /// # extern crate conv;
-/// # extern crate num_integer;
 /// # extern crate num_traits;
 /// #[cfg(feature = "serde1")]
 /// extern crate serde;
@@ -61,7 +63,43 @@ macro_rules! define_moments {
     ($name:ident, $MAX_MOMENT:expr) => (
         use ::conv::ApproxFrom;
         use ::num_traits::pow;
-        use ::num_integer::IterBinomial;
+
+        /// An iterator over binomial coefficients.
+        struct IterBinomial {
+            a: u64,
+            n: u64,
+            k: u64,
+        }
+
+        impl IterBinomial {
+            /// For a given n, iterate over all binomial coefficients binomial(n, k), for k=0...n.
+            #[inline]
+            pub fn new(n: u64) -> IterBinomial {
+                IterBinomial {
+                    k: 0,
+                    a: 1,
+                    n: n,
+                }
+            }
+        }
+
+        impl Iterator for IterBinomial {
+            type Item = u64;
+
+            #[inline]
+            fn next(&mut self) -> Option<u64> {
+                if self.k > self.n {
+                    return None;
+                }
+                self.a = if !(self.k == 0) {
+                    self.a * (self.n - self.k + 1) / self.k
+                } else {
+                    1
+                };
+                self.k += 1;
+                Some(self.a)
+            }
+        }
 
         /// The maximal order of the moment to be calculated.
         const MAX_MOMENT: usize = $MAX_MOMENT;
