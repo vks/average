@@ -1,13 +1,3 @@
-#[macro_use] extern crate average;
-
-
-
-use rand_xoshiro;
-use rand_distr;
-#[cfg(feature = "serde1")]
-#[macro_use] extern crate serde_derive;
-#[cfg(feature = "serde1")]
-extern crate serde_json;
 #[cfg(feature = "serde1")]
 #[macro_use] extern crate serde_big_array;
 
@@ -15,7 +5,7 @@ use core::iter::Iterator;
 use rand::SeedableRng;
 use rand_distr::Distribution;
 
-use average::{Histogram, Merge};
+use average::{Histogram, Merge, define_histogram, assert_almost_eq};
 
 define_histogram!(hist10, 10);
 define_histogram!(hist100, 100);

@@ -1,14 +1,8 @@
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
 
-#[macro_use] extern crate average;
-
-
-#[cfg(feature = "serde1")]
-extern crate serde_json;
-
 use core::iter::Iterator;
 
-use average::{WeightedMeanWithError, Merge};
+use average::{WeightedMeanWithError, Merge, assert_almost_eq};
 
 #[test]
 fn trivial() {

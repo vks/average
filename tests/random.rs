@@ -1,13 +1,8 @@
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
 
-#[macro_use] extern crate average;
-
-
-use rand_distr;
-
 use rand_distr::Distribution;
 
-use average::{Kurtosis, Estimate};
+use average::{Kurtosis, Estimate, assert_almost_eq};
 
 #[test]
 fn normal_distribution() {

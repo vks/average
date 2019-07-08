@@ -1,11 +1,6 @@
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
 
-#[macro_use] extern crate average;
-
-
-
-
-use stats;
+use average::assert_almost_eq;
 
 /// Create a random vector by sampling from a normal distribution.
 fn initialize_vec(size: usize) -> Vec<f64> {

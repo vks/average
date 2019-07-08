@@ -1,9 +1,6 @@
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
 
-#[macro_use] extern crate average;
 #[macro_use] extern crate proptest;
-
-
 
 use core::iter::Iterator;
 

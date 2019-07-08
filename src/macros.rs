@@ -138,7 +138,7 @@ macro_rules! concatenate {
             }
         }
 
-        impl_from_iterator!($name);
+        $crate::impl_from_iterator!($name);
     };
 }
 

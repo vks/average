@@ -1,10 +1,6 @@
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp))]
 
-#[macro_use] extern crate average;
-
-
-
-use average::{Estimate, Min, Max};
+use average::{Estimate, Min, Max, concatenate};
 
 concatenate!(MinMax, [Min, min], [Max, max]);
 
