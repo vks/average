@@ -1,17 +1,10 @@
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
 
-#[macro_use] extern crate bencher;
-
-use rand_xoshiro;
-
-use average;
-
-
-use bencher::Bencher;
+use bencher::{Bencher, benchmark_group, benchmark_main};
 
 /// Create a random vector of random floats in [0, 1].
 fn initialize_vec() -> Vec<f64> {
-    use rand::distributions::{Uniform, Distribution};
+    use rand_distr::{Uniform, Distribution};
     use rand::SeedableRng;
     let range = Uniform::new(0.0, 1.0);
     let n = 1_000_000;

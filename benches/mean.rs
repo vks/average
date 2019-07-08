@@ -1,19 +1,12 @@
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
 
-#[macro_use] extern crate bencher;
-
-use rand_xoshiro;
-
-use average;
-use stats;
-
-use bencher::Bencher;
+use bencher::{Bencher, benchmark_group, benchmark_main};
 
 /// Create a random vector by sampling from a normal distribution.
 fn initialize_vec() -> Vec<f64> {
-    use rand::distributions::{Normal, Distribution};
+    use rand_distr::{Normal, Distribution};
     use rand::SeedableRng;
-    let normal = Normal::new(2.0, 3.0);
+    let normal = Normal::new(2.0, 3.0).unwrap();
     let n = 1_000_000;
     let mut values = Vec::with_capacity(n);
     let mut rng = rand_xoshiro::Xoshiro256StarStar::from_seed(
