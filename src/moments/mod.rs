@@ -1,6 +1,7 @@
 use core;
 
 use conv::ApproxFrom;
+#[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
 
 use super::{Estimate, Merge};
 
@@ -55,6 +56,7 @@ macro_rules! define_moments {
     ($name:ident, $MAX_MOMENT:expr) => (
         use ::conv::ApproxFrom;
         use ::num_traits::pow;
+        #[cfg(feature = "serde1")] use ::serde::{Serialize, Deserialize};
 
         /// An iterator over binomial coefficients.
         struct IterBinomial {

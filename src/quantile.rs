@@ -3,6 +3,7 @@ use core::cmp::min;
 
 use conv::{ApproxFrom, ConvAsUtil, ConvUtil, ValueFrom};
 use float_ord::sort as sort_floats;
+#[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
 
 use super::Estimate;
 

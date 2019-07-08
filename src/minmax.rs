@@ -1,5 +1,7 @@
 use core;
 
+#[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
+
 use super::{Estimate, Merge};
 
 /// Calculate the minimum of `a` and `b`.

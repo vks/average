@@ -1,5 +1,6 @@
 use core;
 
+#[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
 use super::{MeanWithError, Estimate, Merge};
 
 

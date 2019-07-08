@@ -24,6 +24,7 @@ macro_rules! define_histogram {
     ($name:ident, $LEN:expr) => (
         mod $name {
             use $crate::Histogram as Trait;
+            #[cfg(feature = "serde1")] use ::serde::{Serialize, Deserialize};
             #[cfg(feature = "serde1")] serde_big_array::big_array! {
                 BigArray; LEN, (LEN + 1),
             }
