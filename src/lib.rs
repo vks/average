@@ -86,7 +86,7 @@
 //! [`Histogram10`]: ./struct.Histogram10.html
 //! [`Histogram`]: ./trait.Histogram.html
 
-#![cfg_attr(feature = "cargo-clippy", allow(float_cmp))]
+#![cfg_attr(feature = "cargo-clippy", allow(clippy::float_cmp))]
 
 #![no_std]
 

@@ -230,7 +230,7 @@ macro_rules! define_moments {
                 let factor_coeff = -delta * over_n;
 
                 let prev_m = self.m;
-                for p in 2..(MAX_MOMENT + 1) {
+                for p in 2..=MAX_MOMENT {
                     term1 *= factor1;
                     term2 *= factor2;
                     coeff_delta *= delta;
@@ -266,7 +266,7 @@ macro_rules! define_moments {
                 let mut term_a = n_a * factor_a;
                 let mut term_b = n_b * factor_b;
                 let prev_m = self.m;
-                for p in 2..(MAX_MOMENT + 1) {
+                for p in 2..=MAX_MOMENT {
                     term_a *= factor_a;
                     term_b *= factor_b;
                     self.m[p - 2] += other.m[p - 2] + term_a + term_b;

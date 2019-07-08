@@ -1,4 +1,4 @@
-#![cfg_attr(feature = "cargo-clippy", allow(float_cmp))]
+#![cfg_attr(feature = "cargo-clippy", allow(clippy::float_cmp))]
 
 use average::{Estimate, Min, Max, concatenate};
 

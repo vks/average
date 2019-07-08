@@ -1,4 +1,4 @@
-#![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
+#![cfg_attr(feature = "cargo-clippy", allow(clippy::float_cmp, map_clone))]
 
 use average::{Estimate, Quantile};
 use quantiles::ckms::CKMS;
