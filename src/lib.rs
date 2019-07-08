@@ -108,12 +108,12 @@ mod quantile;
 mod traits;
 #[macro_use] mod histogram;
 
-pub use moments::{Mean, Variance, Skewness, Kurtosis, MeanWithError};
-pub use weighted_mean::{WeightedMean, WeightedMeanWithError};
-pub use minmax::{Min, Max};
-pub use quantile::Quantile;
-pub use traits::{Estimate, Merge, Histogram};
+pub use crate::moments::{Mean, Variance, Skewness, Kurtosis, MeanWithError};
+pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};
+pub use crate::minmax::{Min, Max};
+pub use crate::quantile::Quantile;
+pub use crate::traits::{Estimate, Merge, Histogram};
 
 define_histogram!(hist, 10);
-pub use hist::Histogram as Histogram10;
+pub use crate::hist::Histogram as Histogram10;
 define_moments!(Moments4, 4);

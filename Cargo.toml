@@ -9,6 +9,7 @@ name = "average"
 readme = "README.md"
 repository = "https://github.com/vks/average"
 version = "0.10.0"
+edition = "2018"
 
 [features]
 serde1 = ["serde", "serde_derive", "serde-big-array"]
