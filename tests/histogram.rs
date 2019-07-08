@@ -2,6 +2,8 @@
 
 extern crate core;
 extern crate rand;
+extern crate rand_xoshiro;
+extern crate rand_distr;
 #[cfg(feature = "serde1")]
 #[macro_use] extern crate serde_derive;
 #[cfg(feature = "serde1")]
@@ -10,8 +12,8 @@ extern crate serde_json;
 #[macro_use] extern crate serde_big_array;
 
 use core::iter::Iterator;
-use rand::distributions::Distribution;
-use rand::FromEntropy;
+use rand::SeedableRng;
+use rand_distr::Distribution;
 
 use average::{Histogram, Merge};
 
@@ -197,8 +199,8 @@ fn mul() {
 #[test]
 fn variance() {
     let mut h = Histogram10::with_const_width(-3., 3.);
-    let normal = rand::distributions::Normal::new(0., 1.);
-    let mut rng = rand::rngs::SmallRng::from_entropy();
+    let normal = rand_distr::Normal::new(0., 1.).unwrap();
+    let mut rng = rand_xoshiro::Xoshiro256StarStar::from_entropy();
     for _ in 0..1000000 {
         let _ = h.add(normal.sample(&mut rng));
     }

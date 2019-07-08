@@ -3,17 +3,18 @@
 #[macro_use] extern crate average;
 
 extern crate rand;
+extern crate rand_xoshiro;
+extern crate rand_distr;
 extern crate stats;
 
 /// Create a random vector by sampling from a normal distribution.
 fn initialize_vec(size: usize) -> Vec<f64> {
-    use rand::distributions::{Normal, Distribution};
+    use rand_distr::{Normal, Distribution};
+    use rand_xoshiro::Xoshiro256StarStar;
     use rand::SeedableRng;
-    use rand::rngs::SmallRng;
-    let normal = Normal::new(2.0, 3.0);
+    let normal = Normal::new(2.0, 3.0).unwrap();
     let mut values = Vec::with_capacity(size);
-    let mut rng = SmallRng::from_seed(
-        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+    let mut rng = Xoshiro256StarStar::seed_from_u64(42);
     for _ in 0..size {
         values.push(normal.sample(&mut rng));
     }

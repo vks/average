@@ -3,15 +3,15 @@
 #[macro_use] extern crate average;
 
 extern crate rand;
+extern crate rand_distr;
 
-use rand::distributions::Distribution;
+use rand_distr::Distribution;
 
 use average::{Kurtosis, Estimate};
 
 #[test]
 fn normal_distribution() {
-    use rand::distributions::Normal;
-    let normal = Normal::new(2.0, 3.0);
+    let normal = rand_distr::Normal::new(2.0, 3.0).unwrap();
     let mut a = Kurtosis::new();
     for _ in 0..1_000_000 {
         a.add(normal.sample(&mut ::rand::thread_rng()));
@@ -26,9 +26,8 @@ fn normal_distribution() {
 
 #[test]
 fn exponential_distribution() {
-    use rand::distributions::Exp;
     let lambda = 2.0;
-    let normal = Exp::new(lambda);
+    let normal = rand_distr::Exp::new(lambda).unwrap();
     let mut a = Kurtosis::new();
     for _ in 0..6_000_000 {
         a.add(normal.sample(&mut ::rand::thread_rng()));
