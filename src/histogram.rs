@@ -10,12 +10,7 @@
 /// # Example
 ///
 /// ```
-/// # extern crate core;
-/// # #[macro_use] extern crate average;
-/// # #[cfg(feature = "serde1")] #[macro_use] extern crate serde_derive;
-/// # #[cfg(feature = "serde1")] #[macro_use] extern crate serde_big_array;
-/// # fn main() {
-/// use average::Histogram;
+/// use average::{Histogram, define_histogram};
 ///
 /// define_histogram!(hist, 10);
 /// let mut h = hist::Histogram::with_const_width(0., 100.);
@@ -23,14 +18,13 @@
 ///     h.add(i as f64).unwrap();
 /// }
 /// assert_eq!(h.bins(), &[10, 10, 10, 10, 10, 10, 10, 10, 10, 10]);
-/// # }
 /// ```
 #[macro_export]
 macro_rules! define_histogram {
     ($name:ident, $LEN:expr) => (
         mod $name {
             use $crate::Histogram as Trait;
-            #[cfg(feature = "serde1")] big_array! {
+            #[cfg(feature = "serde1")] serde_big_array::big_array! {
                 BigArray; LEN, (LEN + 1),
             }
 

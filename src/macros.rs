@@ -37,10 +37,7 @@ macro_rules! assert_almost_eq {
 /// # Examples
 ///
 /// ```
-/// # extern crate core;
-/// # #[macro_use] extern crate average;
-/// # fn main() {
-/// use average::{Min, Max, Estimate};
+/// use average::{Min, Max, Estimate, concatenate};
 ///
 /// concatenate!(MinMax, [Min, min], [Max, max]);
 ///
@@ -48,7 +45,6 @@ macro_rules! assert_almost_eq {
 ///
 /// assert_eq!(s.min(), 1.0);
 /// assert_eq!(s.max(), 5.0);
-/// # }
 /// ```
 ///
 /// The generated code looks roughly like this:
@@ -85,15 +81,11 @@ macro_rules! assert_almost_eq {
 /// can do the following:
 ///
 /// ```
-/// # extern crate core;
-/// # #[macro_use] extern crate average;
-/// # fn main() {
-/// use average::{Variance, Quantile, Estimate};
+/// use average::{Variance, Quantile, Estimate, concatenate};
 ///
 /// concatenate!(Estimator,
 ///     [Variance, variance, mean, sample_variance],
 ///     [Quantile, quantile, quantile]);
-/// # }
 /// ```
 #[macro_export]
 macro_rules! concatenate {

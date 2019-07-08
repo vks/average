@@ -90,16 +90,6 @@
 
 #![no_std]
 
-
-
-#[cfg(feature = "serde1")]
-extern crate serde;
-#[cfg(feature = "serde1")]
-#[macro_use] extern crate serde_derive;
-#[cfg(feature = "serde1")]
-#[macro_use] extern crate serde_big_array;
-
-
 #[macro_use] mod macros;
 #[macro_use] mod moments;
 mod weighted_mean;

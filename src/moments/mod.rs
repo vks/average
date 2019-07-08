@@ -31,15 +31,8 @@ pub type MeanWithError = Variance;
 /// # Example
 ///
 /// ```
-/// # extern crate core;
-/// # extern crate conv;
-/// # extern crate num_traits;
-/// #[cfg(feature = "serde1")]
-/// extern crate serde;
-/// #[cfg(feature = "serde1")]
-/// #[macro_use] extern crate serde_derive;
-/// # #[macro_use] extern crate average;
-/// # fn main() {
+/// use average::{define_moments, assert_almost_eq};
+///
 /// define_moments!(Moments4, 4);
 ///
 /// let mut a: Moments4 = (1..6).map(f64::from).collect();
@@ -56,7 +49,6 @@ pub type MeanWithError = Variance;
 /// assert_almost_eq!(a.standardized_moment(3), 0.2795084971874741, 1e-15);
 /// // kurtosis
 /// assert_almost_eq!(a.standardized_moment(4), -1.365 + 3.0, 1e-14);
-/// # }
 /// ```
 #[macro_export]
 macro_rules! define_moments {
@@ -301,6 +293,6 @@ macro_rules! define_moments {
             }
         }
 
-        impl_from_iterator!($name);
+        $crate::impl_from_iterator!($name);
     );
 }

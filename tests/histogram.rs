@@ -1,6 +1,3 @@
-#[cfg(feature = "serde1")]
-#[macro_use] extern crate serde_big_array;
-
 use core::iter::Iterator;
 use rand::SeedableRng;
 use rand_distr::Distribution;
