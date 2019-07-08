@@ -2,10 +2,10 @@
 
 #[macro_use] extern crate average;
 
-extern crate rand;
-extern crate rand_xoshiro;
-extern crate rand_distr;
-extern crate stats;
+
+
+
+use stats;
 
 /// Create a random vector by sampling from a normal distribution.
 fn initialize_vec(size: usize) -> Vec<f64> {

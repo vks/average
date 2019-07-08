@@ -1,9 +1,9 @@
 #[macro_use] extern crate average;
 
-extern crate core;
-extern crate rand;
-extern crate rand_xoshiro;
-extern crate rand_distr;
+
+
+use rand_xoshiro;
+use rand_distr;
 #[cfg(feature = "serde1")]
 #[macro_use] extern crate serde_derive;
 #[cfg(feature = "serde1")]

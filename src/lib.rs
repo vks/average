@@ -90,15 +90,15 @@
 
 #![no_std]
 
-extern crate conv;
-extern crate float_ord;
+
+
 #[cfg(feature = "serde1")]
 extern crate serde;
 #[cfg(feature = "serde1")]
 #[macro_use] extern crate serde_derive;
 #[cfg(feature = "serde1")]
 #[macro_use] extern crate serde_big_array;
-extern crate num_traits;
+
 
 #[macro_use] mod macros;
 #[macro_use] mod moments;

@@ -50,7 +50,7 @@ macro_rules! define_histogram {
             }
 
             impl ::core::fmt::Debug for Histogram {
-                fn fmt(&self, formatter: &mut ::core::fmt::Formatter)
+                fn fmt(&self, formatter: &mut ::core::fmt::Formatter<'_>)
                     -> ::core::fmt::Result {
                     formatter.write_str("Histogram {{ range: ")?;
                     self.range[..].fmt(formatter)?;
@@ -154,7 +154,7 @@ macro_rules! define_histogram {
                 /// Return an iterator over the bins and corresponding ranges:
                 /// `((lower, upper), count)`
                 #[inline]
-                pub fn iter(&self) -> IterHistogram {
+                pub fn iter(&self) -> IterHistogram<'_> {
                     self.into_iter()
                 }
 

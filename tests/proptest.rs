@@ -3,7 +3,7 @@
 #[macro_use] extern crate average;
 #[macro_use] extern crate proptest;
 
-extern crate core;
+
 
 use core::iter::Iterator;
 

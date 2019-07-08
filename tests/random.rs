@@ -2,8 +2,8 @@
 
 #[macro_use] extern crate average;
 
-extern crate rand;
-extern crate rand_distr;
+
+use rand_distr;
 
 use rand_distr::Distribution;
 

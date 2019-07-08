@@ -2,7 +2,7 @@
 
 #[macro_use] extern crate average;
 
-extern crate core;
+
 #[cfg(feature = "serde")]
 extern crate serde_json;
 

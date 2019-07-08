@@ -1,9 +1,9 @@
 #![cfg_attr(feature = "cargo-clippy", allow(float_cmp, map_clone))]
 
-extern crate average;
+
 #[cfg(feature = "serde1")]
 extern crate serde_json;
-extern crate quantiles;
+
 
 use average::{Estimate, Quantile};
 use quantiles::ckms::CKMS;

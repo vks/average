@@ -2,7 +2,7 @@
 
 #[macro_use] extern crate average;
 
-extern crate core;
+
 
 use average::{Estimate, Min, Max};
 
