@@ -227,15 +227,13 @@ fn merge() {
 #[cfg(feature = "serde1")]
 #[test]
 fn simple_serde() {
-    /*
     let mut a = Histogram10::from_ranges(
         [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 2.0].iter().cloned()).unwrap();
     for &i in &[0.05, 0.7, 1.0, 1.5] {
-        h.add(i).unwrap();
+        a.add(i).unwrap();
     }
     let b = serde_json::to_string(&a).unwrap();
-    assert_eq!(&b, "{\"avg\":{\"avg\":3.0,\"n\":5},\"sum_2\":10.0}");
+    assert_eq!(&b, "{\"range\":[0.0,0.1,0.2,0.3,0.4,0.5,0.7,0.8,0.9,1.0,2.0],\"bin\":[1,0,0,0,0,0,1,0,0,2]}");
     let c: Histogram10 = serde_json::from_str(&b).unwrap();
-    assert_eq!(h.bins(), &[1, 0, 0, 0, 0, 0, 1, 0, 0, 2]);
-    */
+    assert_eq!(c.bins(), &[1, 0, 0, 0, 0, 0, 1, 0, 0, 2]);
 }
