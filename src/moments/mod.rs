@@ -13,50 +13,12 @@ include!("kurtosis.rs");
 /// Alias for `Variance`.
 pub type MeanWithError = Variance;
 
-/// Define an estimator of all moments up to a number given at compile time.
-///
-/// This uses a [general algorithm][paper] and is slightly less efficient than
-/// the specialized implementations (such as [`Mean`], [`Variance`],
-/// [`Skewness`] and [`Kurtosis`]), but it works for any number of moments >= 4.
-///
-/// (In practise, there is an upper limit due to integer overflow and possibly
-/// numerical issues.)
-///
-/// [paper]: https://doi.org/10.1007/s00180-015-0637-z.
-/// [`Mean`]: ./struct.Mean.html
-/// [`Variance`]: ./struct.Variance.html
-/// [`Skewness`]: ./struct.Skewness.html
-/// [`Kurtosis`]: ./struct.Kurtosis.html
-///
-///
-/// # Example
-///
-/// ```
-/// use average::{define_moments, assert_almost_eq};
-///
-/// define_moments!(Moments4, 4);
-///
-/// let mut a: Moments4 = (1..6).map(f64::from).collect();
-/// assert_eq!(a.len(), 5);
-/// assert_eq!(a.mean(), 3.0);
-/// assert_eq!(a.central_moment(0), 1.0);
-/// assert_eq!(a.central_moment(1), 0.0);
-/// assert_eq!(a.central_moment(2), 2.0);
-/// assert_eq!(a.standardized_moment(0), 5.0);
-/// assert_eq!(a.standardized_moment(1), 0.0);
-/// assert_eq!(a.standardized_moment(2), 1.0);
-/// a.add(1.0);
-/// // skewness
-/// assert_almost_eq!(a.standardized_moment(3), 0.2795084971874741, 1e-15);
-/// // kurtosis
-/// assert_almost_eq!(a.standardized_moment(4), -1.365 + 3.0, 1e-14);
-/// ```
+#[doc(hidden)]
 #[macro_export]
-macro_rules! define_moments {
+macro_rules! define_moments_common {
     ($name:ident, $MAX_MOMENT:expr) => (
         use ::conv::ApproxFrom;
         use ::num_traits::pow;
-        #[cfg(feature = "serde1")] use ::serde::{Serialize, Deserialize};
 
         /// An iterator over binomial coefficients.
         struct IterBinomial {
@@ -97,23 +59,6 @@ macro_rules! define_moments {
 
         /// The maximal order of the moment to be calculated.
         const MAX_MOMENT: usize = $MAX_MOMENT;
-
-        /// Estimate the first N moments of a sequence of numbers ("population").
-        #[derive(Debug, Clone)]
-        #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
-        pub struct $name {
-            /// Number of samples.
-            ///
-            /// Technically, this is the same as m_0, but we want this to be an integer
-            /// to avoid numerical issues, so we store it separately.
-            n: u64,
-            /// Average.
-            avg: f64,
-            /// Moments times `n`.
-            ///
-            /// Starts with m_2. m_0 is the same as `n` and m_1 is 0 by definition.
-            m: [f64; MAX_MOMENT - 1],
-        }
 
         impl $name {
             /// Create a new moments estimator.
@@ -297,4 +242,101 @@ macro_rules! define_moments {
 
         $crate::impl_from_iterator!($name);
     );
+}
+
+#[cfg(feature = "serde1")]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! define_moments_inner {
+    ($name:ident, $MAX_MOMENT:expr) => (
+        $crate::define_moments_common!($name, $MAX_MOMENT);
+
+        use ::serde::{Serialize, Deserialize};
+
+        /// Estimate the first N moments of a sequence of numbers ("population").
+        #[derive(Debug, Clone, Serialize, Deserialize)]
+        pub struct $name {
+            /// Number of samples.
+            ///
+            /// Technically, this is the same as m_0, but we want this to be an integer
+            /// to avoid numerical issues, so we store it separately.
+            n: u64,
+            /// Average.
+            avg: f64,
+            /// Moments times `n`.
+            ///
+            /// Starts with m_2. m_0 is the same as `n` and m_1 is 0 by definition.
+            m: [f64; MAX_MOMENT - 1],
+        }
+
+    );
+}
+
+#[cfg(not(feature = "serde1"))]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! define_moments_inner {
+    ($name:ident, $MAX_MOMENT:expr) => (
+        $crate::define_moments_common!($name, $MAX_MOMENT);
+
+        /// Estimate the first N moments of a sequence of numbers ("population").
+        #[derive(Debug, Clone)]
+        pub struct $name {
+            /// Number of samples.
+            ///
+            /// Technically, this is the same as m_0, but we want this to be an integer
+            /// to avoid numerical issues, so we store it separately.
+            n: u64,
+            /// Average.
+            avg: f64,
+            /// Moments times `n`.
+            ///
+            /// Starts with m_2. m_0 is the same as `n` and m_1 is 0 by definition.
+            m: [f64; MAX_MOMENT - 1],
+        }
+
+    );
+}
+
+/// Define an estimator of all moments up to a number given at compile time.
+///
+/// This uses a [general algorithm][paper] and is slightly less efficient than
+/// the specialized implementations (such as [`Mean`], [`Variance`],
+/// [`Skewness`] and [`Kurtosis`]), but it works for any number of moments >= 4.
+///
+/// (In practise, there is an upper limit due to integer overflow and possibly
+/// numerical issues.)
+///
+/// [paper]: https://doi.org/10.1007/s00180-015-0637-z.
+/// [`Mean`]: ./struct.Mean.html
+/// [`Variance`]: ./struct.Variance.html
+/// [`Skewness`]: ./struct.Skewness.html
+/// [`Kurtosis`]: ./struct.Kurtosis.html
+///
+///
+/// # Example
+///
+/// ```
+/// use average::{define_moments, assert_almost_eq};
+///
+/// define_moments!(Moments4, 4);
+///
+/// let mut a: Moments4 = (1..6).map(f64::from).collect();
+/// assert_eq!(a.len(), 5);
+/// assert_eq!(a.mean(), 3.0);
+/// assert_eq!(a.central_moment(0), 1.0);
+/// assert_eq!(a.central_moment(1), 0.0);
+/// assert_eq!(a.central_moment(2), 2.0);
+/// assert_eq!(a.standardized_moment(0), 5.0);
+/// assert_eq!(a.standardized_moment(1), 0.0);
+/// assert_eq!(a.standardized_moment(2), 1.0);
+/// a.add(1.0);
+/// // skewness
+/// assert_almost_eq!(a.standardized_moment(3), 0.2795084971874741, 1e-15);
+/// // kurtosis
+/// assert_almost_eq!(a.standardized_moment(4), -1.365 + 3.0, 1e-14);
+/// ```
+#[macro_export]
+macro_rules! define_moments {
+    ($name:ident, $MAX_MOMENT:expr) => ($crate::define_moments_inner!($name, $MAX_MOMENT););
 }
