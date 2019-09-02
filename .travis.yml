@@ -8,6 +8,15 @@ env:
   - ARCH=x86_64 FEATURES='serde1'
   - ARCH=i686 FEATURES='serde1'
 
+matrix:
+  include:
+    - rust: nightly
+      os: linux
+      name: "Minimal dependency versions"
+      script:
+        - cargo generate-lockfile -Z minimal-versions
+        - cargo test
+
 addons:
   apt:
     packages:
