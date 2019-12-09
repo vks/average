@@ -47,7 +47,7 @@ impl Variance {
         // stability for a division inside the loop.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
-        let n = f64::approx_from(self.avg.len()).unwrap();
+        let n = self.avg.len().to_f64().unwrap();
         self.avg.add_inner(delta_n);
         self.sum_2 += delta_n * delta_n * n * (n - 1.);
     }
@@ -80,7 +80,7 @@ impl Variance {
         if self.avg.len() < 2 {
             return 0.;
         }
-        self.sum_2 / f64::approx_from(self.avg.len() - 1).unwrap()
+        self.sum_2 / (self.avg.len() - 1).to_f64().unwrap()
     }
 
     /// Calculate the population variance of the sample.
@@ -92,7 +92,7 @@ impl Variance {
         if n < 2 {
             return 0.;
         }
-        self.sum_2 / f64::approx_from(n).unwrap()
+        self.sum_2 / n.to_f64().unwrap()
     }
 
     /// Estimate the standard error of the mean of the population.
@@ -102,7 +102,7 @@ impl Variance {
         if n == 0 {
             return 0.;
         }
-        (self.sample_variance() / f64::approx_from(n).unwrap()).sqrt()
+        (self.sample_variance() / n.to_f64().unwrap()).sqrt()
     }
 
 }
@@ -118,7 +118,7 @@ impl Estimate for Variance {
     fn add(&mut self, sample: f64) {
         self.increment();
         let delta_n = (sample - self.avg.mean())
-            / f64::approx_from(self.len()).unwrap();
+            / self.len().to_f64().unwrap();
         self.add_inner(delta_n);
     }
 
@@ -151,8 +151,8 @@ impl Merge for Variance {
         // This algorithm was proposed by Chan et al. in 1979.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
-        let len_self = f64::approx_from(self.len()).unwrap();
-        let len_other = f64::approx_from(other.len()).unwrap();
+        let len_self = self.len().to_f64().unwrap();
+        let len_other = other.len().to_f64().unwrap();
         let len_total = len_self + len_other;
         let delta = other.mean() - self.mean();
         self.avg.merge(&other.avg);

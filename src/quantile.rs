@@ -1,7 +1,8 @@
 use core;
 use core::cmp::min;
 
-use conv::{ApproxFrom, ConvAsUtil, ConvUtil, ValueFrom};
+use conv::{ConvAsUtil, ConvUtil, ValueFrom};
+use num_traits::ToPrimitive;
 use float_ord::sort as sort_floats;
 #[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
 
@@ -53,14 +54,14 @@ impl Quantile {
     #[inline]
     fn parabolic(&self, i: usize, d: f64) -> f64 {
         debug_assert_eq!(d.abs(), 1.);
-        let s: i64 = d.approx().unwrap();
-        self.q[i] + d / f64::approx_from(self.n[i + 1] - self.n[i - 1]).unwrap()
-            * (f64::approx_from(self.n[i] - self.n[i - 1] + s).unwrap()
+        let s: i64 = d.approx().unwrap();  // FIXME
+        self.q[i] + d / (self.n[i + 1] - self.n[i - 1]).to_f64().unwrap()
+            * ((self.n[i] - self.n[i - 1] + s).to_f64().unwrap()
                * (self.q[i + 1] - self.q[i])
-               / f64::approx_from(self.n[i + 1] - self.n[i]).unwrap()
-               + f64::approx_from(self.n[i + 1] - self.n[i] - s).unwrap()
+               / (self.n[i + 1] - self.n[i]).to_f64().unwrap()
+               + (self.n[i + 1] - self.n[i] - s).to_f64().unwrap()
                * (self.q[i] - self.q[i - 1])
-               / f64::approx_from(self.n[i] - self.n[i - 1]).unwrap())
+               / (self.n[i] - self.n[i - 1]).to_f64().unwrap())
     }
 
     /// Linear prediction for marker height.
@@ -69,7 +70,7 @@ impl Quantile {
         debug_assert_eq!(d.abs(), 1.);
         let sum = if d < 0. { i - 1 } else { i + 1 };
         self.q[i] + d * (self.q[sum] - self.q[i])
-            / f64::approx_from(self.n[sum] - self.n[i]).unwrap()
+            / (self.n[sum] - self.n[i]).to_f64().unwrap()
     }
 
     /// Estimate the p-quantile of the population.
@@ -167,7 +168,7 @@ impl Estimate for Quantile {
 
         // Adjust height of markers.
         for i in 1..4 {
-            let d: f64 = self.m[i] - f64::approx_from(self.n[i]).unwrap();
+            let d = self.m[i] - self.n[i].to_f64().unwrap();
             if d >= 1. && self.n[i + 1] - self.n[i] > 1 ||
                d <= -1. && self.n[i - 1] - self.n[i] < -1 {
                 let d = d.signum();

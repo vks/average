@@ -80,7 +80,7 @@ impl Estimate for Mean {
     fn add(&mut self, sample: f64) {
         self.increment();
         let delta_n = (sample - self.avg)
-            / f64::approx_from(self.n).unwrap();
+            / self.n.to_f64().unwrap();
         self.add_inner(delta_n);
     }
 
@@ -111,8 +111,8 @@ impl Merge for Mean {
         // This algorithm was proposed by Chan et al. in 1979.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
-        let len_self = f64::approx_from(self.n).unwrap();
-        let len_other = f64::approx_from(other.n).unwrap();
+        let len_self = self.n.to_f64().unwrap();
+        let len_other = other.n.to_f64().unwrap();
         let len_total = len_self + len_other;
         self.n += other.n;
         self.avg = (len_self * self.avg + len_other * other.avg) / len_total;

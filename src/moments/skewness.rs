@@ -39,7 +39,7 @@ impl Skewness {
         // This algorithm was suggested by Terriberry.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.
-        let n = f64::approx_from(self.len()).unwrap();
+        let n = self.len().to_f64().unwrap();
         let term = delta * delta_n * (n - 1.);
         self.sum_3 += term * delta_n * (n - 2.)
             - 3.*delta_n * self.avg.sum_2;
@@ -94,7 +94,7 @@ impl Skewness {
         if self.sum_3 == 0. {
             return 0.;
         }
-        let n = f64::approx_from(self.len()).unwrap();
+        let n = self.len().to_f64().unwrap();
         let sum_2 = self.avg.sum_2;
         debug_assert_ne!(sum_2, 0.);
         n.sqrt() * self.sum_3 / (sum_2*sum_2*sum_2).sqrt()
@@ -112,7 +112,7 @@ impl Estimate for Skewness {
     fn add(&mut self, x: f64) {
         let delta = x - self.mean();
         self.increment();
-        let n = f64::approx_from(self.len()).unwrap();
+        let n = self.len().to_f64().unwrap();
         self.add_inner(delta, delta/n);
     }
 
@@ -125,8 +125,8 @@ impl Estimate for Skewness {
 impl Merge for Skewness {
     #[inline]
     fn merge(&mut self, other: &Skewness) {
-        let len_self = f64::approx_from(self.len()).unwrap();
-        let len_other = f64::approx_from(other.len()).unwrap();
+        let len_self = self.len().to_f64().unwrap();
+        let len_other = other.len().to_f64().unwrap();
         let len_total = len_self + len_other;
         let delta = other.mean() - self.mean();
         let delta_n = delta / len_total;

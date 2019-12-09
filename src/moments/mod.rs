@@ -1,6 +1,6 @@
 use core;
 
-use conv::ApproxFrom;
+use num_traits::ToPrimitive;
 #[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
 
 use super::{Estimate, Merge};
@@ -17,8 +17,7 @@ pub type MeanWithError = Variance;
 #[macro_export]
 macro_rules! define_moments_common {
     ($name:ident, $MAX_MOMENT:expr) => (
-        use ::conv::ApproxFrom;
-        use ::num_traits::pow;
+        use num_traits::{pow, ToPrimitive};
 
         /// An iterator over binomial coefficients.
         struct IterBinomial {
@@ -94,7 +93,7 @@ macro_rules! define_moments_common {
             /// Estimate the `p`th central moment of the population.
             #[inline]
             pub fn central_moment(&self, p: usize) -> f64 {
-                let n = f64::approx_from(self.n).unwrap();
+                let n = self.n.to_f64().unwrap();
                 match p {
                     0 => 1.,
                     1 => 0.,
@@ -106,7 +105,7 @@ macro_rules! define_moments_common {
             #[inline]
             pub fn standardized_moment(&self, p: usize) -> f64 {
                 match p {
-                    0 => f64::approx_from(self.n).unwrap(),
+                    0 => self.n.to_f64().unwrap(),
                     1 => 0.,
                     2 => 1.,
                     _ => {
@@ -125,7 +124,7 @@ macro_rules! define_moments_common {
                 if self.n < 2 {
                     return 0.;
                 }
-                self.m[0] / f64::approx_from(self.n - 1).unwrap()
+                self.m[0] / (self.n - 1).to_f64().unwrap()
             }
 
             /// Calculate the sample skewness.
@@ -134,7 +133,7 @@ macro_rules! define_moments_common {
                 if self.n < 2 {
                     return 0.;
                 }
-                let n = f64::approx_from(self.n).unwrap();
+                let n = self.n.to_f64().unwrap();
                 if self.n < 3 {
                     // Method of moments
                     return self.central_moment(3) /
@@ -151,7 +150,7 @@ macro_rules! define_moments_common {
                 if self.n < 4 {
                     return 0.;
                 }
-                let n = f64::approx_from(self.n).unwrap();
+                let n = self.n.to_f64().unwrap();
                 (n + 1.) * n * self.central_moment(4) /
                     ((n - 1.) * (n - 2.) * (n - 3.) * pow(self.central_moment(2), 2)) -
                     3. * pow(n - 1., 2) / ((n - 2.) * (n - 3.))
@@ -162,7 +161,7 @@ macro_rules! define_moments_common {
             pub fn add(&mut self, x: f64) {
                 self.n += 1;
                 let delta = x - self.avg;
-                let n = f64::approx_from(self.n).unwrap();
+                let n = self.n.to_f64().unwrap();
                 self.avg += delta / n;
 
                 let mut coeff_delta = delta;
@@ -186,7 +185,7 @@ macro_rules! define_moments_common {
                     binom.next().unwrap();  // Skip k = 0.
                     for k in 1..(p - 1) {
                         coeff *= factor_coeff;
-                        self.m[p - 2] += f64::approx_from(binom.next().unwrap()).unwrap() *
+                        self.m[p - 2] += binom.next().unwrap().to_f64().unwrap() *
                             prev_m[p - 2 - k] * coeff;
                     }
                 }
@@ -196,12 +195,12 @@ macro_rules! define_moments_common {
         impl $crate::Merge for $name {
             #[inline]
             fn merge(&mut self, other: &$name) {
-                let n_a = f64::approx_from(self.n).unwrap();
-                let n_b = f64::approx_from(other.n).unwrap();
+                let n_a = self.n.to_f64().unwrap();
+                let n_b = other.n.to_f64().unwrap();
                 let delta = other.avg - self.avg;
 
                 self.n += other.n;
-                let n = f64::approx_from(self.n).unwrap();
+                let n = self.n.to_f64().unwrap();
                 let n_a_over_n = n_a / n;
                 let n_b_over_n = n_b / n;
                 self.avg += n_b_over_n * delta;
@@ -226,7 +225,7 @@ macro_rules! define_moments_common {
                         coeff_b *= n_a_over_n;
                         coeff_delta *= delta;
                         self.m[p - 2] +=
-                            f64::approx_from(binom.next().unwrap()).unwrap() *
+                            binom.next().unwrap().to_f64().unwrap() *
                             coeff_delta * (prev_m[p - 2 - k] * coeff_a +
                             other.m[p - 2 - k] * coeff_b);
                     }
@@ -251,7 +250,7 @@ macro_rules! define_moments_inner {
     ($name:ident, $MAX_MOMENT:expr) => (
         $crate::define_moments_common!($name, $MAX_MOMENT);
 
-        use ::serde::{Serialize, Deserialize};
+        use serde::{Serialize, Deserialize};
 
         /// Estimate the first N moments of a sequence of numbers ("population").
         #[derive(Debug, Clone, Serialize, Deserialize)]
