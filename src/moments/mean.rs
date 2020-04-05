@@ -125,3 +125,4 @@ impl Merge for Mean {
 }
 
 impl_from_iterator!(Mean);
+impl_from_par_iterator!(Mean);

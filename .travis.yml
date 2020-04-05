@@ -7,6 +7,8 @@ env:
   - ARCH=i686 FEATURES=''
   - ARCH=x86_64 FEATURES='serde1'
   - ARCH=i686 FEATURES='serde1'
+  - ARCH=x86_64 FEATURES='rayon'
+  - ARCH=i686 FEATURES='rayon'
 
 matrix:
   include:
@@ -16,7 +18,7 @@ matrix:
       script:
         - cargo generate-lockfile -Z minimal-versions
         # Building the test results in problems with rand 0.6
-        - cargo check --features serde1
+        - cargo check --features serde1,rayon
 
 addons:
   apt:

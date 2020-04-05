@@ -30,9 +30,10 @@ This crate works without `std`.
 
 ## Crate features
 
-The following optional feature is available:
+The following optional features are available:
 
 * `serde1` enables serialization, via Serde version 1.
+* `rayon` enables support for `rayon::iter::FromParallelIterator`.
 
 
 ## Rust version requirements

@@ -58,6 +58,7 @@ impl core::default::Default for Min {
 }
 
 impl_from_iterator!(Min);
+impl_from_par_iterator!(Min);
 
 impl Estimate for Min {
     #[inline]
@@ -138,6 +139,7 @@ impl core::default::Default for Max {
 }
 
 impl_from_iterator!(Max);
+impl_from_par_iterator!(Max);
 
 impl Estimate for Max {
     #[inline]
