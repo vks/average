@@ -131,6 +131,20 @@ macro_rules! concatenate {
         }
 
         $crate::impl_from_iterator!($name);
+
+        // This should be conditionally activated if all fields implement `Merge`.
+        // Could probably be implemented with specialization.
+        /*
+        impl $crate::Merge for $name {
+            #[inline]
+            fn merge(&mut self, other: &Self) {
+                use $crate::Merge;
+                $(
+                    self.$field.merge(&other.$field);
+                )*
+            }
+        }
+        */
     };
 }
 
@@ -159,6 +173,54 @@ macro_rules! impl_from_iterator {
                     e.add(i);
                 }
                 e
+            }
+        }
+    }
+}
+
+/// Implement `FromParallelIterator<f64>` for an iterative estimator.
+///
+/// This will do nothing unless the `rayon` feature is enabled.
+#[macro_export]
+macro_rules! impl_from_par_iterator {
+    ( $name:ident ) => {
+        #[cfg(feature = "rayon")]
+        impl ::rayon::iter::FromParallelIterator<f64> for $name {
+            fn from_par_iter<I>(par_iter: I) -> $name
+                where I: ::rayon::iter::IntoParallelIterator<Item = f64>,
+                      Self: $crate::Merge,
+            {
+                use $crate::Merge;
+                use ::rayon::iter::ParallelIterator;
+
+                let par_iter = par_iter.into_par_iter();
+                par_iter.fold(|| $name::new(), |mut e, i| {
+                    e.add(i);
+                    e
+                }).reduce(|| $name::new(), |mut a, b| {
+                    a.merge(&b);
+                    a
+                })
+            }
+        }
+
+        #[cfg(feature = "rayon")]
+        impl<'a> ::rayon::iter::FromParallelIterator<&'a f64> for $name {
+            fn from_par_iter<I>(par_iter: I) -> $name
+                where I: ::rayon::iter::IntoParallelIterator<Item = &'a f64>,
+                      Self: $crate::Merge,
+            {
+                use $crate::Merge;
+                use ::rayon::iter::ParallelIterator;
+
+                let par_iter = par_iter.into_par_iter();
+                par_iter.fold(|| $name::new(), |mut e, i| {
+                    e.add(*i);
+                    e
+                }).reduce(|| $name::new(), |mut a, b| {
+                    a.merge(&b);
+                    a
+                })
             }
         }
     };

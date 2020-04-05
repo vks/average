@@ -44,6 +44,18 @@ fn simple_serde() {
     assert_almost_eq!(c.error(), f64::sqrt(0.5), 1e-16);
 }
 
+#[cfg(feature = "rayon")]
+#[test]
+fn simple_rayon() {
+    use rayon::iter::{IntoParallelIterator, ParallelIterator};
+
+    let a: MeanWithError = (1..6).into_par_iter().map(f64::from).collect();
+    assert_eq!(a.mean(), 3.0);
+    assert_eq!(a.len(), 5);
+    assert_eq!(a.sample_variance(), 2.5);
+    assert_almost_eq!(a.error(), f64::sqrt(0.5), 1e-16);
+}
+
 #[test]
 fn numerically_unstable() {
     // The naive algorithm fails for this example due to cancelation.
