@@ -89,6 +89,7 @@
 #![cfg_attr(feature = "cargo-clippy", allow(clippy::float_cmp))]
 
 #![no_std]
+#![forbid(unsafe_code)]
 
 #[macro_use] mod macros;
 #[macro_use] mod moments;
