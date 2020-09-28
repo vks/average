@@ -7,8 +7,37 @@ pub trait Estimate {
     fn estimate(&self) -> f64;
 }
 
-/// Merge another sample into this one.
+/// Merge with another estimator.
 pub trait Merge {
+    /// Merge the other estimator into this one.
+    ///
+    /// Both estimators are assumed to be fed samples from the same population.
+    ///
+    /// This method is useful for parallelizing the calculation of estimates:
+    /// ```
+    /// use average::{Estimate, Mean, Merge};
+    ///
+    /// let data = &[1., 2., 3., 4., 5., 6., 7., 8., 9., 10.];
+    ///
+    /// let mut thread1 = std::thread::spawn(move || -> Mean {
+    ///     let mut avg = Mean::new();
+    ///     for &x in &data[..5] {
+    ///         avg.add(x);
+    ///     }
+    ///     avg
+    /// });
+    /// let mut thread2 = std::thread::spawn(move || -> Mean {
+    ///     let mut avg = Mean::new();
+    ///     for &x in &data[5..] {
+    ///         avg.add(x);
+    ///     }
+    ///     avg
+    /// });
+    ///
+    /// let mut avg = thread1.join().unwrap();
+    /// avg.merge(&thread2.join().unwrap());
+    /// assert_eq!(avg.mean(), 5.5);
+    /// ```
     fn merge(&mut self, other: &Self);
 }
 

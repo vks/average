@@ -90,6 +90,7 @@
 
 #![no_std]
 #![forbid(unsafe_code)]
+#![forbid(missing_docs)]
 
 #[macro_use] mod macros;
 #[macro_use] mod moments;
