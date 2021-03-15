@@ -17,7 +17,7 @@ use super::Estimate;
 ///
 /// It is recommended to use a different algorithm for discrete distributions
 /// and a small number of samples, or for quantiles close to a singularity in
-/// distribution.
+/// the distribution.
 ///
 /// [1] http://www.cs.wustl.edu/~jain/papers/ftp/psqr.pdf
 /// [2] https://crates.io/crates/quantiles
