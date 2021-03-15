@@ -38,7 +38,7 @@ The following optional features are available:
 
 ## Rust version requirements
 
-Rustc version 1.32 or greater is supported.
+Rustc version 1.36 or greater is supported.
 
 
 ## Related Projects
