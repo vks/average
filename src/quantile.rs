@@ -10,12 +10,17 @@ use super::Estimate;
 
 /// Estimate the p-quantile of a sequence of numbers ("population").
 ///
-/// The algorithm uses constant space but does not provide any upper bound on
-/// the error. For algorithms that use growing space with bounded error, see
-/// the [`quantiles`](https://crates.io/crates/quantiles) crate. They are
-/// recommended over this algorithm for small samples.
-// This uses the P² algorithm introduced here:
-// http://www.cs.wustl.edu/~jain/papers/ftp/psqr.pdf
+/// The [P² algorithm][1] is employed. It uses constant space but the relative
+/// error of the quantile estimate is not bounded by a function of the number of
+/// samples. For algorithms that use growing space with bounded error, see the
+/// [`quantiles`][2] crate.
+///
+/// It is recommended to use a different algorithm for discrete distributions
+/// and a small number of samples, or for quantiles close to a singularity in
+/// distribution.
+///
+/// [1] http://www.cs.wustl.edu/~jain/papers/ftp/psqr.pdf
+/// [2] https://crates.io/crates/quantiles
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
 pub struct Quantile {
