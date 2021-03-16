@@ -108,7 +108,10 @@ pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use crate::minmax::{Min, Max};
 pub use crate::quantile::Quantile;
 pub use crate::traits::{Estimate, Merge, Histogram};
+pub use crate::histogram::{InvalidRangeError, SampleOutOfRangeError};
 
 define_histogram!(hist, 10);
 pub use crate::hist::Histogram as Histogram10;
+
+
 define_moments!(Moments4, 4);

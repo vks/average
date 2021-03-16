@@ -1,3 +1,18 @@
+/// Invalid ranges were specified for constructing the histogram.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum InvalidRangeError {
+    /// The number of ranges is less than the number of bins + 1.
+    NotEnoughRanges,
+    /// The ranges are not sorted.
+    NotSorted,
+    /// A range contains `nan`.
+    NaN,
+}
+
+/// A sample is out of range of the histogram.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SampleOutOfRangeError;
+
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_histogram_common {
@@ -43,7 +58,7 @@ macro_rules! define_histogram_common {
             /// is the number of bins), is not sorted or contains `nan`. `inf`
             /// and empty ranges are allowed.
             #[inline]
-            pub fn from_ranges<T>(ranges: T) -> Result<Self, ()>
+            pub fn from_ranges<T>(ranges: T) -> Result<Self, $crate::InvalidRangeError>
                 where T: IntoIterator<Item = f64>
             {
                 let mut range = [0.; LEN + 1];
@@ -53,16 +68,16 @@ macro_rules! define_histogram_common {
                         break;
                     }
                     if r.is_nan() {
-                        return Err(());
+                        return Err($crate::InvalidRangeError::NaN);
                     }
                     if i > 0 && range[i - 1] > r {
-                        return Err(());
+                        return Err($crate::InvalidRangeError::NotSorted);
                     }
                     range[i] = r;
                     last_i = i;
                 }
                 if last_i != LEN {
-                    return Err(());
+                    return Err($crate::InvalidRangeError::NotEnoughRanges);
                 }
                 Ok(Self {
                     range,
@@ -74,7 +89,7 @@ macro_rules! define_histogram_common {
             ///
             /// Fails if the sample is out of range of the histogram.
             #[inline]
-            pub fn find(&self, x: f64) -> Result<usize, ()> {
+            pub fn find(&self, x: f64) -> Result<usize, $crate::SampleOutOfRangeError> {
                 // We made sure our ranges are valid at construction, so we can
                 // safely unwrap.
                 match self.range.binary_search_by(|p| p.partial_cmp(&x).unwrap()) {
@@ -85,7 +100,7 @@ macro_rules! define_histogram_common {
                         Ok(i - 1)
                     },
                     _ => {
-                        Err(())
+                        Err($crate::SampleOutOfRangeError)
                     },
                 }
             }
@@ -94,12 +109,12 @@ macro_rules! define_histogram_common {
             ///
             /// Fails if the sample is out of range of the histogram.
             #[inline]
-            pub fn add(&mut self, x: f64) -> Result<(), ()> {
+            pub fn add(&mut self, x: f64) -> Result<(), $crate::SampleOutOfRangeError> {
                 if let Ok(i) = self.find(x) {
                     self.bin[i] += 1;
                     Ok(())
                 } else {
-                    Err(())
+                    Err($crate::SampleOutOfRangeError)
                 }
             }
 

@@ -3,6 +3,7 @@ use rand::SeedableRng;
 use rand_distr::Distribution;
 
 use average::{Histogram, Merge, define_histogram, assert_almost_eq};
+use average::{InvalidRangeError, SampleOutOfRangeError};
 
 define_histogram!(hist10, 10);
 define_histogram!(hist100, 100);
@@ -95,18 +96,28 @@ fn from_ranges_infinity() {
 
 #[test]
 fn from_ranges_invalid() {
-    assert!(Histogram10::from_ranges([].iter().cloned()).is_err());
+    assert_eq!(
+        Histogram10::from_ranges([].iter().cloned()).unwrap_err(),
+        InvalidRangeError::NotEnoughRanges
+    );
     let valid = vec![0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 2.0];
     assert!(Histogram10::from_ranges(valid.iter().cloned()).is_ok());
     let mut invalid_nan = valid.clone();
     invalid_nan[3] = std::f64::NAN;
-    assert!(Histogram10::from_ranges(invalid_nan.iter().cloned()).is_err());
+    assert_eq!(
+        Histogram10::from_ranges(invalid_nan.iter().cloned()).unwrap_err(),
+        InvalidRangeError::NaN
+    );
     let mut invalid_order = valid.clone();
     invalid_order[10] = 0.9;
-    assert!(Histogram10::from_ranges(invalid_order.iter().cloned()).is_err());
+    assert_eq!(
+        Histogram10::from_ranges(invalid_order.iter().cloned()).unwrap_err(),
+        InvalidRangeError::NotSorted
+    );
     let mut valid_empty_ranges = valid.clone();
     valid_empty_ranges[1] = 0.;
     valid_empty_ranges[10] = 1.;
+    assert!(Histogram10::from_ranges(valid_empty_ranges.iter().cloned()).is_ok());
 }
 
 #[test]
@@ -122,11 +133,11 @@ fn from_ranges_empty() {
 #[test]
 fn out_of_range() {
     let mut h = Histogram10::with_const_width(0., 100.);
-    assert_eq!(h.add(-0.1), Err(()));
+    assert_eq!(h.add(-0.1), Err(SampleOutOfRangeError));
     assert_eq!(h.add(0.0), Ok(()));
     assert_eq!(h.add(1.0), Ok(()));
-    assert_eq!(h.add(100.0), Err(()));
-    assert_eq!(h.add(100.1), Err(()));
+    assert_eq!(h.add(100.0), Err(SampleOutOfRangeError));
+    assert_eq!(h.add(100.1), Err(SampleOutOfRangeError));
 }
 
 
