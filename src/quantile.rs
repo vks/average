@@ -19,8 +19,8 @@ use super::Estimate;
 /// and a small number of samples, or for quantiles close to a singularity in
 /// the distribution.
 ///
-/// [1] http://www.cs.wustl.edu/~jain/papers/ftp/psqr.pdf
-/// [2] https://crates.io/crates/quantiles
+/// [1]: http://www.cs.wustl.edu/~jain/papers/ftp/psqr.pdf
+/// [2]: https://crates.io/crates/quantiles
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
 pub struct Quantile {
