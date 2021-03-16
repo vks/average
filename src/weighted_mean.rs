@@ -1,8 +1,5 @@
-use core;
-
 #[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
 use super::{MeanWithError, Estimate, Merge};
-
 
 /// Estimate the weighted and unweighted arithmetic mean of a sequence of
 /// numbers ("population").

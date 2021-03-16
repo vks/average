@@ -1,4 +1,3 @@
-use core;
 use core::cmp::min;
 
 use conv::{ConvAsUtil, ConvUtil, ValueFrom};
@@ -40,7 +39,7 @@ impl Quantile {
     /// Panics if `p` is not between 0 and 1.
     #[inline]
     pub fn new(p: f64) -> Quantile {
-        assert!(0. <= p && p <= 1.);
+        assert!((0. ..=  1.).contains(&p));
         Quantile {
             q: [0.; 5],
             n: [1, 2, 3, 4, 0],

@@ -1,5 +1,3 @@
-use core;
-
 use num_traits::ToPrimitive;
 #[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
 
@@ -33,7 +31,7 @@ macro_rules! define_moments_common {
                 IterBinomial {
                     k: 0,
                     a: 1,
-                    n: n,
+                    n,
                 }
             }
         }
