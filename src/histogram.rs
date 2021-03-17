@@ -3,7 +3,8 @@
 pub enum InvalidRangeError {
     /// The number of ranges is less than the number of bins + 1.
     NotEnoughRanges,
-    /// The ranges are not sorted.
+    /// The ranges are not sorted or `(low, high)` where `low` > `high` is
+    /// encountered.
     NotSorted,
     /// A range contains `nan`.
     NaN,
