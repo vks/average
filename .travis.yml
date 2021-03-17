@@ -9,8 +9,6 @@ env:
   - ARCH=i686 FEATURES='serde1'
   - ARCH=x86_64 FEATURES='rayon'
   - ARCH=i686 FEATURES='rayon'
-  - ARCH=x86_64 FEATURES='nightly'
-  - ARCH=i686 FEATURES='nightly'
 
 matrix:
   include:
