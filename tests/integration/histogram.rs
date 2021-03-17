@@ -8,7 +8,7 @@ use average::{InvalidRangeError, SampleOutOfRangeError};
 define_histogram!(hist10, 10);
 define_histogram!(hist100, 100);
 
-use crate::hist10::Histogram as Histogram10;
+use hist10::Histogram as Histogram10;
 
 #[test]
 fn with_const_width() {

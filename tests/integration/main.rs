@@ -1,0 +1,13 @@
+mod histogram;
+mod kurtosis;
+mod macros;
+mod max;
+mod mean;
+mod min;
+mod moments;
+mod proptest;
+mod quantile;
+mod random;
+mod skewness;
+mod streaming_stats;
+mod weighted_mean;
