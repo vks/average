@@ -1,4 +1,9 @@
+#![cfg_attr(feature = "nightly",
+   feature(const_generics, const_evaluatable_checked))]
+
 mod histogram;
+#[cfg(feature = "nightly")]
+mod histogram_const;
 mod kurtosis;
 mod macros;
 mod max;

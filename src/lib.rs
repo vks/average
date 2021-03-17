@@ -95,6 +95,9 @@
 #![forbid(unsafe_code)]
 #![forbid(missing_docs)]
 
+#![cfg_attr(feature = "nightly",
+   feature(const_generics, const_evaluatable_checked))]
+
 #[macro_use] mod macros;
 #[macro_use] mod moments;
 mod weighted_mean;
@@ -102,6 +105,8 @@ mod minmax;
 mod quantile;
 mod traits;
 #[macro_use] mod histogram;
+#[cfg(feature = "nightly")]
+pub mod histogram_const;
 
 pub use crate::moments::{Mean, Variance, Skewness, Kurtosis, MeanWithError};
 pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};
@@ -112,6 +117,5 @@ pub use crate::histogram::{InvalidRangeError, SampleOutOfRangeError};
 
 define_histogram!(hist, 10);
 pub use crate::hist::Histogram as Histogram10;
-
 
 define_moments!(Moments4, 4);

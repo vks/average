@@ -34,6 +34,9 @@ The following optional features are available:
 
 * `serde1` enables serialization, via Serde version 1.
 * `rayon` enables support for `rayon::iter::FromParallelIterator`.
+* `nightly` enables the use of const generics for a histogram implementation
+  without macros. Note that nightly features are not stable and therefore not
+  all library and compiler versions will be compatible.
 
 
 ## Rust version requirements
