@@ -31,14 +31,11 @@ name = "kurtosis"
 [dependencies]
 num-traits = "0.2"
 float-ord = "0.2"
+easy-cast = "0.2"
 serde = { version = "1", features = ["derive"], optional = true }
 serde_derive = { version = "1", optional = true }
 serde-big-array = { version = "0.3.0", optional = true }
 rayon = { version = "1.3", optional = true }
-
-[dependencies.conv]
-default-features = false
-version = "0.3.2"
 
 [dev-dependencies]
 bencher = "0.1"

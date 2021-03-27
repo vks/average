@@ -1,6 +1,6 @@
 use core::cmp::min;
 
-use conv::{ConvAsUtil, ConvUtil, ValueFrom};
+use easy_cast::{Conv, ConvFloat};
 use num_traits::ToPrimitive;
 use float_ord::sort as sort_floats;
 #[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
@@ -58,7 +58,7 @@ impl Quantile {
     #[inline]
     fn parabolic(&self, i: usize, d: f64) -> f64 {
         debug_assert_eq!(d.abs(), 1.);
-        let s: i64 = d.approx().unwrap();  // FIXME
+        let s = i64::conv_nearest(d);
         self.q[i] + d / (self.n[i + 1] - self.n[i - 1]).to_f64().unwrap()
             * ((self.n[i] - self.n[i - 1] + s).to_f64().unwrap()
                * (self.q[i + 1] - self.q[i])
@@ -93,13 +93,13 @@ impl Quantile {
         let mut heights: [f64; 4] = [
             self.q[0], self.q[1], self.q[2], self.q[3]
         ];
-        let len = usize::value_from(self.len()).unwrap();
+        let len = usize::conv(self.len());
         debug_assert!(len < 5);
         sort_floats(&mut heights[..len]);
-        let desired_index = ConvUtil::approx_as::<f64>(len).unwrap() * self.p() - 1.;
+        let desired_index = f64::conv(len) * self.p() - 1.;
         let mut index = desired_index.ceil();
         if desired_index == index && index >= 0. {
-            let index: usize = index.approx().unwrap();
+            let index = usize::conv_nearest(index);
             debug_assert!(index < 5);
             if index < len - 1 {
                 // `q[index]` and `q[index + 1]` are equally valid estimates,
@@ -108,7 +108,7 @@ impl Quantile {
             }
         }
         index = index.max(0.);
-        let mut index: usize = index.approx().unwrap();
+        let mut index = usize::conv_nearest(index);
         debug_assert!(index < 5);
         index = min(index, len - 1);
         self.q[index]
@@ -118,7 +118,7 @@ impl Quantile {
     #[inline]
     pub fn len(&self) -> u64 {
         debug_assert!(self.n[4] >= 0);
-        u64::value_from(self.n[4]).unwrap()
+        u64::conv(self.n[4])
     }
 
     /// Determine whether the sample is empty.
@@ -140,7 +140,7 @@ impl Estimate for Quantile {
     fn add(&mut self, x: f64) {
         // n[4] is the sample size.
         if self.n[4] < 5 {
-            self.q[usize::value_from(self.n[4]).unwrap()] = x;
+            self.q[usize::conv(self.n[4])] = x;
             self.n[4] += 1;
             if self.n[4] == 5 {
                 sort_floats(&mut self.q);
@@ -186,7 +186,7 @@ impl Estimate for Quantile {
                 } else {
                     self.q[i] = self.linear(i, d);
                 }
-                let delta: i64 = d.approx().unwrap();
+                let delta = i64::conv_nearest(d);
                 debug_assert_eq!(delta.abs(), 1);
                 self.n[i] += delta;
             }
