@@ -11,6 +11,7 @@ mod mean;
 mod min;
 mod moments;
 mod proptest;
+#[cfg(feature = "std")]
 mod quantile;
 mod random;
 mod skewness;

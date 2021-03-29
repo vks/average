@@ -35,7 +35,23 @@ fn concatenate_simple() {
 }
 
 #[test]
-fn concatenate_moments() {
+fn concatenate_moments_max() {
+    use average::{Variance, Max};
+
+    concatenate!(Estimator,
+        [Variance, variance, mean, sample_variance],
+        [Max, max, max]);
+
+    let e: Estimator = (1..6).map(f64::from).collect();
+
+    assert_eq!(e.mean(), 3.0);
+    assert_eq!(e.sample_variance(), 2.5);
+    assert_eq!(e.max(), 5.0);
+}
+
+#[cfg(feature = "std")]
+#[test]
+fn concatenate_moments_quantile() {
     use average::{Variance, Quantile};
 
     concatenate!(Estimator,

@@ -79,7 +79,7 @@ macro_rules! assert_almost_eq {
 /// If you want to calculate the mean, variance and the median in one pass, you
 /// can do the following:
 ///
-/// ```
+/// ```ignore
 /// use average::{Variance, Quantile, Estimate, concatenate};
 ///
 /// concatenate!(Estimator,

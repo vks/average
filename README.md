@@ -32,6 +32,7 @@ This crate works without `std`.
 
 The following optional features are available:
 
+* `std` enables `Quantile` (`std` is required for floating point functions).
 * `serde1` enables serialization, via Serde version 1.
 * `rayon` enables support for `rayon::iter::FromParallelIterator`.
 * `nightly` enables the use of const generics for a histogram implementation
