@@ -22,4 +22,4 @@ jobs:
           profile: minimal
           toolchain: ${{ matrix.toolchain }}
       - name: Test
-        run: cargo test --all-features
+        run: cargo test
