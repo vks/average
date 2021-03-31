@@ -14,3 +14,12 @@ jobs:
       fail-fast: false
       matrix:
         toolchain: ["nightly", "1.36.0"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+      - name: Test
+        run: cargo test --all-features
