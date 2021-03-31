@@ -107,12 +107,14 @@ mod quantile;
 mod traits;
 #[macro_use] mod histogram;
 #[cfg(feature = "nightly")]
+#[cfg_attr(doc_cfg, feature(nightly))]
 pub mod histogram_const;
 
 pub use crate::moments::{Mean, Variance, Skewness, Kurtosis, MeanWithError};
 pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use crate::minmax::{Min, Max};
 #[cfg(any(feature = "std", feature = "libm"))]
+#[cfg_attr(doc_cfg, any(feature(std), feature(libm)))]
 pub use crate::quantile::Quantile;
 pub use crate::traits::{Estimate, Merge, Histogram};
 pub use crate::histogram::{InvalidRangeError, SampleOutOfRangeError};
