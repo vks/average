@@ -43,6 +43,7 @@ jobs:
         if: ${{ matrix.variant == 'minimal_versions' }}
         run: cargo generate-lockfile -Z minimal-versions
       - name: Test nightly (if possible)
+        if: ${{ matrix.toolchain == 'nightly' }}
         run: |
           cargo test --target ${{ matrix.target }} --features=nightly
           cargo test --target ${{ matrix.target }} --all-features
