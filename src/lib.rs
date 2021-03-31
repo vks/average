@@ -102,7 +102,7 @@
 #[macro_use] mod moments;
 mod weighted_mean;
 mod minmax;
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "libm"))]
 mod quantile;
 mod traits;
 #[macro_use] mod histogram;
@@ -112,7 +112,7 @@ pub mod histogram_const;
 pub use crate::moments::{Mean, Variance, Skewness, Kurtosis, MeanWithError};
 pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use crate::minmax::{Min, Max};
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "libm"))]
 pub use crate::quantile::Quantile;
 pub use crate::traits::{Estimate, Merge, Histogram};
 pub use crate::histogram::{InvalidRangeError, SampleOutOfRangeError};

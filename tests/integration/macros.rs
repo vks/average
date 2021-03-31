@@ -49,7 +49,7 @@ fn concatenate_moments_max() {
     assert_eq!(e.max(), 5.0);
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "libm"))]
 #[test]
 fn concatenate_moments_quantile() {
     use average::{Variance, Quantile};
