@@ -9,17 +9,47 @@ on:
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        toolchain: ["nightly", "1.36.0"]
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            toolchain: nightly
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            toolchain: 1.36.0  # MSRV
+          - os: ubuntu-latest
+            deps: sudo apt-get update ; sudo apt install gcc-multilib
+            target: i686-unknown-linux-gnu
+            toolchain: stable
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            toolchain: nightly
+            variant: minimal_versions
     steps:
       - uses: actions/checkout@v2
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
+          target: ${{ matrix.target }}
           toolchain: ${{ matrix.toolchain }}
+          override: true
+      - name: Install dependencies (if necessary)
+        run: ${{ matrix.deps }}
+      - name: Minimal versions (if necessary)
+        if: ${{ matrix.variant == 'minimal_versions' }}
+        run: cargo generate-lockfile -Z minimal-versions
+      - name: Test nightly (if possible)
+        run: |
+          cargo test --target ${{ matrix.target }} --features=nightly
+          cargo test --target ${{ matrix.target }} --all-features
+          cargo test --target ${{ matrix.target }} --benches --all-features
       - name: Test
-        run: cargo test
+        run: |
+          cargo test --target ${{ matrix.target }}
+          cargo test --target ${{ matrix.target }} --no-default-features
+          # all stable features:
+          cargo test --target ${{ matrix.target }} --features=std,serde1,rayon
