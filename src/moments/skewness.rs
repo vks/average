@@ -2,6 +2,7 @@
 /// numbers ("population").
 ///
 /// This can be used to estimate the standard error of the mean.
+#[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
 pub struct Skewness {
@@ -97,7 +98,8 @@ impl Skewness {
         let n = self.len().to_f64().unwrap();
         let sum_2 = self.avg.sum_2;
         debug_assert_ne!(sum_2, 0.);
-        n.sqrt() * self.sum_3 / (sum_2*sum_2*sum_2).sqrt()
+        num_traits::Float::sqrt(n) * self.sum_3
+            / num_traits::Float::sqrt(sum_2*sum_2*sum_2)
     }
 }
 

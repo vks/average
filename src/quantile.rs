@@ -21,7 +21,7 @@ use super::Estimate;
 /// [1]: http://www.cs.wustl.edu/~jain/papers/ftp/psqr.pdf
 /// [2]: https://crates.io/crates/quantiles
 #[derive(Debug, Clone)]
-#[cfg_attr(doc_cfg, any(feature(std), feature(libm)))]
+#[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
 #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
 pub struct Quantile {
     /// Marker heights.

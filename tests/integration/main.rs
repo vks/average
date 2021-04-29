@@ -4,6 +4,7 @@
 mod histogram;
 #[cfg(feature = "nightly")]
 mod histogram_const;
+#[cfg(any(feature = "std", feature = "libm"))]
 mod kurtosis;
 mod macros;
 mod max;
@@ -13,7 +14,9 @@ mod moments;
 mod proptest;
 #[cfg(any(feature = "std", feature = "libm"))]
 mod quantile;
+#[cfg(any(feature = "std", feature = "libm"))]
 mod random;
+#[cfg(any(feature = "std", feature = "libm"))]
 mod skewness;
 mod streaming_stats;
 mod weighted_mean;

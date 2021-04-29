@@ -259,17 +259,31 @@ impl WeightedMeanWithError {
     /// This unbiased estimator assumes that the samples were independently
     /// drawn from the same population with constant variance.
     #[inline]
-    pub fn error(&self) -> f64 {
+    pub fn variance_of_weighted_mean(&self) -> f64 {
         // This uses the same estimate as WinCross, which should provide better
         // results than the ones used by SPSS or Mentor.
         //
         // See http://www.analyticalgroup.com/download/WEIGHTED_VARIANCE.pdf.
+
         let weight_sum = self.weighted_avg.sum_weights();
         if weight_sum == 0. {
             return 0.;
         }
         let inv_effective_len = self.weight_sum_sq / (weight_sum * weight_sum);
-        (self.sample_variance() * inv_effective_len).sqrt()
+        self.sample_variance() * inv_effective_len
+    }
+
+    /// Estimate the standard error of the *weighted* mean of the population.
+    ///
+    /// Returns 0 if the sum of weights is 0.
+    ///
+    /// This unbiased estimator assumes that the samples were independently
+    /// drawn from the same population with constant variance.
+    #[cfg(any(feature = "std", feature = "libm"))]
+    #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
+    #[inline]
+    pub fn error(&self) -> f64 {
+        num_traits::Float::sqrt(self.variance_of_weighted_mean())
     }
 }
 

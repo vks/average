@@ -15,8 +15,8 @@ include = ["src/**/*", "benches/*", "LICENSE-*", "README.md"]
 [features]
 serde1 = ["serde", "serde_derive", "serde-big-array"]
 nightly = []
-std = ["easy-cast/std"]
-libm = ["easy-cast/libm"]
+std = ["easy-cast/std", "num-traits/std"]
+libm = ["easy-cast/libm", "num-traits/libm"]
 default = ["libm"]
 
 [[bench]]
@@ -52,3 +52,7 @@ proptest = "0.10"
 # byteorder is not a direct dependency, but the MSRV of 1.4 is higher than ours.
 # Therefore, we have to enforce version 1.3.
 byteorder = "=1.3"
+
+[package.metadata.docs.rs]
+# Enable certain features when building docs for docs.rs
+features = ["libm", "serde1", "rayon"]

@@ -9,6 +9,7 @@ fn trivial() {
     let mut a = Moments4::new();
     assert_eq!(a.len(), 0);
     assert_eq!(a.central_moment(1), 0.0);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_eq!(a.standardized_moment(2), 1.0);
     a.add(1.0);
     assert_eq!(a.len(), 1);
@@ -35,16 +36,18 @@ fn simple() {
     assert_eq!(a.central_moment(1), 0.0);
     // variance
     assert_eq!(a.central_moment(2), 2.0);
-    assert_eq!(a.standardized_moment(0), 5.0);
-    assert_eq!(a.standardized_moment(1), 0.0);
-    assert_eq!(a.standardized_moment(2), 1.0);
-    assert_almost_eq!(a.sample_skewness(), 0.0, 1e-15);
-    assert_almost_eq!(a.standardized_moment(3), 0.0, 1e-15);
-    a.add(1.0);
-    // skewness
-    assert_almost_eq!(a.standardized_moment(3), 0.2795084971874741, 1e-15);
-    // kurtosis
-    assert_almost_eq!(a.standardized_moment(4), -1.365 + 3.0, 1e-14);
+    #[cfg(any(feature = "std", feature = "libm"))] {
+        assert_eq!(a.standardized_moment(0), 5.0);
+        assert_eq!(a.standardized_moment(1), 0.0);
+        assert_eq!(a.standardized_moment(2), 1.0);
+        assert_almost_eq!(a.sample_skewness(), 0.0, 1e-15);
+        assert_almost_eq!(a.standardized_moment(3), 0.0, 1e-15);
+        a.add(1.0);
+        // skewness
+        assert_almost_eq!(a.standardized_moment(3), 0.2795084971874741, 1e-15);
+        // kurtosis
+        assert_almost_eq!(a.standardized_moment(4), -1.365 + 3.0, 1e-14);
+    }
 }
 
 #[cfg(feature = "serde1")]
@@ -60,16 +63,18 @@ fn simple_serde() {
     assert_eq!(c.central_moment(1), 0.0);
     // variance
     assert_eq!(c.central_moment(2), 2.0);
-    assert_eq!(c.standardized_moment(0), 5.0);
-    assert_eq!(c.standardized_moment(1), 0.0);
-    assert_eq!(c.standardized_moment(2), 1.0);
-    assert_almost_eq!(c.sample_skewness(), 0.0, 1e-15);
-    assert_almost_eq!(c.standardized_moment(3), 0.0, 1e-15);
-    c.add(1.0);
-    // skewness
-    assert_almost_eq!(c.standardized_moment(3), 0.2795084971874741, 1e-15);
-    // kurtosis
-    assert_almost_eq!(c.standardized_moment(4), -1.365 + 3.0, 1e-14);
+    #[cfg(any(feature = "std", feature = "libm"))] {
+        assert_eq!(c.standardized_moment(0), 5.0);
+        assert_eq!(c.standardized_moment(1), 0.0);
+        assert_eq!(c.standardized_moment(2), 1.0);
+        assert_almost_eq!(c.sample_skewness(), 0.0, 1e-15);
+        assert_almost_eq!(c.standardized_moment(3), 0.0, 1e-15);
+        c.add(1.0);
+        // skewness
+        assert_almost_eq!(c.standardized_moment(3), 0.2795084971874741, 1e-15);
+        // kurtosis
+        assert_almost_eq!(c.standardized_moment(4), -1.365 + 3.0, 1e-14);
+    }
 }
 
 #[test]

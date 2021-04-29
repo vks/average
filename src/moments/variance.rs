@@ -95,14 +95,22 @@ impl Variance {
         self.sum_2 / n.to_f64().unwrap()
     }
 
-    /// Estimate the standard error of the mean of the population.
+    /// Estimate the variance of the mean of the population.
     #[inline]
-    pub fn error(&self) -> f64 {
+    pub fn variance_of_mean(&self) -> f64 {
         let n = self.avg.len();
         if n == 0 {
             return 0.;
         }
-        (self.sample_variance() / n.to_f64().unwrap()).sqrt()
+        self.sample_variance() / n.to_f64().unwrap()
+    }
+
+    /// Estimate the standard error of the mean of the population.
+    #[cfg(any(feature = "std", feature = "libm"))]
+    #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
+    #[inline]
+    pub fn error(&self) -> f64 {
+        num_traits::Float::sqrt(self.variance_of_mean())
     }
 
 }

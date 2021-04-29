@@ -17,6 +17,8 @@ fn trivial() {
     assert_eq!(a.sum_weights(), 1.0);
     assert_eq!(a.sum_weights_sq(), 1.0);
     assert_eq!(a.population_variance(), 0.0);
+    assert_eq!(a.variance_of_weighted_mean(), 0.0);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_eq!(a.error(), 0.0);
     a.add(1.0, 1.0);
     assert_eq!(a.len(), 2);
@@ -25,6 +27,8 @@ fn trivial() {
     assert_eq!(a.sum_weights(), 2.0);
     assert_eq!(a.sum_weights_sq(), 2.0);
     assert_eq!(a.population_variance(), 0.0);
+    assert_eq!(a.variance_of_weighted_mean(), 0.0);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_eq!(a.error(), 0.0);
 }
 
@@ -36,6 +40,8 @@ fn simple() {
     assert_eq!(a.unweighted_mean(), 3.0);
     assert_eq!(a.sum_weights(), 5.0);
     assert_eq!(a.sample_variance(), 2.5);
+    assert_eq!(a.variance_of_weighted_mean(), 0.5);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_almost_eq!(a.error(), f64::sqrt(0.5), 1e-16);
 }
 
@@ -51,6 +57,8 @@ fn simple_serde() {
     assert_eq!(c.unweighted_mean(), 3.0);
     assert_eq!(c.sum_weights(), 5.0);
     assert_eq!(c.sample_variance(), 2.5);
+    assert_eq!(a.variance_of_weighted_mean(), 0.5);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_almost_eq!(c.error(), f64::sqrt(0.5), 1e-16);
 }
 
@@ -66,9 +74,12 @@ fn reference() {
     assert_eq!(a.sum_weights(), 10.47);
     assert_eq!(a.len(), 10);
     assert_almost_eq!(a.effective_len(), 8.2315, 1e-4);
+    assert_almost_eq!(a.variance_of_weighted_mean(), 0.2173, 1e-4);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_almost_eq!(a.error(), f64::sqrt(0.2173), 1e-4);
 }
 
+#[cfg(any(feature = "std", feature = "libm"))]
 #[test]
 fn error_corner_case() {
     let values = &[1., 2.];

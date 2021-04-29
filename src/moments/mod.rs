@@ -5,7 +5,9 @@ use super::{Estimate, Merge};
 
 include!("mean.rs");
 include!("variance.rs");
+#[cfg(any(feature = "std", feature = "libm"))]
 include!("skewness.rs");
+#[cfg(any(feature = "std", feature = "libm"))]
 include!("kurtosis.rs");
 
 /// Alias for `Variance`.
@@ -100,6 +102,8 @@ macro_rules! define_moments_common {
             }
 
             /// Estimate the `p`th standardized moment of the population.
+            #[cfg(any(feature = "std", feature = "libm"))]
+            #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
             #[inline]
             pub fn standardized_moment(&self, p: usize) -> f64 {
                 match p {
@@ -109,7 +113,8 @@ macro_rules! define_moments_common {
                     _ => {
                         let variance = self.central_moment(2);
                         assert_ne!(variance, 0.);
-                        self.central_moment(p) / pow(variance.sqrt(), p)
+                        self.central_moment(p) / pow(
+                            num_traits::Float::sqrt(variance), p)
                     },
                 }
             }
@@ -126,6 +131,8 @@ macro_rules! define_moments_common {
             }
 
             /// Calculate the sample skewness.
+            #[cfg(any(feature = "std", feature = "libm"))]
+            #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
             #[inline]
             pub fn sample_skewness(&self) -> f64 {
                 if self.n < 2 {
@@ -135,11 +142,17 @@ macro_rules! define_moments_common {
                 if self.n < 3 {
                     // Method of moments
                     return self.central_moment(3) /
-                        (n * (self.central_moment(2) / (n - 1.)).powf(1.5))
+                        num_traits::Float::powf(
+                            n * (self.central_moment(2) / (n - 1.)), 1.5
+                        )
                 }
                 // Adjusted Fisher-Pearson standardized moment coefficient
-                (n * (n - 1.)).sqrt() / (n * (n - 2.)) *
-                    self.central_moment(3) / (self.central_moment(2) / n).powf(1.5)
+                num_traits::Float::sqrt(n * (n - 1.)) /
+                    (n * (n - 2.)) *
+                    num_traits::Float::powf(
+                        self.central_moment(3) / (self.central_moment(2) / n),
+                        1.5
+                    )
             }
 
             /// Calculate the sample excess kurtosis.

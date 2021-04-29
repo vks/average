@@ -13,12 +13,16 @@ fn trivial() {
     assert_eq!(a.len(), 1);
     assert_eq!(a.sample_variance(), 0.0);
     assert_eq!(a.population_variance(), 0.0);
+    assert_eq!(a.variance_of_mean(), 0.0);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_eq!(a.error(), 0.0);
     a.add(1.0);
     assert_eq!(a.mean(), 1.0);
     assert_eq!(a.len(), 2);
     assert_eq!(a.sample_variance(), 0.0);
     assert_eq!(a.population_variance(), 0.0);
+    assert_eq!(a.variance_of_mean(), 0.0);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_eq!(a.error(), 0.0);
 }
 
@@ -28,7 +32,8 @@ fn simple() {
     assert_eq!(a.mean(), 3.0);
     assert_eq!(a.len(), 5);
     assert_eq!(a.sample_variance(), 2.5);
-    assert_almost_eq!(a.error(), f64::sqrt(0.5), 1e-16);
+    #[cfg(any(feature = "std", feature = "libm"))]
+    assert_almost_eq!(a.error(), num_traits::Float::sqrt(0.5), 1e-16);
 }
 
 #[cfg(feature = "serde1")]
@@ -41,6 +46,8 @@ fn simple_serde() {
     assert_eq!(c.mean(), 3.0);
     assert_eq!(c.len(), 5);
     assert_eq!(c.sample_variance(), 2.5);
+    assert_eq!(c.variance_of_mean(), 0.5);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_almost_eq!(c.error(), f64::sqrt(0.5), 1e-16);
 }
 
@@ -53,6 +60,8 @@ fn simple_rayon() {
     assert_eq!(a.mean(), 3.0);
     assert_eq!(a.len(), 5);
     assert_eq!(a.sample_variance(), 2.5);
+    assert_eq!(c.variance_of_mean(), 0.5);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_almost_eq!(a.error(), f64::sqrt(0.5), 1e-16);
 }
 
