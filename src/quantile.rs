@@ -2,6 +2,8 @@ use core::cmp::min;
 
 use easy_cast::{Conv, ConvFloat};
 use num_traits::ToPrimitive;
+#[cfg(not(feature = "std"))]
+use num_traits::Float;
 use float_ord::sort as sort_floats;
 #[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
 
