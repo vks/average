@@ -42,7 +42,9 @@ fn simple() {
         assert_eq!(a.standardized_moment(2), 1.0);
         assert_almost_eq!(a.sample_skewness(), 0.0, 1e-15);
         assert_almost_eq!(a.standardized_moment(3), 0.0, 1e-15);
-        a.add(1.0);
+    }
+    a.add(1.0);
+    #[cfg(any(feature = "std", feature = "libm"))] {
         // skewness
         assert_almost_eq!(a.standardized_moment(3), 0.2795084971874741, 1e-15);
         // kurtosis
@@ -69,7 +71,9 @@ fn simple_serde() {
         assert_eq!(c.standardized_moment(2), 1.0);
         assert_almost_eq!(c.sample_skewness(), 0.0, 1e-15);
         assert_almost_eq!(c.standardized_moment(3), 0.0, 1e-15);
-        c.add(1.0);
+    }
+    c.add(1.0);
+    #[cfg(any(feature = "std", feature = "libm"))] {
         // skewness
         assert_almost_eq!(c.standardized_moment(3), 0.2795084971874741, 1e-15);
         // kurtosis
