@@ -1,5 +1,4 @@
 #[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
-use num_traits::Float;
 use super::{MeanWithError, Estimate, Merge};
 
 /// Estimate the weighted and unweighted arithmetic mean of a sequence of
@@ -284,7 +283,7 @@ impl WeightedMeanWithError {
     #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
     #[inline]
     pub fn error(&self) -> f64 {
-        Float::sqrt(self.variance_of_weighted_mean())
+        num_traits::Float::sqrt(self.variance_of_weighted_mean())
     }
 }
 
