@@ -94,6 +94,7 @@
 #![no_std]
 #![forbid(unsafe_code)]
 #![forbid(missing_docs)]
+#![forbid(missing_debug_implementations)]
 
 #![cfg_attr(feature = "nightly",
    feature(const_generics, const_evaluatable_checked))]

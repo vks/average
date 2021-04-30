@@ -156,6 +156,7 @@ macro_rules! define_histogram_common {
         }
 
         /// Iterate over all `(range, count)` pairs in the histogram.
+        #[derive(Debug, Clone)]
         pub struct IterHistogram<'a> {
             remaining_bin: &'a [u64],
             remaining_range: &'a [f64],

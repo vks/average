@@ -96,6 +96,7 @@ pub trait Histogram:
 }
 
 /// Iterate over the bins normalized by bin width.
+#[derive(Debug, Clone)]
 pub struct IterNormalized<T>
     where T: Iterator<Item = ((f64, f64), u64)>
 {
@@ -114,6 +115,7 @@ impl<T> Iterator for IterNormalized<T>
 }
 
 /// Iterate over the widths of the bins.
+#[derive(Debug, Clone)]
 pub struct IterWidths<T>
     where T: Iterator<Item = ((f64, f64), u64)>
 {
@@ -132,6 +134,7 @@ impl<T> Iterator for IterWidths<T>
 }
 
 /// Iterate over the bin centers.
+#[derive(Debug, Clone)]
 pub struct IterBinCenters<T>
     where T: Iterator<Item = ((f64, f64), u64)>
 {
@@ -150,6 +153,7 @@ impl<T> Iterator for IterBinCenters<T>
 }
 
 /// Iterate over the variances.
+#[derive(Debug, Clone)]
 pub struct IterVariances<T>
     where T: Iterator<Item = ((f64, f64), u64)>
 {
