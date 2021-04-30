@@ -11,6 +11,7 @@ mod max;
 mod mean;
 mod min;
 mod moments;
+#[cfg(feature = "std")]
 mod proptest;
 #[cfg(any(feature = "std", feature = "libm"))]
 mod quantile;
@@ -18,5 +19,6 @@ mod quantile;
 mod random;
 #[cfg(any(feature = "std", feature = "libm"))]
 mod skewness;
+#[cfg(feature = "std")]
 mod streaming_stats;
 mod weighted_mean;

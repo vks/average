@@ -1,7 +1,6 @@
 #![cfg_attr(feature = "cargo-clippy", allow(clippy::float_cmp, map_clone))]
 
 use average::{Estimate, Quantile};
-use quantiles::ckms::CKMS;
 
 #[test]
 fn few_observations() {
@@ -37,6 +36,7 @@ fn few_observations_serde() {
     assert_eq!(c.quantile(), 2.5);
 }
 
+#[cfg(feature = "std")]
 #[test]
 fn percentile_99_9() {
     let observations = [
@@ -356,7 +356,7 @@ fn percentile_99_9() {
     const TOL: f64 = 0.0001;
     const P: f64 = 0.999;
     let mut quantile = Quantile::new(P);
-    let mut ckms = CKMS::new(TOL);
+    let mut ckms = quantiles::ckms::CKMS::new(TOL);
 
     for &o in observations.iter() {
         quantile.add(o);
