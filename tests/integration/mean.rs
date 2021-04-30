@@ -60,7 +60,7 @@ fn simple_rayon() {
     assert_eq!(a.mean(), 3.0);
     assert_eq!(a.len(), 5);
     assert_eq!(a.sample_variance(), 2.5);
-    assert_eq!(c.variance_of_mean(), 0.5);
+    assert_eq!(a.variance_of_mean(), 0.5);
     #[cfg(any(feature = "std", feature = "libm"))]
     assert_almost_eq!(a.error(), f64::sqrt(0.5), 1e-16);
 }
