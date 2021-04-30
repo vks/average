@@ -4,7 +4,7 @@ use rand_distr::Distribution;
 
 use average::{Merge, assert_almost_eq};
 use average::histogram_const::{Histogram, InvalidRangeError,
-SampleOutOfRangeError};
+    SampleOutOfRangeError};
 
 type Histogram10 = Histogram<10>;
 

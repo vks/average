@@ -197,6 +197,7 @@ where [u8; LEN + 1]: Sized {
 }
 
 /// Iterate over all `(range, count)` pairs in the histogram.
+#[derive(Clone, Debug)]
 pub struct IterHistogram<'a> {
     remaining_bin: &'a [u64],
     remaining_range: &'a [f64],
@@ -281,6 +282,7 @@ fn multinomal_variance(n: f64, n_tot_inv: f64) -> f64 {
 }
 
 /// Iterate over the bins normalized by bin width.
+#[derive(Clone, Debug)]
 pub struct IterNormalized<T>
     where T: Iterator<Item = ((f64, f64), u64)>
 {
@@ -299,6 +301,7 @@ impl<T> Iterator for IterNormalized<T>
 }
 
 /// Iterate over the widths of the bins.
+#[derive(Clone, Debug)]
 pub struct IterWidths<T>
     where T: Iterator<Item = ((f64, f64), u64)>
 {
@@ -317,6 +320,7 @@ impl<T> Iterator for IterWidths<T>
 }
 
 /// Iterate over the bin centers.
+#[derive(Clone, Debug)]
 pub struct IterBinCenters<T>
     where T: Iterator<Item = ((f64, f64), u64)>
 {
@@ -335,6 +339,7 @@ impl<T> Iterator for IterBinCenters<T>
 }
 
 /// Iterate over the variances.
+#[derive(Clone, Debug)]
 pub struct IterVariances<T>
     where T: Iterator<Item = ((f64, f64), u64)>
 {
