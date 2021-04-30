@@ -1,3 +1,5 @@
+use num_traits::Float;
+
 /// Estimate the arithmetic mean, the variance and the skewness of a sequence of
 /// numbers ("population").
 ///
@@ -98,8 +100,7 @@ impl Skewness {
         let n = self.len().to_f64().unwrap();
         let sum_2 = self.avg.sum_2;
         debug_assert_ne!(sum_2, 0.);
-        num_traits::Float::sqrt(n) * self.sum_3
-            / num_traits::Float::sqrt(sum_2*sum_2*sum_2)
+        Float::sqrt(n) * self.sum_3 / Float::sqrt(sum_2*sum_2*sum_2)
     }
 }
 

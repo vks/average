@@ -1,9 +1,7 @@
 use core::cmp::min;
 
 use easy_cast::{Conv, ConvFloat};
-use num_traits::ToPrimitive;
-#[cfg(not(feature = "std"))]
-use num_traits::Float;
+use num_traits::{ToPrimitive, Float};
 use float_ord::sort as sort_floats;
 #[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
 
@@ -182,7 +180,7 @@ impl Estimate for Quantile {
             let d = self.m[i] - self.n[i].to_f64().unwrap();
             if d >= 1. && self.n[i + 1] - self.n[i] > 1 ||
                d <= -1. && self.n[i - 1] - self.n[i] < -1 {
-                let d = d.signum();
+                let d = Float::signum(d);
                 let q_new = self.parabolic(i, d);
                 if self.q[i - 1] < q_new && q_new < self.q[i + 1] {
                     self.q[i] = q_new;

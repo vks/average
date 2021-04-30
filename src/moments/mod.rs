@@ -135,6 +135,8 @@ macro_rules! define_moments_common {
             #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
             #[inline]
             pub fn sample_skewness(&self) -> f64 {
+                use num_traits::Float;
+
                 if self.n < 2 {
                     return 0.;
                 }
@@ -142,14 +144,14 @@ macro_rules! define_moments_common {
                 if self.n < 3 {
                     // Method of moments
                     return self.central_moment(3) /
-                        num_traits::Float::powf(
+                        Float::powf(
                             n * (self.central_moment(2) / (n - 1.)), 1.5
                         )
                 }
                 // Adjusted Fisher-Pearson standardized moment coefficient
-                num_traits::Float::sqrt(n * (n - 1.)) /
+                Float::sqrt(n * (n - 1.)) /
                     (n * (n - 2.)) *
-                    num_traits::Float::powf(
+                    Float::powf(
                         self.central_moment(3) / (self.central_moment(2) / n),
                         1.5
                     )
