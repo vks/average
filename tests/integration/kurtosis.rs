@@ -1,5 +1,3 @@
-#![cfg_attr(feature = "cargo-clippy", allow(clippy::float_cmp, map_clone))]
-
 use core::iter::Iterator;
 
 use average::{Kurtosis, Estimate, Merge, assert_almost_eq};

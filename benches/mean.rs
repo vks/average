@@ -1,5 +1,3 @@
-#![cfg_attr(feature = "cargo-clippy", allow(clippy::float_cmp, map_clone))]
-
 use bencher::{Bencher, benchmark_group, benchmark_main};
 
 /// Create a random vector by sampling from a normal distribution.
@@ -21,7 +19,7 @@ fn initialize_vec() -> Vec<f64> {
 fn bench_average(b: &mut Bencher) {
     let values = initialize_vec();
     b.iter(|| {
-        let m: average::MeanWithError = values.iter().map(|x| *x).collect();
+        let m: average::MeanWithError = values.iter().copied().collect();
         m
     });
 }
@@ -29,7 +27,7 @@ fn bench_average(b: &mut Bencher) {
 fn bench_stats(b: &mut Bencher) {
     let values = initialize_vec();
     b.iter(|| {
-        let m: stats::OnlineStats = values.iter().map(|x| *x).collect();
+        let m: stats::OnlineStats = values.iter().copied().collect();
         m
     });
 }

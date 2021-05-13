@@ -1,6 +1,8 @@
 #![cfg_attr(feature = "nightly",
    feature(const_generics, const_evaluatable_checked))]
 
+#![allow(clippy::float_cmp)]
+
 mod histogram;
 #[cfg(feature = "nightly")]
 mod histogram_const;

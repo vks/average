@@ -114,7 +114,7 @@ fn from_ranges_invalid() {
         Histogram10::from_ranges(invalid_order.iter().cloned()).unwrap_err(),
         InvalidRangeError::NotSorted
     );
-    let mut valid_empty_ranges = valid.clone();
+    let mut valid_empty_ranges = valid;
     valid_empty_ranges[1] = 0.;
     valid_empty_ranges[10] = 1.;
     assert!(Histogram10::from_ranges(valid_empty_ranges.iter().cloned()).is_ok());

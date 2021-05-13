@@ -1,5 +1,3 @@
-#![cfg_attr(feature = "cargo-clippy", allow(clippy::float_cmp, map_clone))]
-
 use bencher::{Bencher, benchmark_group, benchmark_main};
 
 /// Create a random vector of random floats in [0, 1].
@@ -21,7 +19,7 @@ fn initialize_vec() -> Vec<f64> {
 fn bench_average(b: &mut Bencher) {
     let values = initialize_vec();
     b.iter(|| {
-        let a: average::Min = values.iter().map(|x| *x).collect();
+        let a: average::Min = values.iter().copied().collect();
         a
     });
 }

@@ -1,5 +1,3 @@
-#![cfg_attr(feature = "cargo-clippy", allow(clippy::float_cmp, map_clone))]
-
 use rand_distr::Distribution;
 
 use average::{Kurtosis, Estimate, assert_almost_eq};

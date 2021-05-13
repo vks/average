@@ -1,5 +1,3 @@
-#![cfg_attr(feature = "cargo-clippy", allow(clippy::float_cmp, map_clone))]
-
 use bencher::{Bencher, benchmark_group, benchmark_main};
 
 /// Create a random vector by sampling from a normal distribution.
@@ -21,7 +19,7 @@ fn initialize_vec() -> Vec<f64> {
 fn bench_kurtosis(b: &mut Bencher) {
     let values = initialize_vec();
     b.iter(|| {
-        let m: average::Kurtosis = values.iter().map(|x| *x).collect();
+        let m: average::Kurtosis = values.iter().copied().collect();
         m
     });
 }
@@ -29,7 +27,7 @@ fn bench_kurtosis(b: &mut Bencher) {
 fn bench_moments(b: &mut Bencher) {
     let values = initialize_vec();
     b.iter(|| {
-        let m: average::Moments4 = values.iter().map(|x| *x).collect();
+        let m: average::Moments4 = values.iter().copied().collect();
         m
     });
 }
