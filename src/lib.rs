@@ -88,10 +88,10 @@
 
 #![cfg_attr(doc_cfg, feature(doc_cfg))]
 
-#![cfg_attr(feature = "cargo-clippy", allow(
+#![allow(
     clippy::float_cmp,
     clippy::suspicious_operation_groupings,
-))]
+)]
 
 #![no_std]
 #![forbid(unsafe_code)]
