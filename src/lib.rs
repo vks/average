@@ -86,6 +86,8 @@
 //! [`Histogram10`]: ./struct.Histogram10.html
 //! [`Histogram`]: ./trait.Histogram.html
 
+#![cfg_attr(doc_cfg, feature(doc_cfg))]
+
 #![cfg_attr(feature = "cargo-clippy", allow(
     clippy::float_cmp,
     clippy::suspicious_operation_groupings,
