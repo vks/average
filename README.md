@@ -12,7 +12,7 @@ This crate works without `std`.
 
 [Documentation Status]: https://docs.rs/average/badge.svg
 [docs.rs]: https://docs.rs/average
-[Build Status]: https://github.com/kas-gui/easy-cast/workflows/Tests/badge.svg?event=push
+[Build Status]: https://github.com/vks/average/workflows/Tests/badge.svg?event=push
 [actions]: https://github.com/vks/average/actions
 [Latest Version]: https://img.shields.io/crates/v/average.svg
 [crates.io]: https://crates.io/crates/average
