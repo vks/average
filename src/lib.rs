@@ -99,7 +99,7 @@
 #![forbid(missing_debug_implementations)]
 
 #![cfg_attr(feature = "nightly",
-   feature(const_generics, const_evaluatable_checked))]
+   feature(generic_const_exprs))]
 
 #[macro_use] mod macros;
 #[macro_use] mod moments;

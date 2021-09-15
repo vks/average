@@ -1,5 +1,5 @@
 #![cfg_attr(feature = "nightly",
-   feature(const_generics, const_evaluatable_checked))]
+   feature(generic_const_exprs))]
 
 #![allow(clippy::float_cmp)]
 
