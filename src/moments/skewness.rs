@@ -149,3 +149,4 @@ impl Merge for Skewness {
 
 impl_from_iterator!(Skewness);
 impl_from_par_iterator!(Skewness);
+impl_extend!(Skewness);

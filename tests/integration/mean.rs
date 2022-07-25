@@ -36,6 +36,17 @@ fn simple() {
     assert_almost_eq!(a.error(), num_traits::Float::sqrt(0.5), 1e-16);
 }
 
+#[test]
+fn simple_extend() {
+    let mut a = MeanWithError::new();
+    a.extend((1..6).map(f64::from));
+    assert_eq!(a.mean(), 3.0);
+    assert_eq!(a.len(), 5);
+    assert_eq!(a.sample_variance(), 2.5);
+    #[cfg(any(feature = "std", feature = "libm"))]
+    assert_almost_eq!(a.error(), num_traits::Float::sqrt(0.5), 1e-16);
+}
+
 #[cfg(feature = "serde1")]
 #[test]
 fn simple_serde() {

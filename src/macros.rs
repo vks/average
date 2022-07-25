@@ -248,3 +248,31 @@ macro_rules! impl_from_par_iterator {
         }
     };
 }
+
+/// Implement `Extend<f64>` for an iterative estimator.
+#[macro_export]
+macro_rules! impl_extend {
+    ( $name:ident ) => {
+        impl ::core::iter::Extend<f64> for $name {
+            fn extend<T>(&mut self, iter: T)
+            where
+                T: IntoIterator<Item = f64>,
+            {
+                for i in iter {
+                    self.add(i);
+                }
+            }
+        }
+
+        impl<'a> ::core::iter::Extend<&'a f64> for $name {
+            fn extend<T>(&mut self, iter: T)
+            where
+                T: IntoIterator<Item = &'a f64>,
+            {
+                for &i in iter {
+                    self.add(i);
+                }
+            }
+        }
+    };
+}

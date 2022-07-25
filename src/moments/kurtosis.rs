@@ -156,3 +156,4 @@ impl Merge for Kurtosis {
 
 impl_from_iterator!(Kurtosis);
 impl_from_par_iterator!(Kurtosis);
+impl_extend!(Kurtosis);

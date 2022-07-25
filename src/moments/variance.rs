@@ -177,3 +177,4 @@ impl Merge for Variance {
 
 impl_from_iterator!(Variance);
 impl_from_par_iterator!(Variance);
+impl_extend!(Variance);

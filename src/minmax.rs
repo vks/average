@@ -58,6 +58,7 @@ impl core::default::Default for Min {
 
 impl_from_iterator!(Min);
 impl_from_par_iterator!(Min);
+impl_extend!(Min);
 
 impl Estimate for Min {
     #[inline]
