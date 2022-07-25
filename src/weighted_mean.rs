@@ -92,6 +92,14 @@ impl core::iter::FromIterator<(f64, f64)> for WeightedMean {
     }
 }
 
+impl core::iter::Extend<(f64, f64)> for WeightedMean {
+    fn extend<T: IntoIterator<Item = (f64, f64)>>(&mut self, iter: T) {
+        for (i, w) in iter {
+            self.add(i, w);
+        }
+    }
+}
+
 impl<'a> core::iter::FromIterator<&'a (f64, f64)> for WeightedMean {
     fn from_iter<T>(iter: T) -> WeightedMean
     where
@@ -102,6 +110,14 @@ impl<'a> core::iter::FromIterator<&'a (f64, f64)> for WeightedMean {
             a.add(i, w);
         }
         a
+    }
+}
+
+impl<'a> core::iter::Extend<&'a (f64, f64)> for WeightedMean {
+    fn extend<T: IntoIterator<Item = &'a (f64, f64)>>(&mut self, iter: T) {
+        for &(i, w) in iter {
+            self.add(i, w);
+        }
     }
 }
 
@@ -338,6 +354,14 @@ impl core::iter::FromIterator<(f64, f64)> for WeightedMeanWithError {
     }
 }
 
+impl core::iter::Extend<(f64, f64)> for WeightedMeanWithError {
+    fn extend<T: IntoIterator<Item = (f64, f64)>>(&mut self, iter: T) {
+        for (i, w) in iter {
+            self.add(i, w);
+        }
+    }
+}
+
 impl<'a> core::iter::FromIterator<&'a (f64, f64)> for WeightedMeanWithError {
     fn from_iter<T>(iter: T) -> WeightedMeanWithError
     where
@@ -348,5 +372,13 @@ impl<'a> core::iter::FromIterator<&'a (f64, f64)> for WeightedMeanWithError {
             a.add(i, w);
         }
         a
+    }
+}
+
+impl<'a> core::iter::Extend<&'a (f64, f64)> for WeightedMeanWithError {
+    fn extend<T: IntoIterator<Item = &'a (f64, f64)>>(&mut self, iter: T) {
+        for &(i, w) in iter {
+            self.add(i, w);
+        }
     }
 }

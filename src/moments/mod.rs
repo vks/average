@@ -243,6 +243,7 @@ macro_rules! define_moments_common {
 
         $crate::impl_from_iterator!($name);
         $crate::impl_from_par_iterator!($name);
+        $crate::impl_extend!($name);
     };
 }
 

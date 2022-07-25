@@ -34,6 +34,19 @@ fn simple() {
     assert_almost_eq!(a.skewness(), 0.2795084971874741, 1e-15);
 }
 
+#[test]
+fn simple_extend() {
+    let mut a = Skewness::new();
+    a.extend((1..6).map(f64::from));
+    assert_eq!(a.mean(), 3.0);
+    assert_eq!(a.len(), 5);
+    assert_eq!(a.sample_variance(), 2.5);
+    assert_almost_eq!(a.error_mean(), f64::sqrt(0.5), 1e-16);
+    assert_eq!(a.skewness(), 0.0);
+    a.add(1.0);
+    assert_almost_eq!(a.skewness(), 0.2795084971874741, 1e-15);
+}
+
 #[cfg(feature = "serde1")]
 #[test]
 fn simple_serde() {
