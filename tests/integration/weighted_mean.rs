@@ -1,6 +1,6 @@
 use core::iter::Iterator;
 
-use average::{WeightedMeanWithError, Merge, assert_almost_eq};
+use average::{assert_almost_eq, Merge, WeightedMeanWithError};
 
 #[test]
 fn trivial() {
@@ -65,8 +65,11 @@ fn reference() {
     // Example from http://www.analyticalgroup.com/download/WEIGHTED_MEAN.pdf.
     let values = &[5., 5., 4., 4., 3., 4., 3., 2., 2., 1.];
     let weights = &[1.23, 2.12, 1.23, 0.32, 1.53, 0.59, 0.94, 0.94, 0.84, 0.73];
-    let a: WeightedMeanWithError = values.iter().zip(weights.iter())
-        .map(|(x, w)| (*x, *w)).collect();
+    let a: WeightedMeanWithError = values
+        .iter()
+        .zip(weights.iter())
+        .map(|(x, w)| (*x, *w))
+        .collect();
     assert_almost_eq!(a.weighted_mean(), 3.53486, 1e-5);
     assert_almost_eq!(a.sample_variance(), 1.7889, 1e-4);
     assert_eq!(a.sum_weights(), 10.47);
@@ -82,8 +85,11 @@ fn reference() {
 fn error_corner_case() {
     let values = &[1., 2.];
     let weights = &[0.5, 0.5];
-    let a: WeightedMeanWithError = values.iter().zip(weights.iter())
-        .map(|(x, w)| (*x, *w)).collect();
+    let a: WeightedMeanWithError = values
+        .iter()
+        .zip(weights.iter())
+        .map(|(x, w)| (*x, *w))
+        .collect();
     assert_eq!(a.error(), 0.5);
 }
 
@@ -110,8 +116,16 @@ fn merge_unweighted() {
 #[test]
 fn merge_weighted() {
     let sequence: &[(f64, f64)] = &[
-        (1., 0.1), (2., 0.2), (3., 0.3), (4., 0.4), (5., 0.5),
-        (6., 0.6), (7., 0.7), (8., 0.8), (9., 0.)];
+        (1., 0.1),
+        (2., 0.2),
+        (3., 0.3),
+        (4., 0.4),
+        (5., 0.5),
+        (6., 0.6),
+        (7., 0.7),
+        (8., 0.8),
+        (9., 0.),
+    ];
     for mid in 0..sequence.len() {
         let (left, right) = sequence.split_at(mid);
         let avg_total: WeightedMeanWithError = sequence.iter().collect();
@@ -122,7 +136,15 @@ fn merge_weighted() {
         assert_almost_eq!(avg_total.sum_weights(), avg_left.sum_weights(), 1e-15);
         assert_eq!(avg_total.sum_weights_sq(), avg_left.sum_weights_sq());
         assert_almost_eq!(avg_total.weighted_mean(), avg_left.weighted_mean(), 1e-15);
-        assert_almost_eq!(avg_total.unweighted_mean(), avg_left.unweighted_mean(), 1e-15);
-        assert_almost_eq!(avg_total.sample_variance(), avg_left.sample_variance(), 1e-14);
+        assert_almost_eq!(
+            avg_total.unweighted_mean(),
+            avg_left.unweighted_mean(),
+            1e-15
+        );
+        assert_almost_eq!(
+            avg_total.sample_variance(),
+            avg_left.sample_variance(),
+            1e-14
+        );
     }
 }

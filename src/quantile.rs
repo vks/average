@@ -1,9 +1,10 @@
 use core::cmp::min;
 
 use easy_cast::{Conv, ConvFloat};
-use num_traits::{ToPrimitive, Float};
 use float_ord::sort as sort_floats;
-#[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
+use num_traits::{Float, ToPrimitive};
+#[cfg(feature = "serde1")]
+use serde::{Deserialize, Serialize};
 
 use super::Estimate;
 
@@ -40,12 +41,12 @@ impl Quantile {
     /// Panics if `p` is not between 0 and 1.
     #[inline]
     pub fn new(p: f64) -> Quantile {
-        assert!((0. ..=  1.).contains(&p));
+        assert!((0. ..=1.).contains(&p));
         Quantile {
             q: [0.; 5],
             n: [1, 2, 3, 4, 0],
-            m: [1., 1. + 2.*p, 1. + 4.*p, 3. + 2.*p, 5.],
-            dm: [0., p/2., p, (1. + p)/2., 1.],
+            m: [1., 1. + 2. * p, 1. + 4. * p, 3. + 2. * p, 5.],
+            dm: [0., p / 2., p, (1. + p) / 2., 1.],
         }
     }
 
@@ -60,13 +61,13 @@ impl Quantile {
     fn parabolic(&self, i: usize, d: f64) -> f64 {
         debug_assert_eq!(d.abs(), 1.);
         let s = i64::conv_nearest(d);
-        self.q[i] + d / (self.n[i + 1] - self.n[i - 1]).to_f64().unwrap()
-            * ((self.n[i] - self.n[i - 1] + s).to_f64().unwrap()
-               * (self.q[i + 1] - self.q[i])
-               / (self.n[i + 1] - self.n[i]).to_f64().unwrap()
-               + (self.n[i + 1] - self.n[i] - s).to_f64().unwrap()
-               * (self.q[i] - self.q[i - 1])
-               / (self.n[i] - self.n[i - 1]).to_f64().unwrap())
+        self.q[i]
+            + d / (self.n[i + 1] - self.n[i - 1]).to_f64().unwrap()
+                * ((self.n[i] - self.n[i - 1] + s).to_f64().unwrap() * (self.q[i + 1] - self.q[i])
+                    / (self.n[i + 1] - self.n[i]).to_f64().unwrap()
+                    + (self.n[i + 1] - self.n[i] - s).to_f64().unwrap()
+                        * (self.q[i] - self.q[i - 1])
+                        / (self.n[i] - self.n[i - 1]).to_f64().unwrap())
     }
 
     /// Linear prediction for marker height.
@@ -74,8 +75,7 @@ impl Quantile {
     fn linear(&self, i: usize, d: f64) -> f64 {
         debug_assert_eq!(d.abs(), 1.);
         let sum = if d < 0. { i - 1 } else { i + 1 };
-        self.q[i] + d * (self.q[sum] - self.q[i])
-            / (self.n[sum] - self.n[i]).to_f64().unwrap()
+        self.q[i] + d * (self.q[sum] - self.q[i]) / (self.n[sum] - self.n[i]).to_f64().unwrap()
     }
 
     /// Estimate the p-quantile of the population.
@@ -91,9 +91,7 @@ impl Quantile {
         if self.is_empty() {
             return 0.;
         }
-        let mut heights: [f64; 4] = [
-            self.q[0], self.q[1], self.q[2], self.q[3]
-        ];
+        let mut heights: [f64; 4] = [self.q[0], self.q[1], self.q[2], self.q[3]];
         let len = usize::conv(self.len());
         debug_assert!(len < 5);
         sort_floats(&mut heights[..len]);
@@ -105,7 +103,7 @@ impl Quantile {
             if index < len - 1 {
                 // `q[index]` and `q[index + 1]` are equally valid estimates,
                 // by convention we take their average.
-                return 0.5*self.q[index] + 0.5*self.q[index + 1];
+                return 0.5 * self.q[index] + 0.5 * self.q[index + 1];
             }
         }
         index = index.max(0.);
@@ -178,8 +176,9 @@ impl Estimate for Quantile {
         // Adjust height of markers.
         for i in 1..4 {
             let d = self.m[i] - self.n[i].to_f64().unwrap();
-            if d >= 1. && self.n[i + 1] - self.n[i] > 1 ||
-               d <= -1. && self.n[i - 1] - self.n[i] < -1 {
+            if d >= 1. && self.n[i + 1] - self.n[i] > 1
+                || d <= -1. && self.n[i - 1] - self.n[i] < -1
+            {
                 let d = Float::signum(d);
                 let q_new = self.parabolic(i, d);
                 if self.q[i - 1] < q_new && q_new < self.q[i + 1] {
@@ -202,10 +201,8 @@ impl Estimate for Quantile {
 #[test]
 fn reference() {
     let observations = [
-        0.02, 0.5, 0.74, 3.39, 0.83,
-        22.37, 10.15, 15.43, 38.62, 15.92,
-        34.60, 10.28, 1.47, 0.40, 0.05,
-        11.39, 0.27, 0.42, 0.09, 11.37,
+        0.02, 0.5, 0.74, 3.39, 0.83, 22.37, 10.15, 15.43, 38.62, 15.92, 34.60, 10.28, 1.47, 0.40,
+        0.05, 11.39, 0.27, 0.42, 0.09, 11.37,
     ];
     let mut q = Quantile::new(0.5);
     for &o in observations.iter() {

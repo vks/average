@@ -1,6 +1,6 @@
 use core::iter::Iterator;
 
-use average::{Min, Estimate, Merge};
+use average::{Estimate, Merge, Min};
 
 #[test]
 fn trivial() {

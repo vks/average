@@ -48,8 +48,9 @@ fn multinomal_variance(n: f64, n_tot_inv: f64) -> f64 {
 }
 
 /// Get the bins and ranges from a histogram.
-pub trait Histogram:
-    where for<'a> &'a Self: IntoIterator<Item = ((f64, f64), u64)>
+pub trait Histogram
+where
+    for<'a> &'a Self: IntoIterator<Item = ((f64, f64), u64)>,
 {
     /// Return the bins of the histogram.
     fn bins(&self) -> &[u64];
@@ -61,25 +62,31 @@ pub trait Histogram:
     fn variance(&self, bin: usize) -> f64 {
         let count = self.bins()[bin];
         let sum: u64 = self.bins().iter().sum();
-        multinomal_variance(count as f64, 1./(sum as f64))
+        multinomal_variance(count as f64, 1. / (sum as f64))
     }
 
     /// Return an iterator over the bins normalized by the bin widths.
     #[inline]
     fn normalized_bins(&self) -> IterNormalized<<&Self as IntoIterator>::IntoIter> {
-        IterNormalized { histogram_iter: self.into_iter() }
+        IterNormalized {
+            histogram_iter: self.into_iter(),
+        }
     }
 
     /// Return an iterator over the bin widths.
     #[inline]
     fn widths(&self) -> IterWidths<<&Self as IntoIterator>::IntoIter> {
-        IterWidths { histogram_iter: self.into_iter() }
+        IterWidths {
+            histogram_iter: self.into_iter(),
+        }
     }
 
     /// Return an iterator over the bin centers.
     #[inline]
     fn centers(&self) -> IterBinCenters<<&Self as IntoIterator>::IntoIter> {
-        IterBinCenters { histogram_iter: self.into_iter() }
+        IterBinCenters {
+            histogram_iter: self.into_iter(),
+        }
     }
 
     /// Return an iterator over the bin variances.
@@ -90,7 +97,7 @@ pub trait Histogram:
         let sum: u64 = self.bins().iter().sum();
         IterVariances {
             histogram_iter: self.into_iter(),
-            sum_inv: 1./(sum as f64)
+            sum_inv: 1. / (sum as f64),
         }
     }
 }
@@ -98,32 +105,38 @@ pub trait Histogram:
 /// Iterate over the bins normalized by bin width.
 #[derive(Debug, Clone)]
 pub struct IterNormalized<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     histogram_iter: T,
 }
 
 impl<T> Iterator for IterNormalized<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     type Item = f64;
 
     #[inline]
     fn next(&mut self) -> Option<f64> {
-        self.histogram_iter.next().map(|((a, b), count)| (count as f64) / (b - a))
+        self.histogram_iter
+            .next()
+            .map(|((a, b), count)| (count as f64) / (b - a))
     }
 }
 
 /// Iterate over the widths of the bins.
 #[derive(Debug, Clone)]
 pub struct IterWidths<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     histogram_iter: T,
 }
 
 impl<T> Iterator for IterWidths<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     type Item = f64;
 
@@ -136,13 +149,15 @@ impl<T> Iterator for IterWidths<T>
 /// Iterate over the bin centers.
 #[derive(Debug, Clone)]
 pub struct IterBinCenters<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     histogram_iter: T,
 }
 
 impl<T> Iterator for IterBinCenters<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     type Item = f64;
 
@@ -155,20 +170,23 @@ impl<T> Iterator for IterBinCenters<T>
 /// Iterate over the variances.
 #[derive(Debug, Clone)]
 pub struct IterVariances<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     histogram_iter: T,
     sum_inv: f64,
 }
 
 impl<T> Iterator for IterVariances<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     type Item = f64;
 
     #[inline]
     fn next(&mut self) -> Option<f64> {
-        self.histogram_iter.next()
+        self.histogram_iter
+            .next()
             .map(|(_, n)| multinomal_variance(n as f64, self.sum_inv))
     }
 }

@@ -4,14 +4,16 @@
 /// debug representations.
 #[macro_export]
 macro_rules! assert_almost_eq {
-    ($a:expr, $b:expr, $prec:expr) => (
+    ($a:expr, $b:expr, $prec:expr) => {
         let diff = ($a - $b).abs();
         if diff > $prec {
-            panic!("assertion failed: `abs(left - right) = {:.1e} < {:e}`, \
+            panic!(
+                "assertion failed: `abs(left - right) = {:.1e} < {:e}`, \
                    (left: `{}`, right: `{}`)",
-                   diff, $prec, $a, $b);
+                diff, $prec, $a, $b
+            );
         }
-    );
+    };
 }
 
 /// Concatenate several iterative estimators into one.
@@ -153,7 +155,8 @@ macro_rules! impl_from_iterator {
     ( $name:ident ) => {
         impl ::core::iter::FromIterator<f64> for $name {
             fn from_iter<T>(iter: T) -> $name
-                where T: IntoIterator<Item=f64>
+            where
+                T: IntoIterator<Item = f64>,
             {
                 let mut e = $name::new();
                 for i in iter {
@@ -165,7 +168,8 @@ macro_rules! impl_from_iterator {
 
         impl<'a> ::core::iter::FromIterator<&'a f64> for $name {
             fn from_iter<T>(iter: T) -> $name
-                where T: IntoIterator<Item=&'a f64>
+            where
+                T: IntoIterator<Item = &'a f64>,
             {
                 let mut e = $name::new();
                 for &i in iter {
@@ -174,7 +178,7 @@ macro_rules! impl_from_iterator {
                 e
             }
         }
-    }
+    };
 }
 
 /// Implement `FromParallelIterator<f64>` for an iterative estimator.
@@ -187,20 +191,29 @@ macro_rules! impl_from_par_iterator {
         #[cfg_attr(doc_cfg, doc(cfg(feature = "rayon")))]
         impl ::rayon::iter::FromParallelIterator<f64> for $name {
             fn from_par_iter<I>(par_iter: I) -> $name
-                where I: ::rayon::iter::IntoParallelIterator<Item = f64>,
-                      Self: $crate::Merge,
+            where
+                I: ::rayon::iter::IntoParallelIterator<Item = f64>,
+                Self: $crate::Merge,
             {
-                use $crate::Merge;
                 use ::rayon::iter::ParallelIterator;
+                use $crate::Merge;
 
                 let par_iter = par_iter.into_par_iter();
-                par_iter.fold(|| $name::new(), |mut e, i| {
-                    e.add(i);
-                    e
-                }).reduce(|| $name::new(), |mut a, b| {
-                    a.merge(&b);
-                    a
-                })
+                par_iter
+                    .fold(
+                        || $name::new(),
+                        |mut e, i| {
+                            e.add(i);
+                            e
+                        },
+                    )
+                    .reduce(
+                        || $name::new(),
+                        |mut a, b| {
+                            a.merge(&b);
+                            a
+                        },
+                    )
             }
         }
 
@@ -208,20 +221,29 @@ macro_rules! impl_from_par_iterator {
         #[cfg_attr(doc_cfg, doc(cfg(feature = "rayon")))]
         impl<'a> ::rayon::iter::FromParallelIterator<&'a f64> for $name {
             fn from_par_iter<I>(par_iter: I) -> $name
-                where I: ::rayon::iter::IntoParallelIterator<Item = &'a f64>,
-                      Self: $crate::Merge,
+            where
+                I: ::rayon::iter::IntoParallelIterator<Item = &'a f64>,
+                Self: $crate::Merge,
             {
-                use $crate::Merge;
                 use ::rayon::iter::ParallelIterator;
+                use $crate::Merge;
 
                 let par_iter = par_iter.into_par_iter();
-                par_iter.fold(|| $name::new(), |mut e, i| {
-                    e.add(*i);
-                    e
-                }).reduce(|| $name::new(), |mut a, b| {
-                    a.merge(&b);
-                    a
-                })
+                par_iter
+                    .fold(
+                        || $name::new(),
+                        |mut e, i| {
+                            e.add(*i);
+                            e
+                        },
+                    )
+                    .reduce(
+                        || $name::new(),
+                        |mut a, b| {
+                            a.merge(&b);
+                            a
+                        },
+                    )
             }
         }
     };

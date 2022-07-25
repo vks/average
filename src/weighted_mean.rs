@@ -1,5 +1,6 @@
-#[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
-use super::{MeanWithError, Estimate, Merge};
+use super::{Estimate, MeanWithError, Merge};
+#[cfg(feature = "serde1")]
+use serde::{Deserialize, Serialize};
 
 /// Estimate the weighted and unweighted arithmetic mean of a sequence of
 /// numbers ("population").
@@ -16,7 +17,7 @@ use super::{MeanWithError, Estimate, Merge};
 /// ```
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
-pub struct WeightedMean  {
+pub struct WeightedMean {
     /// Sum of the weights.
     weight_sum: f64,
     /// Weighted mean value.
@@ -27,7 +28,8 @@ impl WeightedMean {
     /// Create a new weighted and unweighted mean estimator.
     pub fn new() -> WeightedMean {
         WeightedMean {
-            weight_sum: 0., weighted_avg: 0.,
+            weight_sum: 0.,
+            weighted_avg: 0.,
         }
     }
 
@@ -79,7 +81,8 @@ impl core::default::Default for WeightedMean {
 
 impl core::iter::FromIterator<(f64, f64)> for WeightedMean {
     fn from_iter<T>(iter: T) -> WeightedMean
-        where T: IntoIterator<Item=(f64, f64)>
+    where
+        T: IntoIterator<Item = (f64, f64)>,
     {
         let mut a = WeightedMean::new();
         for (i, w) in iter {
@@ -91,7 +94,8 @@ impl core::iter::FromIterator<(f64, f64)> for WeightedMean {
 
 impl<'a> core::iter::FromIterator<&'a (f64, f64)> for WeightedMean {
     fn from_iter<T>(iter: T) -> WeightedMean
-        where T: IntoIterator<Item=&'a (f64, f64)>
+    where
+        T: IntoIterator<Item = &'a (f64, f64)>,
     {
         let mut a = WeightedMean::new();
         for &(i, w) in iter {
@@ -124,8 +128,8 @@ impl Merge for WeightedMean {
     fn merge(&mut self, other: &WeightedMean) {
         let total_weight_sum = self.weight_sum + other.weight_sum;
         self.weighted_avg = (self.weight_sum * self.weighted_avg
-                             + other.weight_sum * other.weighted_avg)
-                            / total_weight_sum;
+            + other.weight_sum * other.weighted_avg)
+            / total_weight_sum;
         self.weight_sum = total_weight_sum;
     }
 }
@@ -177,7 +181,7 @@ impl WeightedMeanWithError {
         // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
         // and
         // http://people.ds.cam.ac.uk/fanf2/hermes/doc/antiforgery/stats.pdf.
-        self.weight_sum_sq += weight*weight;
+        self.weight_sum_sq += weight * weight;
         self.weighted_avg.add(sample, weight);
         self.unweighted_avg.add(sample);
     }
@@ -230,7 +234,7 @@ impl WeightedMeanWithError {
     #[inline]
     pub fn effective_len(&self) -> f64 {
         if self.is_empty() {
-            return 0.
+            return 0.;
         }
         let weight_sum = self.weighted_avg.sum_weights();
         weight_sum * weight_sum / self.weight_sum_sq
@@ -323,7 +327,8 @@ impl core::default::Default for WeightedMeanWithError {
 
 impl core::iter::FromIterator<(f64, f64)> for WeightedMeanWithError {
     fn from_iter<T>(iter: T) -> WeightedMeanWithError
-        where T: IntoIterator<Item=(f64, f64)>
+    where
+        T: IntoIterator<Item = (f64, f64)>,
     {
         let mut a = WeightedMeanWithError::new();
         for (i, w) in iter {
@@ -335,7 +340,8 @@ impl core::iter::FromIterator<(f64, f64)> for WeightedMeanWithError {
 
 impl<'a> core::iter::FromIterator<&'a (f64, f64)> for WeightedMeanWithError {
     fn from_iter<T>(iter: T) -> WeightedMeanWithError
-        where T: IntoIterator<Item=&'a (f64, f64)>
+    where
+        T: IntoIterator<Item = &'a (f64, f64)>,
     {
         let mut a = WeightedMeanWithError::new();
         for &(i, w) in iter {

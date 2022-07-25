@@ -1,6 +1,6 @@
 use core::iter::Iterator;
 
-use average::{Moments4, Merge, assert_almost_eq};
+use average::{assert_almost_eq, Merge, Moments4};
 
 #[test]
 fn trivial() {
@@ -34,7 +34,8 @@ fn simple() {
     assert_eq!(a.central_moment(1), 0.0);
     // variance
     assert_eq!(a.central_moment(2), 2.0);
-    #[cfg(any(feature = "std", feature = "libm"))] {
+    #[cfg(any(feature = "std", feature = "libm"))]
+    {
         assert_eq!(a.standardized_moment(0), 5.0);
         assert_eq!(a.standardized_moment(1), 0.0);
         assert_eq!(a.standardized_moment(2), 1.0);
@@ -42,7 +43,8 @@ fn simple() {
         assert_almost_eq!(a.standardized_moment(3), 0.0, 1e-15);
     }
     a.add(1.0);
-    #[cfg(any(feature = "std", feature = "libm"))] {
+    #[cfg(any(feature = "std", feature = "libm"))]
+    {
         // skewness
         assert_almost_eq!(a.standardized_moment(3), 0.2795084971874741, 1e-15);
         // kurtosis
@@ -55,7 +57,10 @@ fn simple() {
 fn simple_serde() {
     let a: Moments4 = (1..6).map(f64::from).collect();
     let b = serde_json::to_string(&a).unwrap();
-    assert_eq!(&b, "{\"n\":5,\"avg\":3.0,\"m\":[10.0,1.7763568394002505e-15,34.00000000000001]}");
+    assert_eq!(
+        &b,
+        "{\"n\":5,\"avg\":3.0,\"m\":[10.0,1.7763568394002505e-15,34.00000000000001]}"
+    );
     let mut c: Moments4 = serde_json::from_str(&b).unwrap();
     assert_eq!(c.len(), 5);
     assert_eq!(c.mean(), 3.0);
@@ -63,7 +68,8 @@ fn simple_serde() {
     assert_eq!(c.central_moment(1), 0.0);
     // variance
     assert_eq!(c.central_moment(2), 2.0);
-    #[cfg(any(feature = "std", feature = "libm"))] {
+    #[cfg(any(feature = "std", feature = "libm"))]
+    {
         assert_eq!(c.standardized_moment(0), 5.0);
         assert_eq!(c.standardized_moment(1), 0.0);
         assert_eq!(c.standardized_moment(2), 1.0);
@@ -71,7 +77,8 @@ fn simple_serde() {
         assert_almost_eq!(c.standardized_moment(3), 0.0, 1e-15);
     }
     c.add(1.0);
-    #[cfg(any(feature = "std", feature = "libm"))] {
+    #[cfg(any(feature = "std", feature = "libm"))]
+    {
         // skewness
         assert_almost_eq!(c.standardized_moment(3), 0.2795084971874741, 1e-15);
         // kurtosis
@@ -90,8 +97,20 @@ fn merge() {
         avg_left.merge(&avg_right);
         assert_eq!(avg_total.len(), avg_left.len());
         assert_almost_eq!(avg_total.mean(), avg_left.mean(), 1e-14);
-        assert_almost_eq!(avg_total.central_moment(2), avg_left.central_moment(2), 1e-14);
-        assert_almost_eq!(avg_total.central_moment(3), avg_left.central_moment(3), 1e-13);
-        assert_almost_eq!(avg_total.central_moment(4), avg_left.central_moment(4), 1e-12);
+        assert_almost_eq!(
+            avg_total.central_moment(2),
+            avg_left.central_moment(2),
+            1e-14
+        );
+        assert_almost_eq!(
+            avg_total.central_moment(3),
+            avg_left.central_moment(3),
+            1e-13
+        );
+        assert_almost_eq!(
+            avg_total.central_moment(4),
+            avg_left.central_moment(4),
+            1e-12
+        );
     }
 }

@@ -87,45 +87,41 @@
 //! [`Histogram`]: ./trait.Histogram.html
 
 #![cfg_attr(doc_cfg, feature(doc_cfg))]
-
-#![allow(
-    clippy::float_cmp,
-    clippy::suspicious_operation_groupings,
-)]
-
+#![allow(clippy::float_cmp, clippy::suspicious_operation_groupings)]
 #![no_std]
 #![forbid(unsafe_code)]
 #![forbid(missing_docs)]
 #![forbid(missing_debug_implementations)]
+#![cfg_attr(feature = "nightly", feature(generic_const_exprs))]
 
-#![cfg_attr(feature = "nightly",
-   feature(generic_const_exprs))]
-
-#[macro_use] mod macros;
-#[macro_use] mod moments;
-mod weighted_mean;
+#[macro_use]
+mod macros;
+#[macro_use]
+mod moments;
 mod minmax;
 #[cfg(any(feature = "std", feature = "libm"))]
 #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
 mod quantile;
 mod traits;
-#[macro_use] mod histogram;
+mod weighted_mean;
+#[macro_use]
+mod histogram;
 #[cfg(feature = "nightly")]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "nightly")))]
 pub mod histogram_const;
 
-pub use crate::moments::{Mean, Variance, MeanWithError};
 #[cfg(any(feature = "std", feature = "libm"))]
 #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
-pub use crate::moments::{Skewness, Kurtosis};
+pub use crate::moments::{Kurtosis, Skewness};
+pub use crate::moments::{Mean, MeanWithError, Variance};
 
-pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};
-pub use crate::minmax::{Min, Max};
+pub use crate::histogram::{InvalidRangeError, SampleOutOfRangeError};
+pub use crate::minmax::{Max, Min};
 #[cfg(any(feature = "std", feature = "libm"))]
 #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
 pub use crate::quantile::Quantile;
-pub use crate::traits::{Estimate, Merge, Histogram};
-pub use crate::histogram::{InvalidRangeError, SampleOutOfRangeError};
+pub use crate::traits::{Estimate, Histogram, Merge};
+pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};
 
 define_histogram!(hist, 10);
 pub use crate::hist::Histogram as Histogram10;

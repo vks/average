@@ -1,6 +1,6 @@
 use core::iter::Iterator;
 
-use average::{Kurtosis, Estimate, Merge, assert_almost_eq};
+use average::{assert_almost_eq, Estimate, Kurtosis, Merge};
 
 #[test]
 fn trivial() {
@@ -63,7 +63,11 @@ fn merge() {
         avg_left.merge(&avg_right);
         assert_eq!(avg_total.len(), avg_left.len());
         assert_almost_eq!(avg_total.mean(), avg_left.mean(), 1e-14);
-        assert_almost_eq!(avg_total.sample_variance(), avg_left.sample_variance(), 1e-14);
+        assert_almost_eq!(
+            avg_total.sample_variance(),
+            avg_left.sample_variance(),
+            1e-14
+        );
         assert_almost_eq!(avg_total.skewness(), avg_left.skewness(), 1e-14);
         assert_almost_eq!(avg_total.kurtosis(), avg_left.kurtosis(), 1e-14);
     }
