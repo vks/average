@@ -16,6 +16,7 @@ fn initialize_vec() -> Vec<f64> {
     values
 }
 
+#[cfg(feature = "libm")]
 fn bench_kurtosis(b: &mut Bencher) {
     let values = initialize_vec();
     b.iter(|| {
@@ -32,5 +33,9 @@ fn bench_moments(b: &mut Bencher) {
     });
 }
 
+#[cfg(feature = "libm")]
 benchmark_group!(benches, bench_kurtosis, bench_moments);
+#[cfg(not(feature = "libm"))]
+benchmark_group!(benches, bench_moments);
+
 benchmark_main!(benches);
