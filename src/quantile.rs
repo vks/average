@@ -199,6 +199,7 @@ impl Estimate for Quantile {
     }
 }
 
+#[cfg(not(target_arch = "i686"))]
 #[test]
 fn reference() {
     let observations = [
