@@ -208,6 +208,14 @@ macro_rules! define_moments_common {
         impl $crate::Merge for $name {
             #[inline]
             fn merge(&mut self, other: &$name) {
+                if other.is_empty() {
+                    return;
+                }
+                if self.is_empty() {
+                    *self = other.clone();
+                    return;
+                }
+                
                 let n_a = self.n.to_f64().unwrap();
                 let n_b = other.n.to_f64().unwrap();
                 let delta = other.avg - self.avg;

@@ -156,6 +156,13 @@ impl Merge for Variance {
     /// ```
     #[inline]
     fn merge(&mut self, other: &Variance) {
+        if other.is_empty() {
+            return;
+        }
+        if self.is_empty() {
+            *self = other.clone();
+            return;
+        }
         // This algorithm was proposed by Chan et al. in 1979.
         //
         // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance.

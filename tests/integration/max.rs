@@ -42,3 +42,13 @@ fn merge() {
         assert_eq!(max_total.max(), max_left.max());
     }
 }
+
+#[test]
+fn merge_empty() {
+    let mut left = Max::new();
+    let right = Max::new();
+    left.merge(&right);
+    assert_eq!(left.max(), f64::NEG_INFINITY);
+    left.add(1.);
+    assert_eq!(left.max(), 1.);
+}

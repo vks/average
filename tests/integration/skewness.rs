@@ -65,3 +65,17 @@ fn merge() {
         assert_almost_eq!(avg_total.skewness(), avg_left.skewness(), 1e-14);
     }
 }
+
+#[test]
+fn merge_empty() {
+    let mut left = Skewness::new();
+    let right = Skewness::new();
+    left.merge(&right);
+    assert_eq!(left.len(), 0);
+    left.add(1.);
+    left.add(1.);
+    left.add(1.);
+    assert_eq!(left.mean(), 1.);
+    assert_eq!(left.sample_variance(), 0.);
+    assert_eq!(left.skewness(), 0.);
+}

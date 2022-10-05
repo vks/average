@@ -126,3 +126,18 @@ fn merge_weighted() {
         assert_almost_eq!(avg_total.sample_variance(), avg_left.sample_variance(), 1e-14);
     }
 }
+
+#[test]
+fn merge_empty() {
+    let mut left = WeightedMeanWithError::new();
+    let right = WeightedMeanWithError::new();
+    left.merge(&right);
+    assert_eq!(left.len(), 0);
+    left.add(1., 1.);
+    left.add(1., 1.);
+    left.add(1., 1.);
+    left.add(1., 1.);
+    assert_eq!(left.weighted_mean(), 1.);
+    assert_eq!(left.unweighted_mean(), 1.);
+    assert_eq!(left.sample_variance(), 0.);
+}

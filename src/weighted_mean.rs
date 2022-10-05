@@ -122,6 +122,13 @@ impl Merge for WeightedMean {
     /// ```
     #[inline]
     fn merge(&mut self, other: &WeightedMean) {
+        if other.is_empty() {
+            return;
+        }
+        if self.is_empty() {
+            *self = other.clone();
+            return;
+        }
         let total_weight_sum = self.weight_sum + other.weight_sum;
         self.weighted_avg = (self.weight_sum * self.weighted_avg
                              + other.weight_sum * other.weighted_avg)

@@ -42,3 +42,13 @@ fn merge() {
         assert_eq!(min_total.min(), min_left.min());
     }
 }
+
+#[test]
+fn merge_empty() {
+    let mut left = Min::new();
+    let right = Min::new();
+    left.merge(&right);
+    assert_eq!(left.min(), f64::INFINITY);
+    left.add(1.);
+    assert_eq!(left.min(), 1.);
+}

@@ -11,7 +11,7 @@ repository = "https://github.com/vks/average"
 version = "0.13.1"
 edition = "2018"
 include = ["src/**/*", "benches/*", "LICENSE-*", "README.md"]
-resolver = "2"  # This is ignored by Rust <= 1.50
+resolver = "2"
 
 [features]
 serde1 = ["serde", "serde_derive", "serde-big-array"]

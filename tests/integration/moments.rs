@@ -95,3 +95,19 @@ fn merge() {
         assert_almost_eq!(avg_total.central_moment(4), avg_left.central_moment(4), 1e-12);
     }
 }
+
+#[test]
+fn merge_empty() {
+    let mut left = Moments4::new();
+    let right = Moments4::new();
+    left.merge(&right);
+    assert_eq!(left.len(), 0);
+    left.add(1.);
+    left.add(1.);
+    left.add(1.);
+    left.add(1.);
+    assert_eq!(left.mean(), 1.);
+    assert_eq!(left.central_moment(2), 0.);
+    assert_eq!(left.central_moment(3), 0.);
+    assert_eq!(left.central_moment(4), 0.);
+}

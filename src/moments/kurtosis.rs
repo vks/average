@@ -132,6 +132,13 @@ impl Estimate for Kurtosis {
 impl Merge for Kurtosis {
     #[inline]
     fn merge(&mut self, other: &Kurtosis) {
+        if other.is_empty() {
+            return;
+        }
+        if self.is_empty() {
+            *self = other.clone();
+            return;
+        }
         let len_self = self.len().to_f64().unwrap();
         let len_other = other.len().to_f64().unwrap();
         let len_total = len_self + len_other;

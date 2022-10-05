@@ -88,3 +88,15 @@ fn merge() {
         assert_eq!(avg_total.sample_variance(), avg_left.sample_variance());
     }
 }
+
+#[test]
+fn merge_empty() {
+    let mut left = MeanWithError::new();
+    let right = MeanWithError::new();
+    left.merge(&right);
+    assert_eq!(left.len(), 0);
+    left.add(1.);
+    left.add(1.);
+    assert_eq!(left.mean(), 1.);
+    assert_eq!(left.sample_variance(), 0.);
+}
