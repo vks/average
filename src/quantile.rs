@@ -199,7 +199,6 @@ impl Estimate for Quantile {
     }
 }
 
-#[cfg(not(target_arch = "i686"))]
 #[test]
 fn reference() {
     let observations = [
@@ -215,5 +214,5 @@ fn reference() {
     assert_eq!(q.n, [1, 6, 10, 16, 20]);
     assert_eq!(q.m, [1., 5.75, 10.50, 15.25, 20.0]);
     assert_eq!(q.len(), 20);
-    assert_eq!(q.quantile(), 4.2462394088036435);
+    assert_almost_eq!(q.quantile(), 4.2462394088036435, 0.000000000000002);
 }
