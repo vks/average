@@ -238,9 +238,7 @@ macro_rules! define_histogram_inner {
             $crate::define_histogram_common!($LEN);
 
             use ::serde::{Serialize, Deserialize};
-            serde_big_array::big_array! {
-                BigArray; LEN, (LEN + 1),
-            }
+            use serde_big_array::BigArray;
 
             /// A histogram with a number of bins known at compile time.
             #[derive(Clone, Serialize, Deserialize)]
