@@ -1,6 +1,6 @@
 use rand_distr::Distribution;
 
-use average::{Kurtosis, Estimate, assert_almost_eq};
+use average::{assert_almost_eq, Estimate, Kurtosis};
 
 #[test]
 fn normal_distribution() {
@@ -25,9 +25,9 @@ fn exponential_distribution() {
     for _ in 0..6_000_000 {
         a.add(normal.sample(&mut ::rand::thread_rng()));
     }
-    assert_almost_eq!(a.mean(), 1./lambda, 1e-2);
-    assert_almost_eq!(a.sample_variance().sqrt(), 1./lambda, 1e-2);
-    assert_almost_eq!(a.population_variance().sqrt(), 1./lambda, 1e-2);
+    assert_almost_eq!(a.mean(), 1. / lambda, 1e-2);
+    assert_almost_eq!(a.sample_variance().sqrt(), 1. / lambda, 1e-2);
+    assert_almost_eq!(a.population_variance().sqrt(), 1. / lambda, 1e-2);
     assert_almost_eq!(a.error_mean(), 0.0, 1e-2);
     assert_almost_eq!(a.skewness(), 2.0, 1e-1);
     assert_almost_eq!(a.kurtosis(), 6.0, 1e-1);

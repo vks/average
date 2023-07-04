@@ -3,8 +3,8 @@
 use core::iter::Iterator;
 
 use average::Mean;
-use proptest::prelude::*;
 use prop::num::f64;
+use proptest::prelude::*;
 
 proptest! {
     #![proptest_config(ProptestConfig::with_cases(10000))]

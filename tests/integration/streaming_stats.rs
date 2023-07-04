@@ -4,9 +4,9 @@ use average::assert_almost_eq;
 
 /// Create a random vector by sampling from a normal distribution.
 fn initialize_vec(size: usize) -> Vec<f64> {
-    use rand_distr::{Normal, Distribution};
-    use rand_xoshiro::Xoshiro256StarStar;
     use rand::SeedableRng;
+    use rand_distr::{Distribution, Normal};
+    use rand_xoshiro::Xoshiro256StarStar;
     let normal = Normal::new(2.0, 3.0).unwrap();
     let mut values = Vec::with_capacity(size);
     let mut rng = Xoshiro256StarStar::seed_from_u64(42);

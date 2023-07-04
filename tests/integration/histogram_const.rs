@@ -2,9 +2,8 @@ use core::iter::Iterator;
 use rand::SeedableRng;
 use rand_distr::Distribution;
 
-use average::{Merge, assert_almost_eq};
-use average::histogram_const::{Histogram, InvalidRangeError,
-    SampleOutOfRangeError};
+use average::histogram_const::{Histogram, InvalidRangeError, SampleOutOfRangeError};
+use average::{assert_almost_eq, Merge};
 
 type Histogram10 = Histogram<10>;
 
@@ -20,7 +19,11 @@ fn with_const_width() {
 #[test]
 fn from_ranges() {
     let mut h = Histogram10::from_ranges(
-        [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 2.0].iter().cloned()).unwrap();
+        [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 2.0]
+            .iter()
+            .cloned(),
+    )
+    .unwrap();
     for &i in &[0.05, 0.7, 1.0, 1.5] {
         h.add(i).unwrap();
     }
@@ -30,23 +33,41 @@ fn from_ranges() {
 #[test]
 fn iter() {
     let mut h = Histogram10::from_ranges(
-        [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 2.0].iter().cloned()).unwrap();
+        [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 2.0]
+            .iter()
+            .cloned(),
+    )
+    .unwrap();
     for &i in &[0.05, 0.7, 1.0, 1.5] {
         h.add(i).unwrap();
     }
     let iterated: Vec<((f64, f64), u64)> = h.iter().collect();
-    assert_eq!(&iterated, &[
-        ((0., 0.1), 1), ((0.1, 0.2), 0), ((0.2, 0.3), 0), ((0.3, 0.4), 0),
-        ((0.4, 0.5), 0), ((0.5, 0.7), 0), ((0.7, 0.8), 1), ((0.8, 0.9), 0),
-        ((0.9, 1.0), 0), ((1.0, 2.0), 2)
-    ]);
+    assert_eq!(
+        &iterated,
+        &[
+            ((0., 0.1), 1),
+            ((0.1, 0.2), 0),
+            ((0.2, 0.3), 0),
+            ((0.3, 0.4), 0),
+            ((0.4, 0.5), 0),
+            ((0.5, 0.7), 0),
+            ((0.7, 0.8), 1),
+            ((0.8, 0.9), 0),
+            ((0.9, 1.0), 0),
+            ((1.0, 2.0), 2)
+        ]
+    );
 }
 
 #[test]
 fn normalized_bins() {
     let inf = std::f64::INFINITY;
     let mut h = Histogram10::from_ranges(
-        [-inf, 0.1, 0.2, 0.3, 0.4, 0.4, 0.7, 0.8, 0.9, 1.0, inf].iter().cloned()).unwrap();
+        [-inf, 0.1, 0.2, 0.3, 0.4, 0.4, 0.7, 0.8, 0.9, 1.0, inf]
+            .iter()
+            .cloned(),
+    )
+    .unwrap();
     for &i in &[0.05, 0.1, 0.7, 1.0, 1.5] {
         h.add(i).unwrap();
     }
@@ -61,7 +82,11 @@ fn normalized_bins() {
 fn widths() {
     let inf = std::f64::INFINITY;
     let h = Histogram10::from_ranges(
-        [-inf, 0.1, 0.2, 0.3, 0.4, 0.4, 0.7, 0.8, 0.9, 1.0, inf].iter().cloned()).unwrap();
+        [-inf, 0.1, 0.2, 0.3, 0.4, 0.4, 0.7, 0.8, 0.9, 1.0, inf]
+            .iter()
+            .cloned(),
+    )
+    .unwrap();
     let widths: Vec<f64> = h.widths().collect();
     let expected = [inf, 0.1, 0.1, 0.1, 0., 0.3, 0.1, 0.1, 0.1, inf];
     for (a, b) in widths.iter().zip(expected.iter()) {
@@ -73,7 +98,11 @@ fn widths() {
 fn centers() {
     let inf = std::f64::INFINITY;
     let h = Histogram10::from_ranges(
-        [-inf, 0.1, 0.2, 0.3, 0.4, 0.4, 0.7, 0.8, 0.9, 1.0, inf].iter().cloned()).unwrap();
+        [-inf, 0.1, 0.2, 0.3, 0.4, 0.4, 0.7, 0.8, 0.9, 1.0, inf]
+            .iter()
+            .cloned(),
+    )
+    .unwrap();
     let centers: Vec<f64> = h.centers().collect();
     let expected = [-inf, 0.15, 0.25, 0.35, 0.4, 0.55, 0.75, 0.85, 0.95, inf];
     for (a, b) in centers.iter().zip(expected.iter()) {
@@ -85,7 +114,11 @@ fn centers() {
 fn from_ranges_infinity() {
     let inf = std::f64::INFINITY;
     let mut h = Histogram10::from_ranges(
-        [-inf, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4, inf].iter().cloned()).unwrap();
+        [-inf, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4, inf]
+            .iter()
+            .cloned(),
+    )
+    .unwrap();
     for &i in &[-100., -0.45, 0., 0.25, 0.4, 100.] {
         h.add(i).unwrap();
     }
@@ -121,7 +154,11 @@ fn from_ranges_invalid() {
 #[test]
 fn from_ranges_empty() {
     let mut h = Histogram10::from_ranges(
-        [0., 0., 0.2, 0.3, 0.4, 0.5, 0.5, 0.8, 0.9, 2.0, 2.0].iter().cloned()).unwrap();
+        [0., 0., 0.2, 0.3, 0.4, 0.5, 0.5, 0.8, 0.9, 2.0, 2.0]
+            .iter()
+            .cloned(),
+    )
+    .unwrap();
     for &i in &[0.05, 0.7, 1.0, 1.5] {
         h.add(i).unwrap();
     }
@@ -137,7 +174,6 @@ fn out_of_range() {
     assert_eq!(h.add(100.0), Err(SampleOutOfRangeError));
     assert_eq!(h.add(100.1), Err(SampleOutOfRangeError));
 }
-
 
 #[test]
 fn reset() {
@@ -213,7 +249,11 @@ fn variance() {
 #[test]
 fn merge() {
     let mut h = Histogram10::from_ranges(
-        [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 2.0].iter().cloned()).unwrap();
+        [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 2.0]
+            .iter()
+            .cloned(),
+    )
+    .unwrap();
     let mut h1 = h.clone();
     let mut h2 = h.clone();
     for &i in &[0.05, 0.7, 1.0, 1.5] {

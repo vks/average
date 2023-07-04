@@ -1,8 +1,8 @@
 use core::iter::Iterator;
 
-use average::{MeanWithError, Estimate, Merge};
 #[cfg(any(feature = "std", feature = "libm"))]
 use average::assert_almost_eq;
+use average::{Estimate, MeanWithError, Merge};
 
 #[test]
 fn trivial() {

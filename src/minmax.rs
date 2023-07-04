@@ -1,4 +1,5 @@
-#[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
+#[cfg(feature = "serde1")]
+use serde::{Deserialize, Serialize};
 
 use super::{Estimate, Merge};
 

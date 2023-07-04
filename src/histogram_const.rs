@@ -17,9 +17,10 @@ pub enum InvalidRangeError {
 pub struct SampleOutOfRangeError;
 
 impl<const LEN: usize> ::core::fmt::Debug for Histogram<LEN>
-where [u8; LEN + 1]: Sized {
-    fn fmt(&self, formatter: &mut ::core::fmt::Formatter<'_>)
-        -> ::core::fmt::Result {
+where
+    [u8; LEN + 1]: Sized,
+{
+    fn fmt(&self, formatter: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
         formatter.write_str("Histogram {{ range: ")?;
         self.range[..].fmt(formatter)?;
         formatter.write_str(", bins: ")?;
@@ -29,7 +30,9 @@ where [u8; LEN + 1]: Sized {
 }
 
 impl<const LEN: usize> Histogram<LEN>
-where [u8; LEN + 1]: Sized {
+where
+    [u8; LEN + 1]: Sized,
+{
     /// Construct a histogram with constant bin width.
     #[inline]
     pub fn with_const_width(start: f64, end: f64) -> Self {
@@ -55,7 +58,8 @@ where [u8; LEN + 1]: Sized {
     /// and empty ranges are allowed.
     #[inline]
     pub fn from_ranges<T>(ranges: T) -> Result<Self, InvalidRangeError>
-        where T: IntoIterator<Item = f64>
+    where
+        T: IntoIterator<Item = f64>,
     {
         let mut range = [0.; LEN + 1];
         let mut last_i = 0;
@@ -89,15 +93,9 @@ where [u8; LEN + 1]: Sized {
         // We made sure our ranges are valid at construction, so we can
         // safely unwrap.
         match self.range.binary_search_by(|p| p.partial_cmp(&x).unwrap()) {
-            Ok(i) if i < LEN => {
-                Ok(i)
-            },
-            Err(i) if i > 0 && i < LEN + 1 => {
-                Ok(i - 1)
-            },
-            _ => {
-                Err(SampleOutOfRangeError)
-            },
+            Ok(i) if i < LEN => Ok(i),
+            Err(i) if i > 0 && i < LEN + 1 => Ok(i - 1),
+            _ => Err(SampleOutOfRangeError),
         }
     }
 
@@ -162,25 +160,31 @@ where [u8; LEN + 1]: Sized {
     pub fn variance(&self, bin: usize) -> f64 {
         let count = self.bins()[bin];
         let sum: u64 = self.bins().iter().sum();
-        multinomal_variance(count as f64, 1./(sum as f64))
+        multinomal_variance(count as f64, 1. / (sum as f64))
     }
 
     /// Return an iterator over the bins normalized by the bin widths.
     #[inline]
     pub fn normalized_bins(&self) -> IterNormalized<<&Self as IntoIterator>::IntoIter> {
-        IterNormalized { histogram_iter: self.into_iter() }
+        IterNormalized {
+            histogram_iter: self.into_iter(),
+        }
     }
 
     /// Return an iterator over the bin widths.
     #[inline]
     pub fn widths(&self) -> IterWidths<<&Self as IntoIterator>::IntoIter> {
-        IterWidths { histogram_iter: self.into_iter() }
+        IterWidths {
+            histogram_iter: self.into_iter(),
+        }
     }
 
     /// Return an iterator over the bin centers.
     #[inline]
     pub fn centers(&self) -> IterBinCenters<<&Self as IntoIterator>::IntoIter> {
-        IterBinCenters { histogram_iter: self.into_iter() }
+        IterBinCenters {
+            histogram_iter: self.into_iter(),
+        }
     }
 
     /// Return an iterator over the bin variances.
@@ -191,7 +195,7 @@ where [u8; LEN + 1]: Sized {
         let sum: u64 = self.bins().iter().sum();
         IterVariances {
             histogram_iter: self.into_iter(),
-            sum_inv: 1./(sum as f64)
+            sum_inv: 1. / (sum as f64),
         }
     }
 }
@@ -218,7 +222,9 @@ impl<'a> ::core::iter::Iterator for IterHistogram<'a> {
 }
 
 impl<'a, const LEN: usize> ::core::iter::IntoIterator for &'a Histogram<LEN>
-where [u8; LEN + 1]: Sized {
+where
+    [u8; LEN + 1]: Sized,
+{
     type Item = ((f64, f64), u64);
     type IntoIter = IterHistogram<'a>;
     fn into_iter(self) -> IterHistogram<'a> {
@@ -230,7 +236,9 @@ where [u8; LEN + 1]: Sized {
 }
 
 impl<'a, const LEN: usize> ::core::ops::AddAssign<&'a Self> for Histogram<LEN>
-where [u8; LEN + 1]: Sized {
+where
+    [u8; LEN + 1]: Sized,
+{
     #[inline]
     fn add_assign(&mut self, other: &Self) {
         for (a, b) in self.range.iter().zip(other.range.iter()) {
@@ -243,7 +251,9 @@ where [u8; LEN + 1]: Sized {
 }
 
 impl<const LEN: usize> ::core::ops::MulAssign<u64> for Histogram<LEN>
-where [u8; LEN + 1]: Sized {
+where
+    [u8; LEN + 1]: Sized,
+{
     #[inline]
     fn mul_assign(&mut self, other: u64) {
         for x in &mut self.bin[..] {
@@ -253,7 +263,9 @@ where [u8; LEN + 1]: Sized {
 }
 
 impl<const LEN: usize> crate::Merge for Histogram<LEN>
-where [u8; LEN + 1]: Sized {
+where
+    [u8; LEN + 1]: Sized,
+{
     fn merge(&mut self, other: &Self) {
         assert_eq!(self.bin.len(), other.bin.len());
         for (a, b) in self.range.iter().zip(other.range.iter()) {
@@ -268,7 +280,9 @@ where [u8; LEN + 1]: Sized {
 /// A histogram with a number of bins known at compile time.
 #[derive(Clone)]
 pub struct Histogram<const LEN: usize>
-where [u8; LEN + 1]: Sized {
+where
+    [u8; LEN + 1]: Sized,
+{
     /// The ranges defining the bins of the histogram.
     range: [f64; LEN + 1],
     /// The bins of the histogram.
@@ -284,32 +298,38 @@ fn multinomal_variance(n: f64, n_tot_inv: f64) -> f64 {
 /// Iterate over the bins normalized by bin width.
 #[derive(Clone, Debug)]
 pub struct IterNormalized<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     histogram_iter: T,
 }
 
 impl<T> Iterator for IterNormalized<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     type Item = f64;
 
     #[inline]
     fn next(&mut self) -> Option<f64> {
-        self.histogram_iter.next().map(|((a, b), count)| (count as f64) / (b - a))
+        self.histogram_iter
+            .next()
+            .map(|((a, b), count)| (count as f64) / (b - a))
     }
 }
 
 /// Iterate over the widths of the bins.
 #[derive(Clone, Debug)]
 pub struct IterWidths<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     histogram_iter: T,
 }
 
 impl<T> Iterator for IterWidths<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     type Item = f64;
 
@@ -322,13 +342,15 @@ impl<T> Iterator for IterWidths<T>
 /// Iterate over the bin centers.
 #[derive(Clone, Debug)]
 pub struct IterBinCenters<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     histogram_iter: T,
 }
 
 impl<T> Iterator for IterBinCenters<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     type Item = f64;
 
@@ -341,20 +363,23 @@ impl<T> Iterator for IterBinCenters<T>
 /// Iterate over the variances.
 #[derive(Clone, Debug)]
 pub struct IterVariances<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     histogram_iter: T,
     sum_inv: f64,
 }
 
 impl<T> Iterator for IterVariances<T>
-    where T: Iterator<Item = ((f64, f64), u64)>
+where
+    T: Iterator<Item = ((f64, f64), u64)>,
 {
     type Item = f64;
 
     #[inline]
     fn next(&mut self) -> Option<f64> {
-        self.histogram_iter.next()
+        self.histogram_iter
+            .next()
             .map(|(_, n)| multinomal_variance(n as f64, self.sum_inv))
     }
 }

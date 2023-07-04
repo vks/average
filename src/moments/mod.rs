@@ -1,5 +1,6 @@
 use num_traits::ToPrimitive;
-#[cfg(feature = "serde1")] use serde::{Serialize, Deserialize};
+#[cfg(feature = "serde1")]
+use serde::{Deserialize, Serialize};
 
 use super::{Estimate, Merge};
 
@@ -16,7 +17,7 @@ pub type MeanWithError = Variance;
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_moments_common {
-    ($name:ident, $MAX_MOMENT:expr) => (
+    ($name:ident, $MAX_MOMENT:expr) => {
         use num_traits::{pow, ToPrimitive};
 
         /// An iterator over binomial coefficients.
@@ -30,11 +31,7 @@ macro_rules! define_moments_common {
             /// For a given n, iterate over all binomial coefficients binomial(n, k), for k=0...n.
             #[inline]
             pub fn new(n: u64) -> IterBinomial {
-                IterBinomial {
-                    k: 0,
-                    a: 1,
-                    n,
-                }
+                IterBinomial { k: 0, a: 1, n }
             }
         }
 
@@ -97,7 +94,7 @@ macro_rules! define_moments_common {
                 match p {
                     0 => 1.,
                     1 => 0.,
-                    _ => self.m[p - 2] / n
+                    _ => self.m[p - 2] / n,
                 }
             }
 
@@ -113,9 +110,8 @@ macro_rules! define_moments_common {
                     _ => {
                         let variance = self.central_moment(2);
                         assert_ne!(variance, 0.);
-                        self.central_moment(p) / pow(
-                            num_traits::Float::sqrt(variance), p)
-                    },
+                        self.central_moment(p) / pow(num_traits::Float::sqrt(variance), p)
+                    }
                 }
             }
 
@@ -143,18 +139,12 @@ macro_rules! define_moments_common {
                 let n = self.n.to_f64().unwrap();
                 if self.n < 3 {
                     // Method of moments
-                    return self.central_moment(3) /
-                        Float::powf(
-                            n * (self.central_moment(2) / (n - 1.)), 1.5
-                        )
+                    return self.central_moment(3)
+                        / Float::powf(n * (self.central_moment(2) / (n - 1.)), 1.5);
                 }
                 // Adjusted Fisher-Pearson standardized moment coefficient
-                Float::sqrt(n * (n - 1.)) /
-                    (n * (n - 2.)) *
-                    Float::powf(
-                        self.central_moment(3) / (self.central_moment(2) / n),
-                        1.5
-                    )
+                Float::sqrt(n * (n - 1.)) / (n * (n - 2.))
+                    * Float::powf(self.central_moment(3) / (self.central_moment(2) / n), 1.5)
             }
 
             /// Calculate the sample excess kurtosis.
@@ -164,9 +154,9 @@ macro_rules! define_moments_common {
                     return 0.;
                 }
                 let n = self.n.to_f64().unwrap();
-                (n + 1.) * n * self.central_moment(4) /
-                    ((n - 1.) * (n - 2.) * (n - 3.) * pow(self.central_moment(2), 2)) -
-                    3. * pow(n - 1., 2) / ((n - 2.) * (n - 3.))
+                (n + 1.) * n * self.central_moment(4)
+                    / ((n - 1.) * (n - 2.) * (n - 3.) * pow(self.central_moment(2), 2))
+                    - 3. * pow(n - 1., 2) / ((n - 2.) * (n - 3.))
             }
 
             /// Add an observation sampled from the population.
@@ -195,11 +185,11 @@ macro_rules! define_moments_common {
 
                     let mut coeff = 1.;
                     let mut binom = IterBinomial::new(p as u64);
-                    binom.next().unwrap();  // Skip k = 0.
+                    binom.next().unwrap(); // Skip k = 0.
                     for k in 1..(p - 1) {
                         coeff *= factor_coeff;
-                        self.m[p - 2] += binom.next().unwrap().to_f64().unwrap() *
-                            prev_m[p - 2 - k] * coeff;
+                        self.m[p - 2] +=
+                            binom.next().unwrap().to_f64().unwrap() * prev_m[p - 2 - k] * coeff;
                     }
                 }
             }
@@ -215,7 +205,7 @@ macro_rules! define_moments_common {
                     *self = other.clone();
                     return;
                 }
-                
+
                 let n_a = self.n.to_f64().unwrap();
                 let n_b = other.n.to_f64().unwrap();
                 let delta = other.avg - self.avg;
@@ -245,10 +235,9 @@ macro_rules! define_moments_common {
                         coeff_a *= -n_b_over_n;
                         coeff_b *= n_a_over_n;
                         coeff_delta *= delta;
-                        self.m[p - 2] +=
-                            binom.next().unwrap().to_f64().unwrap() *
-                            coeff_delta * (prev_m[p - 2 - k] * coeff_a +
-                            other.m[p - 2 - k] * coeff_b);
+                        self.m[p - 2] += binom.next().unwrap().to_f64().unwrap()
+                            * coeff_delta
+                            * (prev_m[p - 2 - k] * coeff_a + other.m[p - 2 - k] * coeff_b);
                     }
                 }
             }
@@ -262,17 +251,17 @@ macro_rules! define_moments_common {
 
         $crate::impl_from_iterator!($name);
         $crate::impl_from_par_iterator!($name);
-    );
+    };
 }
 
 #[cfg(feature = "serde1")]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_moments_inner {
-    ($name:ident, $MAX_MOMENT:expr) => (
+    ($name:ident, $MAX_MOMENT:expr) => {
         $crate::define_moments_common!($name, $MAX_MOMENT);
 
-        use serde::{Serialize, Deserialize};
+        use serde::{Deserialize, Serialize};
 
         /// Estimate the first N moments of a sequence of numbers ("population").
         #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -289,15 +278,14 @@ macro_rules! define_moments_inner {
             /// Starts with m_2. m_0 is the same as `n` and m_1 is 0 by definition.
             m: [f64; MAX_MOMENT - 1],
         }
-
-    );
+    };
 }
 
 #[cfg(not(feature = "serde1"))]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_moments_inner {
-    ($name:ident, $MAX_MOMENT:expr) => (
+    ($name:ident, $MAX_MOMENT:expr) => {
         $crate::define_moments_common!($name, $MAX_MOMENT);
 
         /// Estimate the first N moments of a sequence of numbers ("population").
@@ -315,8 +303,7 @@ macro_rules! define_moments_inner {
             /// Starts with m_2. m_0 is the same as `n` and m_1 is 0 by definition.
             m: [f64; MAX_MOMENT - 1],
         }
-
-    );
+    };
 }
 
 /// Define an estimator of all moments up to a number given at compile time.
@@ -359,5 +346,7 @@ macro_rules! define_moments_inner {
 /// ```
 #[macro_export]
 macro_rules! define_moments {
-    ($name:ident, $MAX_MOMENT:expr) => ($crate::define_moments_inner!($name, $MAX_MOMENT););
+    ($name:ident, $MAX_MOMENT:expr) => {
+        $crate::define_moments_inner!($name, $MAX_MOMENT);
+    };
 }

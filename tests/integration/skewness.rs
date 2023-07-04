@@ -1,6 +1,6 @@
 use core::iter::Iterator;
 
-use average::{Skewness, Estimate, Merge, assert_almost_eq};
+use average::{assert_almost_eq, Estimate, Merge, Skewness};
 
 #[test]
 fn trivial() {
@@ -39,7 +39,10 @@ fn simple() {
 fn simple_serde() {
     let a: Skewness = (1..6).map(f64::from).collect();
     let b = serde_json::to_string(&a).unwrap();
-    assert_eq!(&b, "{\"avg\":{\"avg\":{\"avg\":3.0,\"n\":5},\"sum_2\":10.0},\"sum_3\":0.0}");
+    assert_eq!(
+        &b,
+        "{\"avg\":{\"avg\":{\"avg\":3.0,\"n\":5},\"sum_2\":10.0},\"sum_3\":0.0}"
+    );
     let mut c: Skewness = serde_json::from_str(&b).unwrap();
     assert_eq!(c.mean(), 3.0);
     assert_eq!(c.len(), 5);
@@ -61,7 +64,11 @@ fn merge() {
         avg_left.merge(&avg_right);
         assert_eq!(avg_total.len(), avg_left.len());
         assert_almost_eq!(avg_total.mean(), avg_left.mean(), 1e-14);
-        assert_almost_eq!(avg_total.sample_variance(), avg_left.sample_variance(), 1e-14);
+        assert_almost_eq!(
+            avg_total.sample_variance(),
+            avg_left.sample_variance(),
+            1e-14
+        );
         assert_almost_eq!(avg_total.skewness(), avg_left.skewness(), 1e-14);
     }
 }

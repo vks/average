@@ -1,6 +1,6 @@
 #![cfg_attr(feature = "cargo-clippy", allow(clippy::float_cmp))]
 
-use average::{Estimate, Min, Max, concatenate};
+use average::{concatenate, Estimate, Max, Min};
 
 concatenate!(MinMax, [Min, min], [Max, max]);
 
@@ -36,11 +36,13 @@ fn concatenate_simple() {
 
 #[test]
 fn concatenate_moments_max() {
-    use average::{Variance, Max};
+    use average::{Max, Variance};
 
-    concatenate!(Estimator,
+    concatenate!(
+        Estimator,
         [Variance, variance, mean, sample_variance],
-        [Max, max, max]);
+        [Max, max, max]
+    );
 
     let e: Estimator = (1..6).map(f64::from).collect();
 
@@ -52,11 +54,13 @@ fn concatenate_moments_max() {
 #[cfg(any(feature = "std", feature = "libm"))]
 #[test]
 fn concatenate_moments_quantile() {
-    use average::{Variance, Quantile};
+    use average::{Quantile, Variance};
 
-    concatenate!(Estimator,
+    concatenate!(
+        Estimator,
         [Variance, variance, mean, sample_variance],
-        [Quantile, quantile, quantile]);
+        [Quantile, quantile, quantile]
+    );
 
     let e: Estimator = (1..6).map(f64::from).collect();
 

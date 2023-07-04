@@ -17,15 +17,14 @@ pub struct SampleOutOfRangeError;
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_histogram_common {
-    ($LEN:expr) => (
+    ($LEN:expr) => {
         use $crate::Histogram as Trait;
 
         /// The number of bins of the histogram.
         const LEN: usize = $LEN;
 
         impl ::core::fmt::Debug for Histogram {
-            fn fmt(&self, formatter: &mut ::core::fmt::Formatter<'_>)
-                -> ::core::fmt::Result {
+            fn fmt(&self, formatter: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                 formatter.write_str("Histogram {{ range: ")?;
                 self.range[..].fmt(formatter)?;
                 formatter.write_str(", bins: ")?;
@@ -60,7 +59,8 @@ macro_rules! define_histogram_common {
             /// and empty ranges are allowed.
             #[inline]
             pub fn from_ranges<T>(ranges: T) -> Result<Self, $crate::InvalidRangeError>
-                where T: IntoIterator<Item = f64>
+            where
+                T: IntoIterator<Item = f64>,
             {
                 let mut range = [0.; LEN + 1];
                 let mut last_i = 0;
@@ -94,15 +94,9 @@ macro_rules! define_histogram_common {
                 // We made sure our ranges are valid at construction, so we can
                 // safely unwrap.
                 match self.range.binary_search_by(|p| p.partial_cmp(&x).unwrap()) {
-                    Ok(i) if i < LEN => {
-                        Ok(i)
-                    },
-                    Err(i) if i > 0 && i < LEN + 1 => {
-                        Ok(i - 1)
-                    },
-                    _ => {
-                        Err($crate::SampleOutOfRangeError)
-                    },
+                    Ok(i) if i < LEN => Ok(i),
+                    Err(i) if i > 0 && i < LEN + 1 => Ok(i - 1),
+                    _ => Err($crate::SampleOutOfRangeError),
                 }
             }
 
@@ -226,18 +220,18 @@ macro_rules! define_histogram_common {
                 }
             }
         }
-    );
+    };
 }
 
 #[cfg(feature = "serde1")]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_histogram_inner {
-    ($name:ident, $LEN:expr) => (
+    ($name:ident, $LEN:expr) => {
         mod $name {
             $crate::define_histogram_common!($LEN);
 
-            use ::serde::{Serialize, Deserialize};
+            use ::serde::{Deserialize, Serialize};
             use serde_big_array::BigArray;
 
             /// A histogram with a number of bins known at compile time.
@@ -251,14 +245,14 @@ macro_rules! define_histogram_inner {
                 bin: [u64; LEN],
             }
         }
-    );
+    };
 }
 
 #[cfg(not(feature = "serde1"))]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_histogram_inner {
-    ($name:ident, $LEN:expr) => (
+    ($name:ident, $LEN:expr) => {
         mod $name {
             $crate::define_histogram_common!($LEN);
 
@@ -271,7 +265,7 @@ macro_rules! define_histogram_inner {
                 bin: [u64; LEN],
             }
         }
-    );
+    };
 }
 
 /// Define a histogram with a number of bins known at compile time.
@@ -297,5 +291,7 @@ macro_rules! define_histogram_inner {
 /// ```
 #[macro_export]
 macro_rules! define_histogram {
-    ($name:ident, $LEN:expr) => ($crate::define_histogram_inner!($name, $LEN););
+    ($name:ident, $LEN:expr) => {
+        $crate::define_histogram_inner!($name, $LEN);
+    };
 }
