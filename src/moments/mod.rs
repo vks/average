@@ -81,20 +81,22 @@ macro_rules! define_moments_common {
 
             /// Estimate the mean of the population.
             ///
-            /// Returns 0 for an empty sample.
+            /// Returns NaN for an empty sample.
             #[inline]
             pub fn mean(&self) -> f64 {
-                self.avg
+                if self.n > 0 { self.avg } else { f64::NAN }
             }
 
             /// Estimate the `p`th central moment of the population.
+            /// 
+            /// If `p` > 1, returns NaN for an empty sample.
             #[inline]
             pub fn central_moment(&self, p: usize) -> f64 {
                 let n = self.n.to_f64().unwrap();
                 match p {
                     0 => 1.,
                     1 => 0.,
-                    _ => self.m[p - 2] / n,
+                    _ => if self.n > 0 { self.m[p - 2] / n } else { f64::NAN },
                 }
             }
 
@@ -118,22 +120,29 @@ macro_rules! define_moments_common {
             /// Calculate the sample variance.
             ///
             /// This is an unbiased estimator of the variance of the population.
+            /// 
+            /// Returns NaN for samples of size 1 or less.
             #[inline]
             pub fn sample_variance(&self) -> f64 {
                 if self.n < 2 {
-                    return 0.;
+                    return f64::NAN;
                 }
                 self.m[0] / (self.n - 1).to_f64().unwrap()
             }
 
             /// Calculate the sample skewness.
+            /// 
+            /// Returns NaN for an empty sample.
             #[cfg(any(feature = "std", feature = "libm"))]
             #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
             #[inline]
             pub fn sample_skewness(&self) -> f64 {
                 use num_traits::Float;
 
-                if self.n < 2 {
+                if self.n == 0 {
+                    return f64::NAN;
+                }
+                if self.n == 1 {
                     return 0.;
                 }
                 let n = self.n.to_f64().unwrap();
@@ -148,10 +157,12 @@ macro_rules! define_moments_common {
             }
 
             /// Calculate the sample excess kurtosis.
+            /// 
+            /// Returns NaN for samples of size 3 or less.
             #[inline]
             pub fn sample_excess_kurtosis(&self) -> f64 {
                 if self.n < 4 {
-                    return 0.;
+                    return f64::NAN;
                 }
                 let n = self.n.to_f64().unwrap();
                 (n + 1.) * n * self.central_moment(4)

@@ -4,7 +4,7 @@ use average::{Estimate, Quantile};
 fn few_observations() {
     let mut q = Quantile::new(0.5);
     assert_eq!(q.len(), 0);
-    assert_eq!(q.quantile(), 0.);
+    assert!(q.quantile().is_nan());
     q.add(1.);
     assert_eq!(q.len(), 1);
     assert_eq!(q.quantile(), 1.);

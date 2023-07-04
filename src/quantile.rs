@@ -80,7 +80,7 @@ impl Quantile {
 
     /// Estimate the p-quantile of the population.
     ///
-    /// Returns 0 for an empty sample.
+    /// Returns NaN for an empty sample.
     #[inline]
     pub fn quantile(&self) -> f64 {
         if self.len() >= 5 {
@@ -89,7 +89,7 @@ impl Quantile {
 
         // Estimate quantile by sorting the sample.
         if self.is_empty() {
-            return 0.;
+            return f64::NAN;
         }
         let mut heights: [f64; 4] = [self.q[0], self.q[1], self.q[2], self.q[3]];
         let len = usize::conv(self.len());

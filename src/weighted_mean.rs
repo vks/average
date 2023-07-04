@@ -66,10 +66,10 @@ impl WeightedMean {
 
     /// Estimate the weighted mean of the population.
     ///
-    /// Returns 0 for an empty sample.
+    /// Returns NaN for an empty sample, or if the sum of weights is zero.
     #[inline]
     pub fn mean(&self) -> f64 {
-        self.weighted_avg
+        if !self.is_empty() { self.weighted_avg } else { f64::NAN }
     }
 }
 
@@ -233,7 +233,7 @@ impl WeightedMeanWithError {
 
     /// Estimate the weighted mean of the population.
     ///
-    /// Returns 0 for an empty sample.
+    /// Returns NaN for an empty sample, or if the sum of weights is zero.
     #[inline]
     pub fn weighted_mean(&self) -> f64 {
         self.weighted_avg.mean()
@@ -241,7 +241,7 @@ impl WeightedMeanWithError {
 
     /// Estimate the unweighted mean of the population.
     ///
-    /// Returns 0 for an empty sample.
+    /// Returns NaN for an empty sample.
     #[inline]
     pub fn unweighted_mean(&self) -> f64 {
         self.unweighted_avg.mean()
@@ -266,6 +266,8 @@ impl WeightedMeanWithError {
     /// Calculate the *unweighted* population variance of the sample.
     ///
     /// This is a biased estimator of the variance of the population.
+    /// 
+    /// Returns NaN for an empty sample.
     #[inline]
     pub fn population_variance(&self) -> f64 {
         self.unweighted_avg.population_variance()
@@ -274,6 +276,8 @@ impl WeightedMeanWithError {
     /// Calculate the *unweighted* sample variance.
     ///
     /// This is an unbiased estimator of the variance of the population.
+    /// 
+    /// Returns NaN for samples of size 1 or less.
     #[inline]
     pub fn sample_variance(&self) -> f64 {
         self.unweighted_avg.sample_variance()
@@ -281,7 +285,7 @@ impl WeightedMeanWithError {
 
     /// Estimate the standard error of the *weighted* mean of the population.
     ///
-    /// Returns 0 if the sum of weights is 0.
+    /// Returns NaN if the sample is empty, or if the sum of weights is zero.
     ///
     /// This unbiased estimator assumes that the samples were independently
     /// drawn from the same population with constant variance.
@@ -294,7 +298,7 @@ impl WeightedMeanWithError {
 
         let weight_sum = self.weighted_avg.sum_weights();
         if weight_sum == 0. {
-            return 0.;
+            return f64::NAN;
         }
         let inv_effective_len = self.weight_sum_sq / (weight_sum * weight_sum);
         self.sample_variance() * inv_effective_len
@@ -302,7 +306,7 @@ impl WeightedMeanWithError {
 
     /// Estimate the standard error of the *weighted* mean of the population.
     ///
-    /// Returns 0 if the sum of weights is 0.
+    /// Returns NaN if the sample is empty, or if the sum of weights is zero.
     ///
     /// This unbiased estimator assumes that the samples were independently
     /// drawn from the same population with constant variance.

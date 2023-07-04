@@ -6,8 +6,12 @@ use average::{assert_almost_eq, Merge, WeightedMeanWithError};
 fn trivial() {
     let mut a = WeightedMeanWithError::new();
     assert_eq!(a.len(), 0);
+    assert!(a.weighted_mean().is_nan());
+    assert!(a.unweighted_mean().is_nan());
     assert_eq!(a.sum_weights(), 0.);
     assert_eq!(a.sum_weights_sq(), 0.);
+    assert!(a.population_variance().is_nan());
+    assert!(a.variance_of_weighted_mean().is_nan());
     a.add(1.0, 1.0);
     assert_eq!(a.len(), 1);
     assert_eq!(a.weighted_mean(), 1.0);
@@ -15,9 +19,9 @@ fn trivial() {
     assert_eq!(a.sum_weights(), 1.0);
     assert_eq!(a.sum_weights_sq(), 1.0);
     assert_eq!(a.population_variance(), 0.0);
-    assert_eq!(a.variance_of_weighted_mean(), 0.0);
+    assert!(a.variance_of_weighted_mean().is_nan());
     #[cfg(any(feature = "std", feature = "libm"))]
-    assert_eq!(a.error(), 0.0);
+    assert!(a.error().is_nan());
     a.add(1.0, 1.0);
     assert_eq!(a.len(), 2);
     assert_eq!(a.weighted_mean(), 1.0);

@@ -57,7 +57,7 @@ impl Skewness {
 
     /// Estimate the mean of the population.
     ///
-    /// Returns 0 for an empty sample.
+    /// Returns NaN for an empty sample.
     #[inline]
     pub fn mean(&self) -> f64 {
         self.avg.mean()
@@ -72,6 +72,8 @@ impl Skewness {
     /// Calculate the sample variance.
     ///
     /// This is an unbiased estimator of the variance of the population.
+    /// 
+    /// Returns NaN for samples of size 1 or less.
     #[inline]
     pub fn sample_variance(&self) -> f64 {
         self.avg.sample_variance()
@@ -80,6 +82,8 @@ impl Skewness {
     /// Calculate the population variance of the sample.
     ///
     /// This is a biased estimator of the variance of the population.
+    /// 
+    /// Returns NaN for an empty sample.
     #[inline]
     pub fn population_variance(&self) -> f64 {
         self.avg.population_variance()
@@ -92,8 +96,13 @@ impl Skewness {
     }
 
     /// Estimate the skewness of the population.
+    /// 
+    /// Returns NaN for an empty sample.
     #[inline]
     pub fn skewness(&self) -> f64 {
+        if self.is_empty() {
+            return f64::NAN;
+        }
         if self.sum_3 == 0. {
             return 0.;
         }
@@ -113,7 +122,7 @@ impl Default for Skewness {
 impl Estimate for Skewness {
     #[inline]
     fn add(&mut self, x: f64) {
-        let delta = x - self.mean();
+        let delta = x - self.avg.avg.avg;
         self.increment();
         let n = self.len().to_f64().unwrap();
         self.add_inner(delta, delta/n);

@@ -55,10 +55,10 @@ impl Mean {
 
     /// Estimate the mean of the population.
     ///
-    /// Returns 0 for an empty sample.
+    /// Returns NaN for an empty sample.
     #[inline]
     pub fn mean(&self) -> f64 {
-        self.avg
+        if self.n > 0 { self.avg } else { f64::NAN }
     }
 
     /// Return the sample size.
@@ -127,7 +127,7 @@ impl Merge for Mean {
         //
         //     self.avg += delta * len_other / len_total;
         //
-        // instead but this results in cancelation if the number of samples are similar.
+        // instead, but this results in cancelation if the number of samples are similar.
     }
 }
 

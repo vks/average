@@ -60,7 +60,7 @@ impl Variance {
 
     /// Estimate the mean of the population.
     ///
-    /// Returns 0 for an empty sample.
+    /// Returns NaN for an empty sample.
     #[inline]
     pub fn mean(&self) -> f64 {
         self.avg.mean()
@@ -75,10 +75,12 @@ impl Variance {
     /// Calculate the sample variance.
     ///
     /// This is an unbiased estimator of the variance of the population.
+    /// 
+    /// Returns NaN for samples of size 1 or less.
     #[inline]
     pub fn sample_variance(&self) -> f64 {
         if self.avg.len() < 2 {
-            return 0.;
+            return f64::NAN;
         }
         self.sum_2 / (self.avg.len() - 1).to_f64().unwrap()
     }
@@ -86,26 +88,35 @@ impl Variance {
     /// Calculate the population variance of the sample.
     ///
     /// This is a biased estimator of the variance of the population.
+    /// 
+    /// Returns NaN for an empty sample.
     #[inline]
     pub fn population_variance(&self) -> f64 {
         let n = self.avg.len();
-        if n < 2 {
-            return 0.;
+        if n == 0 {
+            return f64::NAN;
         }
         self.sum_2 / n.to_f64().unwrap()
     }
 
     /// Estimate the variance of the mean of the population.
+    /// 
+    /// Returns NaN for an empty sample.
     #[inline]
     pub fn variance_of_mean(&self) -> f64 {
         let n = self.avg.len();
         if n == 0 {
+            return f64::NAN;
+        }
+        if n == 1 {
             return 0.;
         }
         self.sample_variance() / n.to_f64().unwrap()
     }
 
     /// Estimate the standard error of the mean of the population.
+    /// 
+    /// Returns NaN for an empty sample.
     #[cfg(any(feature = "std", feature = "libm"))]
     #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
     #[inline]

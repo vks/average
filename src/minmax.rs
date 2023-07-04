@@ -40,10 +40,12 @@ impl Min {
     /// Create a new minimum estimator.
     #[inline]
     pub fn new() -> Min {
-        Min::from_value(::core::f64::INFINITY)
+        Min::from_value(f64::INFINITY)
     }
 
-    /// Estimate the minium of the population.
+    /// Estimate the minimum of the population.
+    /// 
+    /// Returns `f64::INFINITY` for an empty sample.
     #[inline]
     pub fn min(&self) -> f64 {
         self.x
@@ -122,10 +124,12 @@ impl Max {
     /// Create a new maximum estimator.
     #[inline]
     pub fn new() -> Max {
-        Max::from_value(::core::f64::NEG_INFINITY)
+        Max::from_value(f64::NEG_INFINITY)
     }
 
-    /// Estimate the maxium of the population.
+    /// Estimate the maximum of the population.
+    /// 
+    /// Returns `f64::NEG_INFINITY` for an empty sample.
     #[inline]
     pub fn max(&self) -> f64 {
         self.x

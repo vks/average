@@ -8,10 +8,11 @@ use average::{Estimate, MeanWithError, Merge};
 fn trivial() {
     let mut a = MeanWithError::new();
     assert_eq!(a.len(), 0);
+    assert!(a.mean().is_nan());
     a.add(1.0);
     assert_eq!(a.mean(), 1.0);
     assert_eq!(a.len(), 1);
-    assert_eq!(a.sample_variance(), 0.0);
+    assert!(a.sample_variance().is_nan());
     assert_eq!(a.population_variance(), 0.0);
     assert_eq!(a.variance_of_mean(), 0.0);
     #[cfg(any(feature = "std", feature = "libm"))]
