@@ -43,7 +43,7 @@ pub trait Merge {
 
 /// Calculate the multinomial variance. Relevant for histograms.
 #[inline(always)]
-fn multinomal_variance(n: f64, n_tot_inv: f64) -> f64 {
+fn multinomial_variance(n: f64, n_tot_inv: f64) -> f64 {
     n * (1. - n * n_tot_inv)
 }
 
@@ -62,7 +62,7 @@ where
     fn variance(&self, bin: usize) -> f64 {
         let count = self.bins()[bin];
         let sum: u64 = self.bins().iter().sum();
-        multinomal_variance(count as f64, 1. / (sum as f64))
+        multinomial_variance(count as f64, 1. / (sum as f64))
     }
 
     /// Return an iterator over the bins normalized by the bin widths.
@@ -187,6 +187,6 @@ where
     fn next(&mut self) -> Option<f64> {
         self.histogram_iter
             .next()
-            .map(|(_, n)| multinomal_variance(n as f64, self.sum_inv))
+            .map(|(_, n)| multinomial_variance(n as f64, self.sum_inv))
     }
 }

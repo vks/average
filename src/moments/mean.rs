@@ -127,7 +127,7 @@ impl Merge for Mean {
         //
         //     self.avg += delta * len_other / len_total;
         //
-        // instead, but this results in cancelation if the number of samples are similar.
+        // instead, but this results in cancellation if the number of samples are similar.
     }
 }
 
