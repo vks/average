@@ -109,6 +109,7 @@ mod histogram;
 #[cfg(feature = "nightly")]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "nightly")))]
 pub mod histogram_const;
+mod covariance;
 
 #[cfg(any(feature = "std", feature = "libm"))]
 #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
@@ -122,6 +123,7 @@ pub use crate::minmax::{Max, Min};
 pub use crate::quantile::Quantile;
 pub use crate::traits::{Estimate, Histogram, Merge};
 pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};
+pub use crate::covariance::Covariance;
 
 define_histogram!(hist, 10);
 pub use crate::hist::Histogram as Histogram10;
