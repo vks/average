@@ -1,6 +1,7 @@
 use num_traits::ToPrimitive;
 #[cfg(feature = "serde1")]
 use serde_derive::{Deserialize, Serialize};
+
 use crate::Merge;
 
 /// Estimate the arithmetic mean and the covariance of a sequence of number pairs
@@ -179,6 +180,8 @@ impl Covariance {
         }
         self.sum_y_2 / self.n.to_f64().unwrap()
     }
+
+    // TODO: Standard deviation and standard error
 }
 
 impl core::default::Default for Covariance {
@@ -228,5 +231,47 @@ impl Merge for Covariance {
         self.sum_prod += other.sum_prod + delta_x*delta_y * len_self * len_other / len_total;
 
         self.n += other.n;
+    }
+}
+
+impl core::iter::FromIterator<(f64, f64)> for Covariance {
+    fn from_iter<T>(iter: T) -> Covariance
+        where
+            T: IntoIterator<Item = (f64, f64)>,
+    {
+        let mut cov = Covariance::new();
+        for (x, y) in iter {
+            cov.add(x, y);
+        }
+        cov
+    }
+}
+
+impl core::iter::Extend<(f64, f64)> for Covariance {
+    fn extend<T: IntoIterator<Item = (f64, f64)>>(&mut self, iter: T) {
+        for (x, y) in iter {
+            self.add(x, y);
+        }
+    }
+}
+
+impl<'a> core::iter::FromIterator<&'a (f64, f64)> for Covariance {
+    fn from_iter<T>(iter: T) -> Covariance
+        where
+            T: IntoIterator<Item = &'a (f64, f64)>,
+    {
+        let mut cov = Covariance::new();
+        for &(x, y) in iter {
+            cov.add(x, y);
+        }
+        cov
+    }
+}
+
+impl<'a> core::iter::Extend<&'a (f64, f64)> for Covariance {
+    fn extend<T: IntoIterator<Item = &'a (f64, f64)>>(&mut self, iter: T) {
+        for &(x, y) in iter {
+            self.add(x, y);
+        }
     }
 }
