@@ -22,3 +22,4 @@ mod skewness;
 #[cfg(feature = "std")]
 mod streaming_stats;
 mod weighted_mean;
+mod covariance;

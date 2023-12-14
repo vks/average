@@ -4,8 +4,24 @@ use serde_derive::{Deserialize, Serialize};
 
 use crate::Merge;
 
-/// Estimate the arithmetic mean and the covariance of a sequence of number pairs
+/// Estimate the arithmetic means and the covariance of a sequence of number pairs
 /// ("population").
+///
+/// Because the variances are calculated as well, this can be used to calculate the Pearson
+/// correlation coefficient.
+///
+///
+/// ## Example
+///
+/// ```
+/// use average::Covariance;
+///
+/// let a: Covariance = [(1., 5.), (2., 4.), (3., 3.), (4., 2.), (5., 1.)].iter().cloned().collect();
+/// assert_eq!(a.mean_x(), 3.);
+/// assert_eq!(a.mean_y(), 3.);
+/// assert_eq!(a.population_covariance(), -2.5);
+/// assert_eq!(a.sample_covariance(), -2.0);
+/// ```
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
 pub struct Covariance {
@@ -40,13 +56,13 @@ impl Covariance {
         let delta_x = x - self.avg_x;
         let delta_y = y - self.avg_y;
 
-        self.avg_x += delta_x / self.n.to_f64().unwrap();
+        self.avg_x += delta_x / n;
         self.sum_x_2 += delta_x * delta_x * n * (n - 1.);
 
-        self.avg_y += delta_y / self.n.to_f64().unwrap();
+        self.avg_y += delta_y / n;
         self.sum_y_2 += delta_y * delta_y * n * (n - 1.);
 
-        self.sum_prod += delta_x * delta_y;
+        self.sum_prod += delta_x * (y - self.avg_y);
     }
 
     /// Calculate the population covariance of the sample.
@@ -56,7 +72,7 @@ impl Covariance {
     /// Returns NaN for an empty sample.
     #[inline]
     pub fn population_covariance(&self) -> f64 {
-        if self.n < 2 {
+        if self.n < 1 {
             return f64::NAN;
         }
         self.sum_prod / self.n.to_f64().unwrap()

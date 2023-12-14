@@ -93,6 +93,7 @@
 #![forbid(missing_docs)]
 #![forbid(missing_debug_implementations)]
 #![cfg_attr(feature = "nightly", feature(generic_const_exprs))]
+#[cfg(feature = "std")] extern crate std;
 
 #[macro_use]
 mod macros;
