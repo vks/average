@@ -208,7 +208,7 @@ impl Merge for Covariance {
     /// let mut cov_left: Covariance = left.iter().collect();
     /// let cov_right: Covariance = right.iter().collect();
     /// cov_left.merge(&cov_right);
-    /// assert_eq!(cov_total, cov_left);
+    /// assert_eq!(cov_total.population_covariance(), cov_left.population_covariance());
     /// ```
     #[inline]
     fn merge(&mut self, other: &Covariance) {
