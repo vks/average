@@ -54,13 +54,14 @@ impl Covariance {
         let n = self.n.to_f64().unwrap();
 
         let delta_x = x - self.avg_x;
-        let delta_y = y - self.avg_y;
+        let delta_x_n = delta_x / n;
+        let delta_y_n = (y - self.avg_y) / n;
 
-        self.avg_x += delta_x / n;
-        self.sum_x_2 += delta_x * delta_x * n * (n - 1.);
+        self.avg_x += delta_x_n;
+        self.sum_x_2 += delta_x_n * delta_x_n * n * (n - 1.);
 
-        self.avg_y += delta_y / n;
-        self.sum_y_2 += delta_y * delta_y * n * (n - 1.);
+        self.avg_y += delta_y_n;
+        self.sum_y_2 += delta_y_n * delta_y_n * n * (n - 1.);
 
         self.sum_prod += delta_x * (y - self.avg_y);
     }
@@ -91,30 +92,17 @@ impl Covariance {
         self.sum_prod / (self.n - 1).to_f64().unwrap()
     }
 
-    /// Calculate the population Pearson correlation coefficient of the sample.
+    /// Calculate the population Pearson correlation coefficient.
     ///
     /// Returns NaN for an empty sample.
     #[cfg(any(feature = "std", feature = "libm"))]
     #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
     #[inline]
-    pub fn population_pearson(&self) -> f64 {
-        let cov = self.population_covariance();
-        let var_x = self.population_variance_x();
-        let var_y = self.population_variance_y();
-        cov / num_traits::Float::sqrt(var_x * var_y)
-    }
-
-    /// Calculate the sample Pearson correlation coefficient.
-    ///
-    /// Returns NaN for an empty sample.
-    #[cfg(any(feature = "std", feature = "libm"))]
-    #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
-    #[inline]
-    pub fn sample_pearson(&self) -> f64 {
-        let cov = self.sample_covariance();
-        let var_x = self.sample_variance_x();
-        let var_y = self.sample_variance_y();
-        cov / num_traits::Float::sqrt(var_x * var_y)
+    pub fn pearson(&self) -> f64 {
+        if self.n < 2 {
+            return f64::NAN;
+        }
+        self.sum_prod / num_traits::Float::sqrt(self.sum_x_2 * self.sum_y_2)
     }
 
     /// Return the sample size.
