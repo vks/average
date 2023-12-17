@@ -11,6 +11,7 @@ fn simple() {
     assert!(cov.sample_variance_y().is_nan());
     assert!(cov.population_covariance().is_nan());
     assert!(cov.sample_covariance().is_nan());
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert!(cov.pearson().is_nan());
 
     cov.add(1., 5.);
@@ -22,6 +23,7 @@ fn simple() {
     assert!(cov.sample_variance_y().is_nan());
     assert_eq!(cov.population_covariance(), 0.);
     assert!(cov.sample_covariance().is_nan());
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert!(cov.pearson().is_nan());
 
     cov.add(2., 4.);
@@ -33,6 +35,7 @@ fn simple() {
     assert_eq!(cov.sample_variance_y(), 0.5);
     assert_eq!(cov.population_covariance(), -0.25);
     assert_eq!(cov.sample_covariance(), -0.5);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_eq!(cov.pearson(), -1.);
 
     cov.add(3., 3.);
@@ -44,6 +47,7 @@ fn simple() {
     assert_eq!(cov.sample_variance_y(), 1.);
     assert_eq!(cov.population_covariance(), -2./3.);
     assert_eq!(cov.sample_covariance(), -1.);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_eq!(cov.pearson(), -1.);
 
     cov.add(4., 2.);
@@ -55,6 +59,7 @@ fn simple() {
     assert_eq!(cov.sample_variance_y(), 5./3.);
     assert_eq!(cov.population_covariance(), -1.25);
     assert_eq!(cov.sample_covariance(), -5./3.);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_eq!(cov.pearson(), -1.);
 
     cov.add(5., 1.);
@@ -66,5 +71,6 @@ fn simple() {
     assert_eq!(cov.sample_variance_y(), 2.5);
     assert_eq!(cov.population_covariance(), -2.0);
     assert_eq!(cov.sample_covariance(), -2.5);
+    #[cfg(any(feature = "std", feature = "libm"))]
     assert_eq!(cov.pearson(), -1.);
 }

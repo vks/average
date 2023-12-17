@@ -79,7 +79,7 @@ fn simple_rayon() {
 
 #[test]
 fn numerically_unstable() {
-    // The naive algorithm fails for this example due to cancelation.
+    // The naive algorithm fails for this example due to cancellation.
     let big = 1e9;
     let sample = &[big + 4., big + 7., big + 13., big + 16.];
     let a: MeanWithError = sample.iter().collect();
