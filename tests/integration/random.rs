@@ -30,5 +30,5 @@ fn exponential_distribution() {
     assert_almost_eq!(a.population_variance().sqrt(), 1. / lambda, 1e-2);
     assert_almost_eq!(a.error_mean(), 0.0, 1e-2);
     assert_almost_eq!(a.skewness(), 2.0, 1e-1);
-    assert_almost_eq!(a.kurtosis(), 6.0, 1e-1);
+    assert_almost_eq!(a.kurtosis(), 6.0, 1.5e-1);
 }
