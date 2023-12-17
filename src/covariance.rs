@@ -19,8 +19,8 @@ use crate::Merge;
 /// let a: Covariance = [(1., 5.), (2., 4.), (3., 3.), (4., 2.), (5., 1.)].iter().cloned().collect();
 /// assert_eq!(a.mean_x(), 3.);
 /// assert_eq!(a.mean_y(), 3.);
-/// assert_eq!(a.population_covariance(), -2.5);
-/// assert_eq!(a.sample_covariance(), -2.0);
+/// assert_eq!(a.population_covariance(), -2.0);
+/// assert_eq!(a.sample_covariance(), -2.5);
 /// ```
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
