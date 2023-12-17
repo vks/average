@@ -58,6 +58,7 @@ streaming-stats = "0.2"
 quantiles = "0.7"
 proptest = "=1.0"
 byteorder = "=1.4" # MSRV 1.56, required by proptest
+tempfile = "=3.6" # MSRV 1.56, required by proptest
 
 [package.metadata.docs.rs]
 # Enable certain features when building docs for docs.rs
