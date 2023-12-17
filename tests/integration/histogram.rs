@@ -64,7 +64,7 @@ fn iter() {
 
 #[test]
 fn normalized_bins() {
-    let inf = std::f64::INFINITY;
+    let inf = f64::INFINITY;
     let mut h = Histogram10::from_ranges(
         [-inf, 0.1, 0.2, 0.3, 0.4, 0.4, 0.7, 0.8, 0.9, 1.0, inf]
             .iter()
@@ -83,7 +83,7 @@ fn normalized_bins() {
 
 #[test]
 fn widths() {
-    let inf = std::f64::INFINITY;
+    let inf = f64::INFINITY;
     let h = Histogram10::from_ranges(
         [-inf, 0.1, 0.2, 0.3, 0.4, 0.4, 0.7, 0.8, 0.9, 1.0, inf]
             .iter()
@@ -99,7 +99,7 @@ fn widths() {
 
 #[test]
 fn centers() {
-    let inf = std::f64::INFINITY;
+    let inf = f64::INFINITY;
     let h = Histogram10::from_ranges(
         [-inf, 0.1, 0.2, 0.3, 0.4, 0.4, 0.7, 0.8, 0.9, 1.0, inf]
             .iter()
@@ -115,7 +115,7 @@ fn centers() {
 
 #[test]
 fn from_ranges_infinity() {
-    let inf = std::f64::INFINITY;
+    let inf = f64::INFINITY;
     let mut h = Histogram10::from_ranges(
         [-inf, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4, inf]
             .iter()
@@ -137,7 +137,7 @@ fn from_ranges_invalid() {
     let valid = vec![0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 2.0];
     assert!(Histogram10::from_ranges(valid.iter().cloned()).is_ok());
     let mut invalid_nan = valid.clone();
-    invalid_nan[3] = std::f64::NAN;
+    invalid_nan[3] = f64::NAN;
     assert_eq!(
         Histogram10::from_ranges(invalid_nan.iter().cloned()).unwrap_err(),
         InvalidRangeError::NaN

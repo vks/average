@@ -31,7 +31,7 @@ pub struct Min {
 }
 
 impl Min {
-    /// Create a new minium estimator from a given value.
+    /// Create a new minimum estimator from a given value.
     #[inline]
     pub fn from_value(x: f64) -> Min {
         Min { x }
@@ -115,7 +115,7 @@ pub struct Max {
 }
 
 impl Max {
-    /// Create a new maxium estimator from a given value.
+    /// Create a new maximum estimator from a given value.
     #[inline]
     pub fn from_value(x: f64) -> Max {
         Max { x }

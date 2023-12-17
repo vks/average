@@ -270,7 +270,7 @@ macro_rules! define_histogram_inner {
 
 /// Define a histogram with a number of bins known at compile time.
 ///
-/// Because macros are not hygenic for items, everything is defined in a private
+/// Because macros are not hygienic for items, everything is defined in a private
 /// module with the given name. This includes the `Histogram` struct, the number
 /// of bins `LEN` and the histogram iterator `HistogramIter`.
 ///
