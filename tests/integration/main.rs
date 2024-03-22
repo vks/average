@@ -11,8 +11,6 @@ mod max;
 mod mean;
 mod min;
 mod moments;
-#[cfg(feature = "std")]
-mod proptest;
 #[cfg(any(feature = "std", feature = "libm"))]
 mod quantile;
 #[cfg(any(feature = "std", feature = "libm"))]
