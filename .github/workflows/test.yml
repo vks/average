@@ -29,14 +29,12 @@ jobs:
             toolchain: nightly
             variant: minimal_versions
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
-          profile: minimal
-          target: ${{ matrix.target }}
+          targets: ${{ matrix.target }}
           toolchain: ${{ matrix.toolchain }}
-          override: true
       - name: Install dependencies (if necessary)
         run: ${{ matrix.deps }}
       - name: Minimal versions (if necessary)
@@ -57,17 +55,13 @@ jobs:
           cargo test --target ${{ matrix.target }} --features=std,serde1,rayon
   test-no-std:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
-            profile: minimal
-            toolchain: nightly
-            target: thumbv6m-none-eabi
-            override: true
+          targets: thumbv6m-none-eabi
+          toolchain: nightly
       - name: Build top-level only
         run: |
           cargo build --target=thumbv6m-none-eabi --no-default-features
