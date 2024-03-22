@@ -45,7 +45,7 @@ The following features are available:
 
 ## Rust version requirements
 
-Rustc version 1.56 or greater is supported.
+Rustc version 1.61 or greater is supported.
 
 ## Related Projects
 
