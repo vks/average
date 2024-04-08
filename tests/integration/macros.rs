@@ -2,7 +2,7 @@
 
 use average::{concatenate, Estimate, Max, Min};
 
-concatenate!(MinMax, [Min, min], [Max, max]);
+concatenate!(pub MinMax, [Min, min], [Max, max]);
 
 #[test]
 fn concatenate_simple() {

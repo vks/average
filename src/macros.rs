@@ -90,11 +90,11 @@ macro_rules! assert_almost_eq {
 /// ```
 #[macro_export]
 macro_rules! concatenate {
-    ( $name:ident, $([$estimator:ident, $statistic:ident]),+ ) => {
-        concatenate!( $name, $([$estimator, $statistic, $statistic]),* );
+    ( $visibility:vis $name:ident, $([$estimator:ident, $statistic:ident]),+ ) => {
+        concatenate!($visibility $name, $([$estimator, $statistic, $statistic]),* );
     };
-    ( $name:ident, $( [$estimator:ident, $field:ident, $($statistic:ident),+] ),+ ) => {
-        struct $name {
+    ( $visibility:vis $name:ident, $( [$estimator:ident, $field:ident, $($statistic:ident),+] ),+ ) => {
+        $visibility struct $name {
         $(
             $field: $estimator,
         )*
