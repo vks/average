@@ -2,7 +2,7 @@
 
 use average::{concatenate, Estimate, Max, Min};
 
-concatenate!(pub MinMax, [Min, min], [Max, max]);
+concatenate!(MinMax, [Min, min], [Max, max]);
 
 #[test]
 fn concatenate_simple() {
@@ -67,4 +67,20 @@ fn concatenate_moments_quantile() {
     assert_eq!(e.mean(), 3.0);
     assert_eq!(e.sample_variance(), 2.5);
     assert_eq!(e.quantile(), 3.0);
+}
+
+#[test]
+fn concatenate_pub() {
+    mod submodule {
+        use average::{concatenate, Min, Max, Estimate};
+        concatenate!(pub MinMax, [Min, min], [Max, max]);
+    }
+
+    let mut s = submodule::MinMax::new();
+    for i in 1..6 {
+        s.add(f64::from(i));
+    }
+
+    assert_eq!(s.min(), 1.0);
+    assert_eq!(s.max(), 5.0);
 }

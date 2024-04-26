@@ -21,7 +21,3 @@ mod skewness;
 mod streaming_stats;
 mod weighted_mean;
 mod covariance;
-
-// Ensure that the struct defined by macro is accessible
-#[allow(unused_imports)]
-use macros::MinMax;
