@@ -19,6 +19,7 @@ serde1 = ["serde", "serde_derive", "serde-big-array"]
 nightly = []
 std = ["easy-cast/std", "num-traits/std"]
 libm = ["easy-cast/libm", "num-traits/libm"]
+distinct_elements = ["rand", "arrayvec"]
 default = ["libm"]
 
 [[bench]]
@@ -41,6 +42,8 @@ serde_derive = { version = "1", optional = true }
 serde-big-array = { version = "0.5", optional = true }
 rayon = { version = "=1.7", optional = true }  # MSRV 1.61
 rayon-core = { version = "=1.11", optional = true }  # MSRV 1.61
+arrayvec = { version = "0.7.4", optional = true }
+rand = { version =  "0.8", default-features = false, features = ["small_rng"], optional = true }
 
 [dependencies.serde]
 version = "1"

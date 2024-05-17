@@ -21,3 +21,5 @@ mod skewness;
 mod streaming_stats;
 mod weighted_mean;
 mod covariance;
+#[cfg(feature = "distinct_elements")]
+mod distinct_elements;

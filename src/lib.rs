@@ -111,6 +111,8 @@ mod histogram;
 #[cfg_attr(doc_cfg, doc(cfg(feature = "nightly")))]
 pub mod histogram_const;
 mod covariance;
+#[cfg(feature = "distinct_elements")]
+mod distinct_elements;
 
 #[cfg(any(feature = "std", feature = "libm"))]
 #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
@@ -125,6 +127,9 @@ pub use crate::quantile::Quantile;
 pub use crate::traits::{Estimate, Histogram, Merge};
 pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use crate::covariance::Covariance;
+#[cfg(feature = "distinct_elements")]
+#[cfg_attr(doc_cfg, doc(cfg(feature = "distinct_elements")))]
+pub use crate::distinct_elements::DistinctElements;
 
 define_histogram!(hist, 10);
 pub use crate::hist::Histogram as Histogram10;

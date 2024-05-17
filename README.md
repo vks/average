@@ -41,6 +41,8 @@ The following features are available:
 * `nightly` enables the use of const generics for a histogram implementation
   without macros. Note that nightly features are not stable and therefore not
   all library and compiler versions will be compatible.
+* `distinct_elements` enables `DistinctElements` to estimate the number of distinct
+  elements in a sequence. The implementation is experimental and may suffer breaking changes in a minor release!
 
 
 ## Rust version requirements
