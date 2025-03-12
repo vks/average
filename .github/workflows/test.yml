@@ -52,7 +52,7 @@ jobs:
           # doctests don't work without `libm` or `std`
           cargo test --target ${{ matrix.target }} --tests --no-default-features
           # all stable features:
-          cargo test --target ${{ matrix.target }} --features=std,serde1,rayon
+          cargo test --target ${{ matrix.target }} --features=std,serde,rayon
   test-no-std:
     runs-on: ubuntu-latest
     steps:
@@ -66,5 +66,5 @@ jobs:
         run: |
           cargo build --target=thumbv6m-none-eabi --no-default-features
           cargo build --target=thumbv6m-none-eabi
-          cargo build --target=thumbv6m-none-eabi --features serde1
-          cargo build --target=thumbv6m-none-eabi --no-default-features --features serde1
+          cargo build --target=thumbv6m-none-eabi --features serde
+          cargo build --target=thumbv6m-none-eabi --no-default-features --features serde

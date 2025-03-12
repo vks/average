@@ -48,7 +48,7 @@ fn simple_extend() {
     assert_almost_eq!(a.error(), num_traits::Float::sqrt(0.5), 1e-16);
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 #[test]
 fn simple_serde() {
     let a: MeanWithError = (1..6).map(f64::from).collect();

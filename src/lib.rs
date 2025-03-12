@@ -17,7 +17,7 @@
 //! avoid numerical instabilities.
 //!
 //! If you want [Serde](https://github.com/serde-rs/serde) support,
-//! include `"serde1"` in your list of features.
+//! include `"serde"` in your list of features.
 //!
 //! Note that deserializing does not currently check for all invalid inputs.
 //! For example, if you deserialize a corrupted [`Variance`] it may return

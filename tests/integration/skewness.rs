@@ -52,7 +52,7 @@ fn simple_extend() {
     assert_almost_eq!(a.skewness(), 0.2795084971874741, 1e-15);
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 #[test]
 fn simple_serde() {
     let a: Skewness = (1..6).map(f64::from).collect();

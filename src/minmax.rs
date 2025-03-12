@@ -1,4 +1,4 @@
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 use super::{Estimate, Merge};
@@ -25,7 +25,7 @@ fn max(a: f64, b: f64) -> f64 {
 /// println!("The minimum is {}.", a.min());
 /// ```
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Min {
     x: f64,
 }
@@ -109,7 +109,7 @@ impl Merge for Min {
 /// assert_eq!(a.max(), 5.);
 /// ```
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Max {
     x: f64,
 }

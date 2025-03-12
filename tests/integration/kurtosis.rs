@@ -54,7 +54,7 @@ fn simple_extend() {
     assert_almost_eq!(a.kurtosis(), -1.365, 1e-15);
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 #[test]
 fn simple_serde() {
     let a: Kurtosis = (1..6).map(f64::from).collect();

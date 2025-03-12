@@ -13,7 +13,7 @@ fn trivial() {
     assert_eq!(m.max(), 3.)
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 #[test]
 fn trivial_serde() {
     let mut m = Max::new();

@@ -1,5 +1,5 @@
 use num_traits::ToPrimitive;
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 use serde_derive::{Deserialize, Serialize};
 
 use crate::Merge;
@@ -23,7 +23,7 @@ use crate::Merge;
 /// assert_eq!(a.sample_covariance(), -2.5);
 /// ```
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Covariance {
     avg_x: f64,
     sum_x_2: f64,

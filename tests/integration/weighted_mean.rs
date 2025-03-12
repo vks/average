@@ -47,7 +47,7 @@ fn simple() {
     assert_almost_eq!(a.error(), f64::sqrt(0.5), 1e-16);
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 #[test]
 fn simple_serde() {
     let a: WeightedMeanWithError = (1..6).map(|x| (f64::from(x), 1.0)).collect();

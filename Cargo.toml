@@ -12,10 +12,9 @@ version = "0.15.1"
 edition = "2021"
 rust-version = "1.63"
 include = ["src/**/*", "benches/*", "LICENSE-*", "README.md"]
-resolver = "2"
 
 [features]
-serde1 = ["serde", "serde_derive", "serde-big-array"]
+serde = ["dep:serde", "serde_derive", "serde-big-array"]
 nightly = []
 std = ["easy-cast/std", "num-traits/std"]
 libm = ["easy-cast/libm", "num-traits/libm"]
@@ -59,7 +58,7 @@ quantiles = "0.7"
 
 [package.metadata.docs.rs]
 # Enable certain features when building docs for docs.rs
-features = ["libm", "serde1", "rayon"]
+features = ["libm", "serde", "rayon"]
 rustdoc-args = ["--generate-link-to-definition"]
 # To build locally:
-# RUSTDOCFLAGS="--cfg docsrs -Zunstable-options --generate-link-to-definition cargo +nightly doc --features libm,serde1,rayon --no-deps --open
+# RUSTDOCFLAGS="--cfg docsrs -Zunstable-options --generate-link-to-definition cargo +nightly doc --features libm,serde,rayon --no-deps --open

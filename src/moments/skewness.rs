@@ -5,7 +5,7 @@ use num_traits::Float;
 ///
 /// This can be used to estimate the standard error of the mean.
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Skewness {
     /// Estimator of mean and variance.
     avg: MeanWithError,

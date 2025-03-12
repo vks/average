@@ -223,7 +223,7 @@ macro_rules! define_histogram_common {
     };
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_histogram_inner {
@@ -248,7 +248,7 @@ macro_rules! define_histogram_inner {
     };
 }
 
-#[cfg(not(feature = "serde1"))]
+#[cfg(not(feature = "serde"))]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_histogram_inner {

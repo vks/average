@@ -276,7 +276,7 @@ fn merge() {
     assert_eq!(h.bins(), h1.bins());
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 #[test]
 fn simple_serde() {
     let mut a = Histogram10::from_ranges(

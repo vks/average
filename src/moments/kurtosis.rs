@@ -3,7 +3,7 @@
 ///
 /// This can be used to estimate the standard error of the mean.
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Kurtosis {
     /// Estimator of mean, variance and skewness.
     avg: Skewness,

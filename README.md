@@ -36,7 +36,7 @@ The following features are available:
   This is enabled by default. If the `std` feature is also enabled, `std` is
   preferred over `libm`.
 * `std` enables `Quantile` (using floating point functions provided by `std`).
-* `serde1` enables serialization, via Serde version 1.
+* `serde` enables serialization, via Serde version 1.
 * `rayon` enables support for `rayon::iter::FromParallelIterator`.
 * `nightly` enables the use of const generics for a histogram implementation
   without macros. Note that nightly features are not stable and therefore not

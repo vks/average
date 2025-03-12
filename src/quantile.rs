@@ -3,7 +3,7 @@ use core::cmp::min;
 use easy_cast::{Conv, ConvFloat};
 use float_ord::sort as sort_floats;
 use num_traits::{Float, ToPrimitive};
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 use super::Estimate;
@@ -22,7 +22,7 @@ use super::Estimate;
 /// [1]: http://www.cs.wustl.edu/~jain/papers/ftp/psqr.pdf
 /// [2]: https://crates.io/crates/quantiles
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Quantile {
     /// Marker heights.
     q: [f64; 5],

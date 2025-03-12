@@ -1,5 +1,5 @@
 use super::{Estimate, MeanWithError, Merge};
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /// Estimate the weighted and unweighted arithmetic mean of a sequence of
@@ -16,7 +16,7 @@ use serde::{Deserialize, Serialize};
 /// println!("The weighted mean is {}.", a.mean());
 /// ```
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct WeightedMean {
     /// Sum of the weights.
     weight_sum: f64,
@@ -173,7 +173,7 @@ impl Merge for WeightedMean {
 /// println!("The weighted mean is {} ± {}.", a.weighted_mean(), a.error());
 /// ```
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct WeightedMeanWithError {
     /// Sum of the squares of the weights.
     weight_sum_sq: f64,

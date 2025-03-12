@@ -1,5 +1,5 @@
 use num_traits::ToPrimitive;
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 use super::{Estimate, Merge};
@@ -264,7 +264,7 @@ macro_rules! define_moments_common {
     };
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_moments_inner {
@@ -291,7 +291,7 @@ macro_rules! define_moments_inner {
     };
 }
 
-#[cfg(not(feature = "serde1"))]
+#[cfg(not(feature = "serde"))]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_moments_inner {

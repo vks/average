@@ -19,7 +19,7 @@ fn few_observations() {
     assert_eq!(q.quantile(), 2.5);
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 #[test]
 fn few_observations_serde() {
     let mut q = Quantile::new(0.5);

@@ -80,7 +80,7 @@ fn simple_extend() {
     }
 }
 
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 #[test]
 fn simple_serde() {
     let a: Moments4 = (1..6).map(f64::from).collect();
