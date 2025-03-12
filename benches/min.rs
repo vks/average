@@ -4,7 +4,7 @@ use bencher::{benchmark_group, benchmark_main, Bencher};
 fn initialize_vec() -> Vec<f64> {
     use rand::SeedableRng;
     use rand_distr::{Distribution, Uniform};
-    let range = Uniform::new(0.0, 1.0);
+    let range = Uniform::new(0.0, 1.0).unwrap();
     let n = 1_000_000;
     let mut values = Vec::with_capacity(n);
     let mut rng = rand_xoshiro::Xoshiro256StarStar::from_seed([
