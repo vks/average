@@ -4,7 +4,6 @@ use num_traits::Float;
 /// numbers ("population").
 ///
 /// This can be used to estimate the standard error of the mean.
-#[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
 pub struct Skewness {

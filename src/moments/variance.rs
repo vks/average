@@ -118,7 +118,6 @@ impl Variance {
     /// 
     /// Returns NaN for an empty sample.
     #[cfg(any(feature = "std", feature = "libm"))]
-    #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
     #[inline]
     pub fn error(&self) -> f64 {
         num_traits::Float::sqrt(self.variance_of_mean())

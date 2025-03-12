@@ -86,12 +86,12 @@
 //! [`Histogram10`]: ./struct.Histogram10.html
 //! [`Histogram`]: ./trait.Histogram.html
 
-#![cfg_attr(doc_cfg, feature(doc_cfg))]
 #![allow(clippy::float_cmp, clippy::suspicious_operation_groupings)]
 #![no_std]
 #![forbid(unsafe_code)]
 #![forbid(missing_docs)]
 #![forbid(missing_debug_implementations)]
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![cfg_attr(feature = "nightly", feature(generic_const_exprs))]
 #[cfg(feature = "std")] extern crate std;
 
@@ -101,26 +101,22 @@ mod macros;
 mod moments;
 mod minmax;
 #[cfg(any(feature = "std", feature = "libm"))]
-#[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
 mod quantile;
 mod traits;
 mod weighted_mean;
 #[macro_use]
 mod histogram;
 #[cfg(feature = "nightly")]
-#[cfg_attr(doc_cfg, doc(cfg(feature = "nightly")))]
 pub mod histogram_const;
 mod covariance;
 
 #[cfg(any(feature = "std", feature = "libm"))]
-#[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
 pub use crate::moments::{Kurtosis, Skewness};
 pub use crate::moments::{Mean, MeanWithError, Variance};
 
 pub use crate::histogram::{InvalidRangeError, SampleOutOfRangeError};
 pub use crate::minmax::{Max, Min};
 #[cfg(any(feature = "std", feature = "libm"))]
-#[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
 pub use crate::quantile::Quantile;
 pub use crate::traits::{Estimate, Histogram, Merge};
 pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};

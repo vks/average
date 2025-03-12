@@ -60,6 +60,6 @@ quantiles = "0.7"
 [package.metadata.docs.rs]
 # Enable certain features when building docs for docs.rs
 features = ["libm", "serde1", "rayon"]
-rustdoc-args = ["--cfg", "doc_cfg"]
+rustdoc-args = ["--generate-link-to-definition"]
 # To build locally:
-# RUSTDOCFLAGS="--cfg doc_cfg" cargo +nightly doc --features libm,serde1,rayon --no-deps --open
+# RUSTDOCFLAGS="--cfg docsrs -Zunstable-options --generate-link-to-definition cargo +nightly doc --features libm,serde1,rayon --no-deps --open

@@ -188,7 +188,6 @@ macro_rules! impl_from_iterator {
 macro_rules! impl_from_par_iterator {
     ( $name:ident ) => {
         #[cfg(feature = "rayon")]
-        #[cfg_attr(doc_cfg, doc(cfg(feature = "rayon")))]
         impl ::rayon::iter::FromParallelIterator<f64> for $name {
             fn from_par_iter<I>(par_iter: I) -> $name
             where
@@ -218,7 +217,6 @@ macro_rules! impl_from_par_iterator {
         }
 
         #[cfg(feature = "rayon")]
-        #[cfg_attr(doc_cfg, doc(cfg(feature = "rayon")))]
         impl<'a> ::rayon::iter::FromParallelIterator<&'a f64> for $name {
             fn from_par_iter<I>(par_iter: I) -> $name
             where

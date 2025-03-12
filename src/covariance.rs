@@ -96,7 +96,6 @@ impl Covariance {
     ///
     /// Returns NaN for an empty sample.
     #[cfg(any(feature = "std", feature = "libm"))]
-    #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
     #[inline]
     pub fn pearson(&self) -> f64 {
         if self.n < 2 {

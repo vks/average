@@ -102,7 +102,6 @@ macro_rules! define_moments_common {
 
             /// Estimate the `p`th standardized moment of the population.
             #[cfg(any(feature = "std", feature = "libm"))]
-            #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
             #[inline]
             pub fn standardized_moment(&self, p: usize) -> f64 {
                 match p {
@@ -134,7 +133,6 @@ macro_rules! define_moments_common {
             /// 
             /// Returns NaN for an empty sample.
             #[cfg(any(feature = "std", feature = "libm"))]
-            #[cfg_attr(doc_cfg, doc(cfg(any(feature = "std", feature = "libm"))))]
             #[inline]
             pub fn sample_skewness(&self) -> f64 {
                 use num_traits::Float;
