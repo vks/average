@@ -19,7 +19,7 @@ jobs:
             toolchain: nightly
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            toolchain: 1.61.0  # MSRV
+            toolchain: 1.63.0  # MSRV
           - os: ubuntu-latest
             deps: sudo apt-get update ; sudo apt install gcc-multilib
             target: i686-unknown-linux-gnu

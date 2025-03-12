@@ -10,7 +10,7 @@ readme = "README.md"
 repository = "https://github.com/vks/average"
 version = "0.15.1"
 edition = "2021"
-rust-version = "1.61"
+rust-version = "1.63"
 include = ["src/**/*", "benches/*", "LICENSE-*", "README.md"]
 resolver = "2"
 
@@ -39,8 +39,8 @@ float-ord = "0.3"
 easy-cast = { version = "0.5", default-features = false, optional = true }
 serde_derive = { version = "1", optional = true }
 serde-big-array = { version = "0.5", optional = true }
-rayon = { version = "=1.7", optional = true }  # MSRV 1.61
-rayon-core = { version = "=1.11", optional = true }  # MSRV 1.61
+rayon = { version = "=1.10", optional = true }  # MSRV 1.63
+rayon-core = { version = "=1.12", optional = true }  # MSRV 1.63
 
 [dependencies.serde]
 version = "1"
