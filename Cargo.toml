@@ -14,10 +14,10 @@ rust-version = "1.63"
 include = ["src/**/*", "benches/*", "LICENSE-*", "README.md"]
 
 [features]
-serde = ["dep:serde", "serde_derive", "serde-big-array"]
+serde = ["dep:serde", "dep:serde_derive", "dep:serde-big-array"]
 nightly = []
-std = ["easy-cast/std", "num-traits/std"]
-libm = ["easy-cast/libm", "num-traits/libm"]
+std = ["dep:easy-cast", "easy-cast/std", "num-traits/std"]
+libm = ["dep:easy-cast", "easy-cast/libm", "num-traits/libm"]
 default = ["libm"]
 
 [[bench]]
