@@ -1,5 +1,3 @@
-#![cfg_attr(feature = "cargo-clippy", allow(clippy::float_cmp))]
-
 use average::{concatenate, Estimate, Max, Min};
 
 concatenate!(MinMax, [Min, min], [Max, max]);
