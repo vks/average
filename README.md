@@ -43,10 +43,6 @@ The following features are available:
   all library and compiler versions will be compatible.
 
 
-## Rust version requirements
-
-Rustc version 1.61 or greater is supported.
-
 ## Related Projects
 
 * [`quantiles`](https://crates.io/crates/quantiles):
