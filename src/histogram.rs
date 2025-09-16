@@ -17,7 +17,7 @@ pub struct SampleOutOfRangeError;
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_histogram_common {
-    ($LEN:expr) => {
+    ($LEN:expr_2021) => {
         use $crate::Histogram as Trait;
 
         /// The number of bins of the histogram.
@@ -252,7 +252,7 @@ macro_rules! define_histogram_inner {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_histogram_inner {
-    ($name:ident, $LEN:expr) => {
+    ($name:ident, $LEN:expr_2021) => {
         mod $name {
             $crate::define_histogram_common!($LEN);
 
@@ -291,7 +291,7 @@ macro_rules! define_histogram_inner {
 /// ```
 #[macro_export]
 macro_rules! define_histogram {
-    ($name:ident, $LEN:expr) => {
+    ($name:ident, $LEN:expr_2021) => {
         $crate::define_histogram_inner!($name, $LEN);
     };
 }

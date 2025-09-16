@@ -4,7 +4,7 @@
 /// debug representations.
 #[macro_export]
 macro_rules! assert_almost_eq {
-    ($a:expr, $b:expr, $prec:expr) => {
+    ($a:expr_2021, $b:expr_2021, $prec:expr_2021) => {
         let diff = ($a - $b).abs();
         if diff > $prec {
             panic!(
