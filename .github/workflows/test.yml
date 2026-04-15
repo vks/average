@@ -56,6 +56,7 @@ jobs:
           cargo test --target ${{ matrix.target }} --tests --no-default-features
           # all stable features:
           cargo test --target ${{ matrix.target }} --features=std,serde,rayon
+          cargo test --target ${{ matrix.target }} --features=derive
   test-no-std:
     runs-on: ubuntu-latest
     steps:

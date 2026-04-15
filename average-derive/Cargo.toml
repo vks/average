@@ -1,0 +1,18 @@
+[package]
+name = "average-derive"
+version = "0.17.0"
+edition = "2024"
+rust-version = "1.85"
+authors = ["Vinzent Steinberg <Vinzent.Steinberg@gmail.com>"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/vks/average"
+description = "Derive macros for the `average` crate"
+include = ["src/**/*", "LICENSE-*"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+quote = "1"
+syn = { version = "2", features = ["derive"] }

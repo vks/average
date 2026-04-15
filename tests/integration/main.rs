@@ -21,3 +21,4 @@ mod skewness;
 mod streaming_stats;
 mod weighted_mean;
 mod covariance;
+mod derive;

@@ -119,6 +119,8 @@ pub use crate::minmax::{Max, Min};
 #[cfg(any(feature = "std", feature = "libm"))]
 pub use crate::quantile::Quantile;
 pub use crate::traits::{Estimate, Histogram, Merge};
+#[cfg(feature = "derive")]
+pub use average_derive::Merge;
 pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use crate::covariance::Covariance;
 
