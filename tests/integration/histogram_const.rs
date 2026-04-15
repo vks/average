@@ -1,5 +1,4 @@
 use core::iter::Iterator;
-use rand::SeedableRng;
 use rand_distr::Distribution;
 
 use average::histogram_const::{Histogram, InvalidRangeError, SampleOutOfRangeError};
@@ -232,7 +231,7 @@ fn mul() {
 fn variance() {
     let mut h = Histogram10::with_const_width(-3., 3.);
     let normal = rand_distr::Normal::new(0., 1.).unwrap();
-    let mut rng = rand_xoshiro::Xoshiro256StarStar::from_os_rng();
+    let mut rng: rand::rngs::Xoshiro256PlusPlus = rand::make_rng();
     for _ in 0..1000000 {
         let _ = h.add(normal.sample(&mut rng));
     }

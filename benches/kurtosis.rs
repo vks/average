@@ -7,7 +7,7 @@ fn initialize_vec() -> Vec<f64> {
     let normal = Normal::new(2.0, 3.0).unwrap();
     let n = 1_000_000;
     let mut values = Vec::with_capacity(n);
-    let mut rng = rand_xoshiro::Xoshiro256StarStar::from_seed([
+    let mut rng = rand::rngs::Xoshiro256PlusPlus::from_seed([
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
         26, 27, 28, 29, 30, 31, 32,
     ]);
