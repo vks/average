@@ -17,7 +17,7 @@ pub type MeanWithError = Variance;
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_moments_common {
-    ($name:ident, $MAX_MOMENT:expr) => {
+    ($name:ident, $MAX_MOMENT:expr_2021) => {
         use num_traits::{pow, ToPrimitive};
 
         /// An iterator over binomial coefficients.
@@ -295,7 +295,7 @@ macro_rules! define_moments_inner {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! define_moments_inner {
-    ($name:ident, $MAX_MOMENT:expr) => {
+    ($name:ident, $MAX_MOMENT:expr_2021) => {
         $crate::define_moments_common!($name, $MAX_MOMENT);
 
         /// Estimate the first N moments of a sequence of numbers ("population").
@@ -356,7 +356,7 @@ macro_rules! define_moments_inner {
 /// ```
 #[macro_export]
 macro_rules! define_moments {
-    ($name:ident, $MAX_MOMENT:expr) => {
+    ($name:ident, $MAX_MOMENT:expr_2021) => {
         $crate::define_moments_inner!($name, $MAX_MOMENT);
     };
 }
