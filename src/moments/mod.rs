@@ -101,6 +101,9 @@ macro_rules! define_moments_common {
             }
 
             /// Estimate the `p`th standardized moment of the population.
+            ///
+            /// Note: for `p = 0`, this returns the sample size `n` rather than
+            /// the standard mathematical definition (which would be 1).
             #[cfg(any(feature = "std", feature = "libm"))]
             #[inline]
             pub fn standardized_moment(&self, p: usize) -> f64 {

@@ -7,7 +7,7 @@
 pub struct Kurtosis {
     /// Estimator of mean, variance and skewness.
     avg: Skewness,
-    /// Intermediate sum of terms to the fourth for calculating the skewness.
+    /// Intermediate sum of terms to the fourth for calculating the kurtosis.
     sum_4: f64,
 }
 
@@ -78,7 +78,7 @@ impl Kurtosis {
         self.avg.sample_variance()
     }
 
-    /// Calculate the population variance of the sample.
+    /// Calculate the biased population variance.
     ///
     /// This is a biased estimator of the variance of the population.
     /// 

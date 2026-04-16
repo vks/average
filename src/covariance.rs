@@ -92,7 +92,7 @@ impl Covariance {
         self.sum_prod / (self.n - 1).to_f64().unwrap()
     }
 
-    /// Calculate the population Pearson correlation coefficient.
+    /// Calculate the Pearson correlation coefficient.
     ///
     /// Returns NaN for an empty sample.
     #[cfg(any(feature = "std", feature = "libm"))]
@@ -145,7 +145,7 @@ impl Covariance {
         self.sum_x_2 / (self.n - 1).to_f64().unwrap()
     }
 
-    /// Calculate the population variance of the sample for `x`.
+    /// Calculate the biased population variance for `x`.
     ///
     /// This is a biased estimator of the variance of the population.
     ///
@@ -171,7 +171,7 @@ impl Covariance {
         self.sum_y_2 / (self.n - 1).to_f64().unwrap()
     }
 
-    /// Calculate the population variance of the sample for `y`.
+    /// Calculate the biased population variance for `y`.
     ///
     /// This is a biased estimator of the variance of the population.
     ///

@@ -78,7 +78,7 @@ impl Skewness {
         self.avg.sample_variance()
     }
 
-    /// Calculate the population variance of the sample.
+    /// Calculate the biased population variance.
     ///
     /// This is a biased estimator of the variance of the population.
     /// 

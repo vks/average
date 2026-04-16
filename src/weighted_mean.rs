@@ -263,7 +263,7 @@ impl WeightedMeanWithError {
         weight_sum * weight_sum / self.weight_sum_sq
     }
 
-    /// Calculate the *unweighted* population variance of the sample.
+    /// Calculate the *unweighted* biased population variance.
     ///
     /// This is a biased estimator of the variance of the population.
     /// 

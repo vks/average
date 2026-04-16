@@ -85,7 +85,7 @@ impl Variance {
         self.sum_2 / (self.avg.len() - 1).to_f64().unwrap()
     }
 
-    /// Calculate the population variance of the sample.
+    /// Calculate the biased population variance.
     ///
     /// This is a biased estimator of the variance of the population.
     /// 
