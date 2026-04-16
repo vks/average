@@ -11,6 +11,7 @@ fn trivial() {
     assert!(a.population_variance().is_nan());
     assert!(a.error_mean().is_nan());
     assert!(a.skewness().is_nan());
+    assert!(a.sample_skewness().is_nan());
     a.add(1.0);
     assert_eq!(a.len(), 1);
     assert_eq!(a.mean(), 1.0);
@@ -18,6 +19,7 @@ fn trivial() {
     assert_eq!(a.population_variance(), 0.0);
     assert_eq!(a.error_mean(), 0.0);
     assert_eq!(a.skewness(), 0.0);
+    assert!(a.sample_skewness().is_nan());
     a.add(1.0);
     assert_eq!(a.len(), 2);
     assert_eq!(a.mean(), 1.0);
@@ -25,6 +27,7 @@ fn trivial() {
     assert_eq!(a.population_variance(), 0.0);
     assert_eq!(a.error_mean(), 0.0);
     assert_eq!(a.skewness(), 0.0);
+    assert!(a.sample_skewness().is_nan());
 }
 
 #[test]
@@ -35,8 +38,12 @@ fn simple() {
     assert_eq!(a.sample_variance(), 2.5);
     assert_almost_eq!(a.error_mean(), f64::sqrt(0.5), 1e-16);
     assert_eq!(a.skewness(), 0.0);
+    assert_eq!(a.sample_skewness(), 0.0);
     a.add(1.0);
     assert_almost_eq!(a.skewness(), 0.2795084971874741, 1e-15);
+    // G_1 = sqrt(n*(n-1))/(n-2) * skewness
+    // For n=6: sqrt(30)/4 * 0.2795... = 5*sqrt(6)/32
+    assert_almost_eq!(a.sample_skewness(), 5. * f64::sqrt(6.) / 32., 1e-15);
 }
 
 #[test]

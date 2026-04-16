@@ -103,7 +103,7 @@ impl Kurtosis {
     }
 
     /// Estimate the excess kurtosis of the population.
-    /// 
+    ///
     /// Returns NaN for an empty sample.
     #[inline]
     pub fn kurtosis(&self) -> f64 {
@@ -116,6 +116,40 @@ impl Kurtosis {
         let n = self.len().to_f64().unwrap();
         debug_assert_ne!(self.avg.avg.sum_2, 0.);
         n * self.sum_4 / (self.avg.avg.sum_2 * self.avg.avg.sum_2) - 3.
+    }
+
+    /// Calculate the sample skewness.
+    ///
+    /// This is the adjusted Fisher-Pearson standardized moment coefficient.
+    ///
+    /// Returns NaN for samples of size 2 or less.
+    #[inline]
+    pub fn sample_skewness(&self) -> f64 {
+        self.avg.sample_skewness()
+    }
+
+    /// Calculate the sample excess kurtosis.
+    ///
+    /// This is the bias-corrected estimator of the excess kurtosis.
+    ///
+    /// Returns NaN for samples of size 3 or less.
+    #[inline]
+    pub fn sample_excess_kurtosis(&self) -> f64 {
+        if self.len() < 4 {
+            return f64::NAN;
+        }
+        let n = self.len().to_f64().unwrap();
+        let sum_2 = self.avg.avg.sum_2;
+        if sum_2 == 0. {
+            return 0.;
+        }
+        // G_2 = (n-1)/((n-2)(n-3)) * ((n+1)*g_2 + 6)
+        // where g_2 = m_4/m_2^2 - 3 is the biased excess kurtosis,
+        // and m_4/m_2^2 = n*sum_4/sum_2^2.
+        // Expanding: (n+1)*(n-1)/((n-2)(n-3)) * n*sum_4/sum_2^2
+        //            - 3*(n-1)^2/((n-2)(n-3))
+        (n + 1.) * (n - 1.) * n * self.sum_4 / ((n - 2.) * (n - 3.) * sum_2 * sum_2)
+            - 3. * (n - 1.) * (n - 1.) / ((n - 2.) * (n - 3.))
     }
 
 }

@@ -110,6 +110,32 @@ impl Skewness {
         debug_assert_ne!(sum_2, 0.);
         Float::sqrt(n) * self.sum_3 / Float::sqrt(sum_2*sum_2*sum_2)
     }
+
+    /// Calculate the sample skewness.
+    ///
+    /// This is the adjusted Fisher-Pearson standardized moment coefficient,
+    /// the same bias-corrected estimator used by Excel, SAS, and most other
+    /// statistical packages.
+    ///
+    /// Returns NaN for samples of size 2 or less.
+    #[inline]
+    pub fn sample_skewness(&self) -> f64 {
+        if self.len() < 3 {
+            return f64::NAN;
+        }
+        let n = self.len().to_f64().unwrap();
+        let sum_2 = self.avg.sum_2;
+        if sum_2 == 0. {
+            return 0.;
+        }
+        // Adjusted Fisher-Pearson standardized moment coefficient:
+        // G_1 = sqrt(n*(n-1)) / (n-2) * m_3 / m_2^{3/2}
+        // where m_p = sum_p / n are the biased central moments.
+        // Since skewness() = sqrt(n) * sum_3 / sum_2^{3/2} = m_3 / m_2^{3/2},
+        // this is equivalent to sqrt(n*(n-1)) / (n-2) * skewness().
+        Float::sqrt(n * (n - 1.)) / (n - 2.)
+            * Float::sqrt(n) * self.sum_3 / Float::sqrt(sum_2 * sum_2 * sum_2)
+    }
 }
 
 impl Default for Skewness {
