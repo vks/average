@@ -45,4 +45,29 @@ mod tests {
         assert_eq!(a.1.max(), 4.0);
         assert!((a.0.mean() - 2.5).abs() < 1e-10);
     }
+
+    #[test]
+    fn derive_merge_generic_struct() {
+        #[derive(Default, Merge)]
+        struct Wrapper<T: Default> {
+            inner: T,
+        }
+
+        let mut a = Wrapper::<Mean>::default();
+        let mut b = Wrapper::<Mean>::default();
+        for x in [1.0_f64, 2.0] {
+            a.inner.add(x);
+        }
+        for x in [3.0_f64, 4.0] {
+            b.inner.add(x);
+        }
+        a.merge(&b);
+        assert!((a.inner.mean() - 2.5).abs() < 1e-10);
+    }
+
+    #[test]
+    fn derive_merge_compile_fail() {
+        let t = trybuild::TestCases::new();
+        t.compile_fail("tests/compile-fail/derive-enum.rs");
+    }
 }

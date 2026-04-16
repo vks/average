@@ -121,6 +121,11 @@ pub use crate::quantile::Quantile;
 pub use crate::traits::{Estimate, Histogram, Merge};
 #[cfg(feature = "derive")]
 pub use average_derive::Merge;
+
+#[doc(hidden)]
+pub mod __private {
+    pub use crate::traits::Merge;
+}
 pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use crate::covariance::Covariance;
 

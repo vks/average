@@ -1,0 +1,5 @@
+error: `#[derive(Merge)]` is only supported on structs
+ --> tests/compile-fail/derive-enum.rs:4:6
+  |
+4 | enum Foo {
+  |      ^^^
