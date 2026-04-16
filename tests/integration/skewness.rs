@@ -40,6 +40,9 @@ fn simple() {
     assert_eq!(a.skewness(), 0.0);
     assert_eq!(a.sample_skewness(), 0.0);
     a.add(1.0);
+    // zero variance: all identical values
+    let b: Skewness = [5., 5., 5.].iter().copied().collect();
+    assert_eq!(b.sample_skewness(), 0.0);
     assert_almost_eq!(a.skewness(), 0.2795084971874741, 1e-15);
     // G_1 = sqrt(n*(n-1))/(n-2) * skewness
     // For n=6: sqrt(30)/4 * 0.2795... = 5*sqrt(6)/32

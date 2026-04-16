@@ -158,3 +158,35 @@ fn merge_empty() {
     assert_eq!(left.central_moment(3), 0.);
     assert_eq!(left.central_moment(4), 0.);
 }
+
+/// Reference values from scipy for [1, 2, 3, 4, 5, 1]:
+///
+/// ```python
+/// from scipy.stats import skew, kurtosis
+/// data = [1., 2., 3., 4., 5., 1.]
+/// skew(data, bias=False)       # 0.38273277230987213
+/// kurtosis(data, bias=False)   # -1.4812500000000004
+/// ```
+#[cfg(any(feature = "std", feature = "libm"))]
+#[test]
+fn sample_skewness() {
+    let mut a: Moments4 = (1..6).map(f64::from).collect();
+    assert_almost_eq!(a.sample_skewness(), 0.0, 1e-15);
+    a.add(1.0);
+    assert_almost_eq!(a.sample_skewness(), 0.38273277230987213, 1e-15);
+}
+
+#[test]
+fn sample_excess_kurtosis() {
+    let mut a: Moments4 = (1..6).map(f64::from).collect();
+    a.add(1.0);
+    assert_almost_eq!(a.sample_excess_kurtosis(), -1.48125, 1e-13);
+}
+
+#[cfg(any(feature = "std", feature = "libm"))]
+#[test]
+fn zero_variance() {
+    let a: Moments4 = [5., 5., 5., 5.].iter().copied().collect();
+    assert_eq!(a.sample_skewness(), 0.0);
+    assert_eq!(a.sample_excess_kurtosis(), 0.0);
+}

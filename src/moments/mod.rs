@@ -133,42 +133,48 @@ macro_rules! define_moments_common {
             }
 
             /// Calculate the sample skewness.
-            /// 
-            /// Returns NaN for an empty sample.
+            ///
+            /// This is the adjusted Fisher-Pearson standardized moment
+            /// coefficient:
+            /// G_1 = sqrt(n*(n-1)) / (n-2) * m_3 / m_2^{3/2}
+            ///
+            /// Returns NaN for samples of size 2 or less.
             #[cfg(any(feature = "std", feature = "libm"))]
             #[inline]
             pub fn sample_skewness(&self) -> f64 {
                 use num_traits::Float;
 
-                if self.n == 0 {
+                if self.n < 3 {
                     return f64::NAN;
                 }
-                if self.n == 1 {
+                let m2 = self.central_moment(2);
+                if m2 == 0. {
                     return 0.;
                 }
                 let n = self.n.to_f64().unwrap();
-                if self.n < 3 {
-                    // Method of moments
-                    return self.central_moment(3)
-                        / Float::powf(n * (self.central_moment(2) / (n - 1.)), 1.5);
-                }
-                // Adjusted Fisher-Pearson standardized moment coefficient
-                Float::sqrt(n * (n - 1.)) / (n * (n - 2.))
-                    * Float::powf(self.central_moment(3) / (self.central_moment(2) / n), 1.5)
+                Float::sqrt(n * (n - 1.)) / (n - 2.)
+                    * self.central_moment(3) / Float::powf(m2, 1.5)
             }
 
             /// Calculate the sample excess kurtosis.
-            /// 
+            ///
+            /// G_2 = (n-1)/((n-2)(n-3)) * ((n+1)*g_2 + 6)
+            /// where g_2 = m_4/m_2^2 - 3 is the biased excess kurtosis.
+            ///
             /// Returns NaN for samples of size 3 or less.
             #[inline]
             pub fn sample_excess_kurtosis(&self) -> f64 {
                 if self.n < 4 {
                     return f64::NAN;
                 }
+                let m2 = self.central_moment(2);
+                if m2 == 0. {
+                    return 0.;
+                }
                 let n = self.n.to_f64().unwrap();
-                (n + 1.) * n * self.central_moment(4)
-                    / ((n - 1.) * (n - 2.) * (n - 3.) * pow(self.central_moment(2), 2))
-                    - 3. * pow(n - 1., 2) / ((n - 2.) * (n - 3.))
+                (n + 1.) * (n - 1.) * self.central_moment(4)
+                    / ((n - 2.) * (n - 3.) * m2 * m2)
+                    - 3. * (n - 1.) * (n - 1.) / ((n - 2.) * (n - 3.))
             }
 
             /// Add an observation sampled from the population.

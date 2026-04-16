@@ -43,6 +43,10 @@ fn simple() {
     assert_eq!(a.skewness(), 0.0);
     assert_eq!(a.sample_skewness(), 0.0);
     a.add(1.0);
+    // zero variance: all identical values
+    let b: Kurtosis = [5., 5., 5., 5.].iter().copied().collect();
+    assert_eq!(b.sample_skewness(), 0.0);
+    assert_eq!(b.sample_excess_kurtosis(), 0.0);
     assert_almost_eq!(a.skewness(), 0.2795084971874741, 1e-15);
     assert_almost_eq!(a.sample_skewness(), 5. * f64::sqrt(6.) / 32., 1e-15);
     assert_almost_eq!(a.kurtosis(), -1.365, 1e-15);
