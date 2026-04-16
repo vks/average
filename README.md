@@ -37,6 +37,8 @@ The following features are available:
   preferred over `libm`.
 * `std` enables `Quantile` (using floating point functions provided by `std`).
 * `serde` enables serialization, via Serde version 1.
+* `derive` enables `#[derive(Merge)]` and the `#[concatenate]` attribute macro
+  for defining composite estimator structs.
 * `rayon` enables support for `rayon::iter::FromParallelIterator`.
 * `nightly` enables the use of const generics for a histogram implementation
   without macros. Note that nightly features are not stable and therefore not

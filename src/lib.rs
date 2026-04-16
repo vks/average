@@ -56,7 +56,12 @@
 //! forwarding to the underlying estimators. Everything is inlined, so there
 //! should be no overhead.
 //!
-//! You can avoid the boilerplate code by using the [`concatenate`] macro.
+//! You can avoid the boilerplate code by using the [`concatenate`] macro. With
+//! the `derive` feature enabled, you can also use the
+//! [`#[concatenate]`](average_derive::concatenate) attribute macro from
+//! `average_derive`, and
+//! [`#[derive(Merge)]`](average_derive::Merge) to auto-implement the [`Merge`]
+//! trait for your struct.
 //!
 //! Note that calculating moments requires calculating the lower moments, so you
 //! only need to include the highest moment in your struct.
