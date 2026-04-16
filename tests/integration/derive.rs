@@ -70,4 +70,118 @@ mod tests {
         let t = trybuild::TestCases::new();
         t.compile_fail("tests/compile-fail/derive-enum.rs");
     }
+
+    // --- #[concatenate] attribute macro tests ---
+
+    use average_derive::concatenate;
+    use average::Min;
+
+    #[derive(Merge)]
+    #[concatenate]
+    struct MinMax {
+        min: Min,
+        max: Max,
+    }
+
+    #[test]
+    fn concatenate_simple() {
+        let mut s = MinMax::new();
+        for i in 1..6 {
+            s.add(f64::from(i));
+        }
+        assert_eq!(s.min(), 1.0);
+        assert_eq!(s.max(), 5.0);
+    }
+
+    #[test]
+    fn concatenate_default() {
+        let mut s = MinMax::default();
+        for i in 1..6 {
+            s.add(f64::from(i));
+        }
+        assert_eq!(s.min(), 1.0);
+        assert_eq!(s.max(), 5.0);
+    }
+
+    #[test]
+    fn concatenate_from_iterator() {
+        let s: MinMax = (1..6).map(f64::from).collect();
+        assert_eq!(s.min(), 1.0);
+        assert_eq!(s.max(), 5.0);
+    }
+
+    #[test]
+    fn concatenate_from_iterator_ref() {
+        let data: Vec<f64> = (1..6).map(f64::from).collect();
+        let s: MinMax = data.iter().collect();
+        assert_eq!(s.min(), 1.0);
+        assert_eq!(s.max(), 5.0);
+    }
+
+    #[test]
+    fn concatenate_merge() {
+        let mut a: MinMax = (1..4).map(f64::from).collect();
+        let b: MinMax = (4..7).map(f64::from).collect();
+        a.merge(&b);
+        assert_eq!(a.min(), 1.0);
+        assert_eq!(a.max(), 6.0);
+    }
+
+    #[test]
+    fn concatenate_multi_statistics() {
+        use average::Variance;
+
+        #[concatenate]
+        struct Estimator {
+            #[statistics(mean, sample_variance)]
+            variance: Variance,
+            #[statistics(max)]
+            max: Max,
+        }
+
+        let e: Estimator = (1..6).map(f64::from).collect();
+        assert_eq!(e.mean(), 3.0);
+        assert_eq!(e.sample_variance(), 2.5);
+        assert_eq!(e.max(), 5.0);
+    }
+
+    #[cfg(any(feature = "std", feature = "libm"))]
+    #[test]
+    fn concatenate_moments_quantile() {
+        use average::{Quantile, Variance};
+
+        #[concatenate]
+        struct Estimator {
+            #[statistics(mean, sample_variance)]
+            variance: Variance,
+            #[statistics(quantile)]
+            quantile: Quantile,
+        }
+
+        let e: Estimator = (1..6).map(f64::from).collect();
+        assert_eq!(e.mean(), 3.0);
+        assert_eq!(e.sample_variance(), 2.5);
+        assert_eq!(e.quantile(), 3.0);
+    }
+
+    #[test]
+    fn concatenate_pub() {
+        mod submodule {
+            use average::{Min, Max};
+            use average_derive::concatenate;
+
+            #[concatenate]
+            pub struct MinMax {
+                min: Min,
+                max: Max,
+            }
+        }
+
+        let mut s = submodule::MinMax::new();
+        for i in 1..6 {
+            s.add(f64::from(i));
+        }
+        assert_eq!(s.min(), 1.0);
+        assert_eq!(s.max(), 5.0);
+    }
 }
