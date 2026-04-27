@@ -46,6 +46,8 @@
 //! * Arbitrary higher moments ([`define_moments`]).
 //! * Quantiles ([`Quantile`]).
 //! * Minimum ([`Min`]) and maximum ([`Max`]).
+//! * Exponentially weighted moving average ([`ExpMovingMean`]) and variance
+//!   ([`ExpMovingVariance`]).
 //!
 //!
 //! ## Estimating several statistics at once
@@ -85,6 +87,8 @@
 //! [`Quantile`]: ./struct.Quantile.html
 //! [`Min`]: ./struct.Min.html
 //! [`Max`]: ./struct.Max.html
+//! [`ExpMovingMean`]: ./struct.ExpMovingMean.html
+//! [`ExpMovingVariance`]: ./struct.ExpMovingVariance.html
 //! [`concatenate`]: ./macro.concatenate.html
 //! [`define_moments`]: ./macro.define_moments.html
 //! [`define_histogram`]: ./macro.define_histogram.html
@@ -114,6 +118,7 @@ mod histogram;
 #[cfg(feature = "nightly")]
 pub mod histogram_const;
 mod covariance;
+mod exp_moving;
 
 #[cfg(any(feature = "std", feature = "libm"))]
 pub use crate::moments::{Kurtosis, Skewness};
@@ -133,6 +138,7 @@ pub mod __private {
 }
 pub use crate::weighted_mean::{WeightedMean, WeightedMeanWithError};
 pub use crate::covariance::Covariance;
+pub use crate::exp_moving::{ExpMovingMean, ExpMovingVariance};
 
 define_histogram!(hist, 10);
 pub use crate::hist::Histogram as Histogram10;
