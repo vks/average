@@ -72,7 +72,8 @@ fn variance_empty() {
     assert!(a.is_empty());
     assert_eq!(a.len(), 0);
     assert!(a.mean().is_nan());
-    assert!(a.variance().is_nan());
+    assert!(a.population_variance().is_nan());
+    assert!(a.sample_variance().is_nan());
     assert!(a.estimate().is_nan());
 }
 
@@ -82,7 +83,8 @@ fn variance_single_sample() {
     a.add(5.0);
     assert_eq!(a.len(), 1);
     assert_eq!(a.mean(), 5.0);
-    assert_eq!(a.variance(), 0.0);
+    assert_eq!(a.population_variance(), 0.0);
+    assert!(a.sample_variance().is_nan());
 }
 
 #[test]
@@ -93,7 +95,8 @@ fn variance_reference() {
     }
     assert_eq!(a.len(), 5);
     assert_eq!(a.mean(), 10.6875);
-    assert_eq!(a.variance(), 32.08984375);
+    assert_eq!(a.population_variance(), 32.08984375);
+    assert_eq!(a.sample_variance(), 32.08984375 / 0.6640625);
 }
 
 #[test]
@@ -103,14 +106,26 @@ fn variance_constants_converge() {
         a.add(3.0);
     }
     assert_eq!(a.mean(), 3.0);
-    assert_eq!(a.variance(), 0.0);
+    assert_eq!(a.population_variance(), 0.0);
+    assert_eq!(a.sample_variance(), 0.0);
+}
+
+#[test]
+fn variance_alpha_one_sample_variance_is_nan() {
+    // alpha = 1 puts all weight on the latest sample, so the unbiased
+    // correction (1 - Σwᵢ²) is exactly zero.
+    let mut a = ExpMovingVariance::with_alpha(1.0);
+    a.add(1.0);
+    a.add(2.0);
+    assert_eq!(a.population_variance(), 0.0);
+    assert!(a.sample_variance().is_nan());
 }
 
 #[test]
 fn variance_extend_f64() {
     let mut a = ExpMovingVariance::with_alpha(0.5);
     a.extend([1.0_f64, 2.0, 4.0, 8.0, 16.0]);
-    assert_eq!(a.variance(), 32.08984375);
+    assert_eq!(a.population_variance(), 32.08984375);
 }
 
 #[test]
@@ -118,7 +133,7 @@ fn variance_extend_ref_f64() {
     let mut a = ExpMovingVariance::with_alpha(0.5);
     let data = [1.0_f64, 2.0, 4.0, 8.0, 16.0];
     a.extend(data.iter());
-    assert_eq!(a.variance(), 32.08984375);
+    assert_eq!(a.population_variance(), 32.08984375);
 }
 
 #[cfg(any(feature = "std", feature = "libm"))]
@@ -128,7 +143,7 @@ fn variance_standard_deviation() {
     for &x in &[1.0_f64, 2.0, 4.0, 8.0, 16.0] {
         a.add(x);
     }
-    assert_eq!(a.standard_deviation(), a.variance().sqrt());
+    assert_eq!(a.standard_deviation(), a.sample_variance().sqrt());
 }
 
 #[cfg(any(feature = "std", feature = "libm"))]
@@ -187,5 +202,6 @@ fn variance_serde_round_trip() {
     assert_eq!(b.len(), a.len());
     assert_eq!(b.alpha(), a.alpha());
     assert_eq!(b.mean(), a.mean());
-    assert_eq!(b.variance(), a.variance());
+    assert_eq!(b.population_variance(), a.population_variance());
+    assert_eq!(b.sample_variance(), a.sample_variance());
 }

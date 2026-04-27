@@ -166,15 +166,20 @@ impl<'a> core::iter::Extend<&'a f64> for ExpMovingMean {
 ///     a.add(x);
 /// }
 /// assert_eq!(a.mean(), 5.5);
-/// assert_eq!(a.variance(), 6.75);
+/// assert_eq!(a.population_variance(), 6.75);
+/// assert_eq!(a.sample_variance(), 10.8);
 /// ```
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct ExpMovingVariance {
     /// Inner mean estimator.
     avg: ExpMovingMean,
-    /// Exponentially weighted variance estimate.
+    /// Exponentially weighted population variance estimate.
     s: f64,
+    /// Sum of squared sample weights. Equals `Σ wᵢ²` where the `wᵢ` sum to 1
+    /// by construction, so it lies in `(0, 1]`. Used for the bias correction
+    /// in `sample_variance()`.
+    weight_sum_sq: f64,
 }
 
 impl ExpMovingVariance {
@@ -185,7 +190,11 @@ impl ExpMovingVariance {
     /// Panics in debug mode if `alpha` is not in `(0, 1]`.
     #[inline]
     pub fn with_alpha(alpha: f64) -> Self {
-        Self { avg: ExpMovingMean::with_alpha(alpha), s: 0.0 }
+        Self {
+            avg: ExpMovingMean::with_alpha(alpha),
+            s: 0.0,
+            weight_sum_sq: 0.0,
+        }
     }
 
     /// Create a new estimator using the span convention.
@@ -233,21 +242,44 @@ impl ExpMovingVariance {
         self.avg.mean()
     }
 
-    /// Return the current exponentially weighted variance estimate.
+    /// Return the population (biased) exponentially weighted variance.
     ///
-    /// Returns NaN for samples of size 1 or less.
+    /// This is the maximum-likelihood estimate. It is biased downward because
+    /// the same data is used to estimate the mean.
+    ///
+    /// Returns NaN for an empty sample. Returns 0.0 for a sample of size 1.
     #[inline]
-    pub fn variance(&self) -> f64 {
+    pub fn population_variance(&self) -> f64 {
         if self.avg.is_empty() { f64::NAN } else { self.s }
     }
 
-    /// Return the current exponentially weighted standard deviation.
+    /// Return the sample (unbiased) exponentially weighted variance.
     ///
-    /// Returns NaN for an empty sample.
+    /// Applies the reliability correction `1 / (1 − Σwᵢ²)` to the population
+    /// variance, where the `wᵢ` are the implicit exponentially decaying
+    /// weights. This is analogous to Bessel's correction for the unweighted
+    /// case.
+    ///
+    /// Returns NaN for samples of size 1 or less, or if `alpha == 1` (in
+    /// which case the bias correction is undefined because all weight sits on
+    /// the last sample).
+    #[inline]
+    pub fn sample_variance(&self) -> f64 {
+        let denom = 1.0 - self.weight_sum_sq;
+        if self.avg.len() <= 1 || denom <= 0.0 {
+            f64::NAN
+        } else {
+            self.s / denom
+        }
+    }
+
+    /// Return the standard deviation, defined as `sqrt(sample_variance())`.
+    ///
+    /// Returns NaN under the same conditions as [`Self::sample_variance`].
     #[cfg(any(feature = "std", feature = "libm"))]
     #[inline]
     pub fn standard_deviation(&self) -> f64 {
-        <f64 as num_traits::Float>::sqrt(self.variance())
+        <f64 as num_traits::Float>::sqrt(self.sample_variance())
     }
 }
 
@@ -256,19 +288,26 @@ impl Estimate for ExpMovingVariance {
     fn add(&mut self, x: f64) {
         let alpha = self.avg.alpha;
         if self.avg.n == 0 {
-            // First sample: seed the mean; variance stays 0.
+            // First sample: seed the mean (variance stays 0). The seeded
+            // sample carries the full weight, so Σwᵢ² starts at 1.
             self.avg.add(x);
+            self.weight_sum_sq = 1.0;
         } else {
             let prev_mean = self.avg.mean;
             self.avg.add(x);
             let delta = x - prev_mean;
             self.s = (1.0 - alpha) * (self.s + alpha * delta * delta);
+            // Each pre-existing weight is scaled by (1 - alpha); the new
+            // sample contributes alpha.
+            let one_minus_alpha = 1.0 - alpha;
+            self.weight_sum_sq =
+                one_minus_alpha * one_minus_alpha * self.weight_sum_sq + alpha * alpha;
         }
     }
 
     #[inline]
     fn estimate(&self) -> f64 {
-        self.variance()
+        self.population_variance()
     }
 }
 
