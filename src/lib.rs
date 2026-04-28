@@ -100,7 +100,7 @@
 #![forbid(unsafe_code)]
 #![forbid(missing_docs)]
 #![forbid(missing_debug_implementations)]
-#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(feature = "nightly", feature(generic_const_exprs))]
 #[cfg(feature = "std")] extern crate std;
 
