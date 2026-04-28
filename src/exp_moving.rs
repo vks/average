@@ -35,6 +35,10 @@ pub struct ExpMovingMean {
     alpha: f64,
     /// Current exponentially weighted mean.
     mean: f64,
+    /// Value of the very first observation. Captured to enable [`Self::append`]
+    /// to convert between the seeded form and the adjusted closed form. Ignored
+    /// while `n == 0`.
+    seed: f64,
     /// Number of observations added so far.
     n: u64,
 }
@@ -48,7 +52,7 @@ impl ExpMovingMean {
     #[inline]
     pub fn with_alpha(alpha: f64) -> Self {
         debug_assert!(alpha > 0.0 && alpha <= 1.0, "alpha must be in (0, 1]");
-        Self { alpha, mean: 0.0, n: 0 }
+        Self { alpha, mean: 0.0, seed: 0.0, n: 0 }
     }
 
     /// Create a new estimator using the span convention.
@@ -95,6 +99,68 @@ impl ExpMovingMean {
     pub fn mean(&self) -> f64 {
         if self.n > 0 { self.mean } else { f64::NAN }
     }
+
+    /// Append `other`'s history to this estimator, treating `other` as
+    /// observed *after* all of `self`'s samples.
+    ///
+    /// This enables chunked / parallel computation where independent chunks
+    /// are recombined in their original time order — the result is identical
+    /// (up to floating-point rounding) to feeding the concatenated sample
+    /// stream into a single [`ExpMovingMean`].
+    ///
+    /// Note: this operation is **not commutative** — `a.append(b)` differs
+    /// from `b.append(a)`. That is why [`crate::Merge`] is not implemented
+    /// for this type; if you need symmetric merging, you cannot have it for
+    /// exponentially weighted statistics.
+    ///
+    /// Both estimators must use the same smoothing factor.
+    ///
+    /// # Panics (debug)
+    ///
+    /// Panics in debug mode if `self.alpha() != other.alpha()`.
+    ///
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use average::{ExpMovingMean, Estimate};
+    ///
+    /// let samples = [1.0_f64, 2.0, 4.0, 8.0, 16.0];
+    /// let alpha = 0.5;
+    ///
+    /// let mut full = ExpMovingMean::with_alpha(alpha);
+    /// for &x in &samples { full.add(x); }
+    ///
+    /// let mut a = ExpMovingMean::with_alpha(alpha);
+    /// for &x in &samples[..2] { a.add(x); }
+    /// let mut b = ExpMovingMean::with_alpha(alpha);
+    /// for &x in &samples[2..] { b.add(x); }
+    /// a.append(&b);
+    ///
+    /// assert!((a.mean() - full.mean()).abs() < 1e-12);
+    /// ```
+    #[cfg(any(feature = "std", feature = "libm"))]
+    pub fn append(&mut self, other: &Self) {
+        if other.n == 0 {
+            return;
+        }
+        if self.n == 0 {
+            *self = other.clone();
+            return;
+        }
+        debug_assert!(self.alpha == other.alpha, "alpha mismatch");
+        // The seeded form (mean, seed, n) is convertible to the unnormalised
+        // adjusted closed form via `num = mean − (1−α)^n · seed`. Combining
+        // the older chunk A and the newer chunk B in adjusted form decays
+        // A's history by `(1−α)^|B|`, then we convert back using A's seed.
+        // The composition collapses to the closed form below — no `num`/`den`
+        // needs to be materialised.
+        let one_minus_a = 1.0 - self.alpha;
+        let decay = <f64 as num_traits::Float>::powf(one_minus_a, other.n as f64);
+        self.mean = decay * (self.mean - other.seed) + other.mean;
+        self.n = self.n.saturating_add(other.n);
+        // self.seed and self.alpha unchanged.
+    }
 }
 
 impl Estimate for ExpMovingMean {
@@ -110,6 +176,7 @@ impl Estimate for ExpMovingMean {
     fn add(&mut self, x: f64) {
         if self.n == 0 {
             self.mean = x;
+            self.seed = x;
         } else {
             let delta = x - self.mean;
             self.mean += self.alpha * delta;
@@ -280,6 +347,62 @@ impl ExpMovingVariance {
     #[inline]
     pub fn standard_deviation(&self) -> f64 {
         <f64 as num_traits::Float>::sqrt(self.sample_variance())
+    }
+
+    /// Append `other`'s history to this estimator, treating `other` as
+    /// observed *after* all of `self`'s samples.
+    ///
+    /// See [`ExpMovingMean::append`] for the rationale and ordering semantics.
+    /// Both estimators must use the same smoothing factor.
+    ///
+    /// # Panics (debug)
+    ///
+    /// Panics in debug mode if `self.alpha() != other.alpha()`.
+    #[cfg(any(feature = "std", feature = "libm"))]
+    pub fn append(&mut self, other: &Self) {
+        if other.avg.n == 0 {
+            return;
+        }
+        if self.avg.n == 0 {
+            *self = other.clone();
+            return;
+        }
+        debug_assert!(self.avg.alpha == other.avg.alpha, "alpha mismatch");
+        let alpha = self.avg.alpha;
+        let one_minus_a = 1.0 - alpha;
+        let n_b = other.avg.n as f64;
+        let decay = <f64 as num_traits::Float>::powf(one_minus_a, n_b);
+
+        let m_a = self.avg.mean;
+        let m_b = other.avg.mean;
+        let seed_b = other.avg.seed;
+        let delta = m_a - seed_b;
+
+        // Combined seeded mean — same identity as `ExpMovingMean::append`.
+        let new_mean = decay * delta + m_b;
+
+        // Combined population variance. Derived from `s = E[X²] − μ²` in
+        // seeded form (weights sum to 1) by writing
+        //     Q_combined = decay·Q_A + Q_B − decay·seed_B²
+        // and `s_combined = Q_combined − μ_combined²`, then expanding so the
+        // explicit subtraction of `μ_combined²` cancels — giving a form
+        // numerically equivalent to the parallel-variance combine.
+        let new_s = decay * self.s
+            + other.s
+            + decay * delta * ((m_a + seed_b - 2.0 * m_b) - decay * delta);
+
+        // Combined Σwᵢ². A's seeded weights are scaled by `decay`; B's seed
+        // weight is replaced by its regular adjusted weight `α·(1−α)^(|B|−1)`,
+        // which removes a `(1−α)^(2|B|−1)·(1+α)` chunk from B's contribution.
+        let correction = <f64 as num_traits::Float>::powf(one_minus_a, 2.0 * n_b - 1.0)
+            * (1.0 + alpha);
+        let new_wss = decay * decay * self.weight_sum_sq + other.weight_sum_sq - correction;
+
+        self.avg.mean = new_mean;
+        self.avg.n = self.avg.n.saturating_add(other.avg.n);
+        self.s = new_s;
+        self.weight_sum_sq = new_wss;
+        // self.avg.seed and alpha unchanged.
     }
 }
 

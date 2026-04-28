@@ -174,6 +174,180 @@ fn variance_with_half_life() {
     assert!((a.mean() - 0.5).abs() < 1e-15);
 }
 
+// ── append ────────────────────────────────────────────────────────────────────
+
+#[cfg(any(feature = "std", feature = "libm"))]
+fn assert_close(actual: f64, expected: f64) {
+    assert!(
+        (actual - expected).abs() < 1e-12,
+        "expected {expected}, got {actual}, diff {}",
+        (actual - expected).abs(),
+    );
+}
+
+#[cfg(any(feature = "std", feature = "libm"))]
+#[test]
+fn mean_append_matches_sequential() {
+    let alpha = 0.3;
+    let samples = [1.0_f64, 4.0, 9.0, 16.0, 25.0, 36.0, 49.0];
+    for split in 1..samples.len() {
+        let mut full = ExpMovingMean::with_alpha(alpha);
+        full.extend(samples);
+
+        let mut a = ExpMovingMean::with_alpha(alpha);
+        a.extend(&samples[..split]);
+        let mut b = ExpMovingMean::with_alpha(alpha);
+        b.extend(&samples[split..]);
+        a.append(&b);
+
+        assert_eq!(a.len(), full.len());
+        assert_close(a.mean(), full.mean());
+    }
+}
+
+#[cfg(any(feature = "std", feature = "libm"))]
+#[test]
+fn mean_append_three_way() {
+    let alpha = 0.4;
+    let samples = [10.0_f64, 20.0, 30.0, 40.0, 50.0, 60.0];
+    let mut full = ExpMovingMean::with_alpha(alpha);
+    full.extend(samples);
+
+    let mut a = ExpMovingMean::with_alpha(alpha);
+    a.extend(&samples[..2]);
+    let mut b = ExpMovingMean::with_alpha(alpha);
+    b.extend(&samples[2..4]);
+    let mut c = ExpMovingMean::with_alpha(alpha);
+    c.extend(&samples[4..]);
+
+    a.append(&b);
+    a.append(&c);
+
+    assert_eq!(a.len(), full.len());
+    assert_close(a.mean(), full.mean());
+}
+
+#[cfg(any(feature = "std", feature = "libm"))]
+#[test]
+fn mean_append_empty_other_is_noop() {
+    let mut a = ExpMovingMean::with_alpha(0.5);
+    a.extend([1.0_f64, 2.0, 3.0]);
+    let before = a.mean();
+    let len_before = a.len();
+    let empty = ExpMovingMean::with_alpha(0.5);
+    a.append(&empty);
+    assert_eq!(a.mean(), before);
+    assert_eq!(a.len(), len_before);
+}
+
+#[cfg(any(feature = "std", feature = "libm"))]
+#[test]
+fn mean_append_into_empty_clones_other() {
+    let mut a = ExpMovingMean::with_alpha(0.5);
+    let mut b = ExpMovingMean::with_alpha(0.5);
+    b.extend([1.0_f64, 2.0, 3.0]);
+    a.append(&b);
+    assert_eq!(a.len(), b.len());
+    assert_eq!(a.mean(), b.mean());
+}
+
+#[cfg(any(feature = "std", feature = "libm"))]
+#[test]
+fn mean_append_alpha_one() {
+    // alpha = 1 makes the EWMA a last-value tracker. Appending should behave
+    // accordingly: result tracks `other`'s last value.
+    let mut a = ExpMovingMean::with_alpha(1.0);
+    a.extend([10.0_f64, 20.0]);
+    let mut b = ExpMovingMean::with_alpha(1.0);
+    b.extend([100.0_f64, 200.0]);
+    a.append(&b);
+    assert_eq!(a.mean(), 200.0);
+    assert_eq!(a.len(), 4);
+}
+
+#[cfg(any(feature = "std", feature = "libm"))]
+#[test]
+fn mean_append_underflow_is_stable() {
+    // For α = 0.5, decay underflows to 0.0 around n ≈ 1074. With n_b = 2000
+    // the older chunk's contribution is numerically zero — the merged mean
+    // should equal `other.mean()` without producing NaN.
+    let alpha = 0.5;
+    let mut a = ExpMovingMean::with_alpha(alpha);
+    a.add(1.0e10);
+    let mut b = ExpMovingMean::with_alpha(alpha);
+    for i in 0..2000 {
+        b.add(i as f64);
+    }
+    let b_mean = b.mean();
+    a.append(&b);
+    assert!(a.mean().is_finite());
+    assert_eq!(a.mean(), b_mean);
+}
+
+#[cfg(any(feature = "std", feature = "libm"))]
+#[test]
+fn variance_append_matches_sequential() {
+    let alpha = 0.3;
+    let samples = [1.0_f64, 4.0, 9.0, 16.0, 25.0, 36.0, 49.0];
+    for split in 1..samples.len() {
+        let mut full = ExpMovingVariance::with_alpha(alpha);
+        full.extend(samples);
+
+        let mut a = ExpMovingVariance::with_alpha(alpha);
+        a.extend(&samples[..split]);
+        let mut b = ExpMovingVariance::with_alpha(alpha);
+        b.extend(&samples[split..]);
+        a.append(&b);
+
+        assert_eq!(a.len(), full.len());
+        assert_close(a.mean(), full.mean());
+        assert_close(a.population_variance(), full.population_variance());
+        assert_close(a.sample_variance(), full.sample_variance());
+    }
+}
+
+#[cfg(any(feature = "std", feature = "libm"))]
+#[test]
+fn variance_append_three_way() {
+    let alpha = 0.4;
+    let samples = [10.0_f64, 20.0, 30.0, 40.0, 50.0, 60.0];
+    let mut full = ExpMovingVariance::with_alpha(alpha);
+    full.extend(samples);
+
+    let mut a = ExpMovingVariance::with_alpha(alpha);
+    a.extend(&samples[..2]);
+    let mut b = ExpMovingVariance::with_alpha(alpha);
+    b.extend(&samples[2..4]);
+    let mut c = ExpMovingVariance::with_alpha(alpha);
+    c.extend(&samples[4..]);
+    a.append(&b);
+    a.append(&c);
+
+    assert_close(a.mean(), full.mean());
+    assert_close(a.population_variance(), full.population_variance());
+    assert_close(a.sample_variance(), full.sample_variance());
+}
+
+#[cfg(any(feature = "std", feature = "libm"))]
+#[test]
+fn variance_append_empty_edges() {
+    let mut a = ExpMovingVariance::with_alpha(0.5);
+    a.extend([1.0_f64, 2.0, 3.0]);
+    let before_mean = a.mean();
+    let before_var = a.population_variance();
+    let empty = ExpMovingVariance::with_alpha(0.5);
+    a.append(&empty);
+    assert_eq!(a.mean(), before_mean);
+    assert_eq!(a.population_variance(), before_var);
+
+    let mut a2 = ExpMovingVariance::with_alpha(0.5);
+    let mut b = ExpMovingVariance::with_alpha(0.5);
+    b.extend([1.0_f64, 2.0, 3.0]);
+    a2.append(&b);
+    assert_eq!(a2.mean(), b.mean());
+    assert_eq!(a2.population_variance(), b.population_variance());
+}
+
 // ── Serde round-trip ──────────────────────────────────────────────────────────
 
 #[cfg(feature = "serde")]
