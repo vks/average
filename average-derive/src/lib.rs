@@ -150,6 +150,13 @@ fn concatenate_impl(input: syn::ItemStruct) -> syn::Result<proc_macro2::TokenStr
     let name = &input.ident;
     let vis = &input.vis;
 
+    if !input.generics.params.is_empty() || input.generics.where_clause.is_some() {
+        return Err(syn::Error::new_spanned(
+            &input.generics,
+            "`#[concatenate]` does not support generic structs",
+        ));
+    }
+
     let fields = match &input.fields {
         Fields::Named(f) => &f.named,
         _ => {
