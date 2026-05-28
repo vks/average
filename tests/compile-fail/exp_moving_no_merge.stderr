@@ -1,0 +1,5 @@
+error[E0599]: no method named `merge` found for struct `ExpMovingMean` in the current scope
+ --> tests/compile-fail/exp_moving_no_merge.rs:6:7
+  |
+6 |     a.merge(&b); // should not compile: Merge is not implemented for ExpMovingMean
+  |       ^^^^^ method not found in `ExpMovingMean`

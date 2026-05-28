@@ -348,6 +348,17 @@ fn variance_append_empty_edges() {
     assert_eq!(a2.population_variance(), b.population_variance());
 }
 
+// ── Compile-fail: Merge is not implemented ────────────────────────────────────
+
+/// Verify that `ExpMovingMean` and `ExpMovingVariance` intentionally do **not**
+/// implement `Merge` — merging is undefined because EW statistics are
+/// order-dependent. This prevents accidentally calling `merge` on them.
+#[test]
+fn exp_moving_no_merge_compile_fail() {
+    let t = trybuild::TestCases::new();
+    t.compile_fail("tests/compile-fail/exp_moving_no_merge.rs");
+}
+
 // ── Serde round-trip ──────────────────────────────────────────────────────────
 
 #[cfg(feature = "serde")]
