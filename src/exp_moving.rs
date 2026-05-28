@@ -87,6 +87,10 @@ impl ExpMovingMean {
     }
 
     /// Return the sample size.
+    ///
+    /// When combining chunks via [`Self::append`], the count is accumulated
+    /// with `saturating_add`, so this value caps at `u64::MAX` rather than
+    /// wrapping if an astronomically large number of samples is processed.
     #[inline]
     pub fn len(&self) -> u64 {
         self.n
@@ -296,6 +300,9 @@ impl ExpMovingVariance {
     }
 
     /// Return the sample size.
+    ///
+    /// See [`ExpMovingMean::len`] for a note on saturation behaviour when
+    /// using [`Self::append`].
     #[inline]
     pub fn len(&self) -> u64 {
         self.avg.len()
