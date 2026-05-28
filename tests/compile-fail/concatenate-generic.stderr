@@ -1,0 +1,5 @@
+error: `#[concatenate]` does not support generic structs
+ --> tests/compile-fail/concatenate-generic.rs:7:11
+  |
+7 | struct Foo<T> {
+  |           ^^^

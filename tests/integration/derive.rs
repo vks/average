@@ -71,6 +71,13 @@ mod tests {
         t.compile_fail("tests/compile-fail/derive-enum.rs");
     }
 
+    #[test]
+    fn concatenate_compile_fail() {
+        let t = trybuild::TestCases::new();
+        t.compile_fail("tests/compile-fail/concatenate-generic.rs");
+        t.compile_fail("tests/compile-fail/concatenate-where.rs");
+    }
+
     // --- #[concatenate] attribute macro tests ---
 
     use average_derive::concatenate;

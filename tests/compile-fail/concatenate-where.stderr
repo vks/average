@@ -1,0 +1,7 @@
+error: `#[concatenate]` does not support generic structs
+ --> tests/compile-fail/concatenate-where.rs:6:1
+  |
+6 | #[concatenate]
+  | ^^^^^^^^^^^^^^
+  |
+  = note: this error originates in the attribute macro `concatenate` (in Nightly builds, run with -Z macro-backtrace for more info)
