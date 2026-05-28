@@ -97,14 +97,26 @@ pub fn derive_merge(input: TokenStream) -> TokenStream {
 /// To also generate a `Merge` implementation, add `#[derive(Merge)]` to the
 /// struct.
 ///
+/// # Constraints
+///
+/// - Every field type must implement [`average::Estimate`], because the
+///   generated `add` method calls `Estimate::add` on each field
+///   unconditionally.
+/// - Generic structs (structs with type parameters or `where` clauses) are not
+///   supported.
+///
 /// # Field attributes
 ///
 /// - `#[statistics(method1, method2, ...)]` — expose accessor methods that
-///   delegate to the field. Each `method` must be a method on the field type
-///   that takes `&self` and returns `f64`.
-/// - If no `#[statistics(...)]` is given, a single accessor named after the
-///   field is generated (i.e., `fn field_name(&self) -> f64` calls
-///   `self.field_name.field_name()`).
+///   delegate to the field.  Each `method` must be a `&self -> f64` method on
+///   the field type.
+/// - Without `#[statistics(...)]`, a single accessor named after the field is
+///   generated (i.e., `fn field_name(&self) -> f64` delegates to
+///   `self.field_name.field_name()`), so the field type must expose a method
+///   with the same name as the field.
+/// - Generated accessor methods inherit the *struct's* visibility (not the
+///   individual field's visibility).  For example, a `pub struct` produces
+///   `pub fn mean(…)` regardless of whether the `mean` field is private.
 ///
 /// # Example
 ///
