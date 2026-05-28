@@ -62,10 +62,13 @@ pub fn derive_merge(input: TokenStream) -> TokenStream {
     let mut generics = input.generics.clone();
     {
         let where_clause = generics.make_where_clause();
+        let mut seen = std::collections::HashSet::new();
         for ty in &field_types {
-            where_clause
-                .predicates
-                .push(syn::parse_quote!(#ty: ::average::__private::Merge));
+            if seen.insert(quote!(#ty).to_string()) {
+                where_clause
+                    .predicates
+                    .push(syn::parse_quote!(#ty: ::average::__private::Merge));
+            }
         }
     }
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
