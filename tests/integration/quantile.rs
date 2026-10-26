@@ -19,6 +19,25 @@ fn few_observations() {
     assert_eq!(q.quantile(), 2.5);
 }
 
+#[test]
+fn few_observations_unsorted() {
+    let mut q = Quantile::new(0.5);
+    assert_eq!(q.len(), 0);
+    assert!(q.quantile().is_nan());
+    q.add(1.);
+    assert_eq!(q.len(), 1);
+    assert_eq!(q.quantile(), 1.);
+    q.add(4.);
+    assert_eq!(q.len(), 2);
+    assert_eq!(q.quantile(), 2.5);
+    q.add(2.);
+    assert_eq!(q.len(), 3);
+    assert_eq!(q.quantile(), 2.);
+    q.add(3.);
+    assert_eq!(q.len(), 4);
+    assert_eq!(q.quantile(), 2.5);
+}
+
 #[cfg(feature = "serde")]
 #[test]
 fn few_observations_serde() {
