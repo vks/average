@@ -100,16 +100,16 @@ impl Quantile {
             let index = usize::conv_nearest(index);
             debug_assert!(index < 5);
             if index < len - 1 {
-                // `q[index]` and `q[index + 1]` are equally valid estimates,
-                // by convention we take their average.
-                return 0.5 * self.q[index] + 0.5 * self.q[index + 1];
+                // Values at indices `index` and `index + 1` are equally valid
+                // estimates; by convention we take their average.
+                return 0.5 * heights[index] + 0.5 * heights[index + 1];
             }
         }
         index = index.max(0.);
         let mut index = usize::conv_nearest(index);
         debug_assert!(index < 5);
         index = min(index, len - 1);
-        self.q[index]
+        heights[index]
     }
 
     /// Return the sample size.
